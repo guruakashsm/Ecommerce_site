@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        margin: 0;
+        padding: 0;
+    }
+
+    .feedback-form {
+        background-color: #f0f0f0; /* Change the background color of the form */
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    h1 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .role-options {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+    }
+
+    button {
+        padding: 10px 15px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        background-color: #2196f3;
+        color: #fff;
+        margin: 0 10px;
+    }
+
+    button:hover {
+        background-color: #1976d2;
+    }
+
+    #feedbackContainer {
+        margin-top: 20px;
+    }
+
+    .feedback-box {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        text-align: left;
+        width: 500px;
+        border-color: #000;
+        border-width: 0.1cm;
+        
+    }
+
+    .feedback-box p {
+        margin: 0;
+        font-size: 16px;
+        padding: 10px;
+       
+    }
+
+    .feedback-box h3 {
+        background-color: #2196f3; /* Change the background color of the feedback name */
+        color: #fff;
+        padding: 10px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        margin: 0;
+    }
+   </style>
+</head>
+<!DOCTYPE html>
+<html>
+<head>
+   <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        margin: 0;
+        padding: 0;
+    }
+
+    .feedback-form {
+        background-color: #f0f0f0;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    h1 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .role-options {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+    }
+
+    button {
+        padding: 10px 15px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        background-color: #2196f3;
+        color: #fff;
+        margin: 0 10px;
+    }
+
+    button:hover {
+        background-color: #1976d2;
+    }
+
+    #feedbackContainer {
+        margin-top: 20px;
+    }
+
+    .feedback-box {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        text-align: left;
+        width: 500px;
+        border-color: #000;
+        border-width: 0.1cm;
+        position: relative; /* Add position relative for icon positioning */
+    }
+
+    .feedback-box p {
+        margin: 0;
+        font-size: 16px;
+        padding: 10px;
+    }
+
+    .feedback-box h3 {
+        background-color: #2196f3;
+        color: #fff;
+        padding: 10px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        margin: 0;
+    }
+
+    /* Style for the delete icon */
+    .delete-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        color: red;
+        font-size: 18px;
+    }
+   </style>
+</head>
+<body>
+    <div class="feedback-form">
+        <h1>Feedback</h1>
+        <br>
+        <div class="role-options">
+            <button id="sellerButton">Seller</button>
+            <button id="customerButton">Customer</button>
+        </div>
+        <center>
+        <div id="feedbackContainer">
+            <!-- Feedback data will be displayed here -->
+        </div>
+        </center>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const sellerButton = document.getElementById("sellerButton");
+            const customerButton = document.getElementById("customerButton");
+            const feedbackContainer = document.getElementById("feedbackContainer");
+            
+            sellerButton.addEventListener("click", function() {
+                fetch("/sellerfeedback")
+                .then(response => response.json())
+                .then(data => {
+                    displayFeedback(data, "Seller");
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+            });
+            
+            customerButton.addEventListener("click", function() {
+                fetch("/customerfeedback")
+                .then(response => response.json())
+                .then(data => {
+                    displayFeedback(data, "Customer");
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+            });
+            
+            // Function to add a delete icon to each feedback item
+            function addDeleteIcon(feedbackBox, email, feedback) {
+                const deleteIcon = document.createElement("span");
+                deleteIcon.classList.add("delete-icon");
+                deleteIcon.innerHTML = "&#10006;"; // X icon
+                deleteIcon.addEventListener("click", function() {
+                    // Send email and feedback to the "/deletefeedback" route
+                    fetch("/deletefeedback", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ email, feedback })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data === 1) {
+                            feedbackBox.remove();
+                        } else {
+                            alert("Error deleting feedback");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                    });
+                });
+                feedbackBox.appendChild(deleteIcon);
+            }
+            
+            // Function to display feedback with delete icons
+            function displayFeedback(feedbackData, role) {
+                feedbackContainer.innerHTML = "";
+                feedbackData.forEach(item => {
+                    const feedbackBox = document.createElement("div");
+                    feedbackBox.classList.add("feedback-box");
+                    feedbackBox.innerHTML = `
+
+                        <p><strong>Email:</strong> ${item.email}</p>
+                        <p><strong>Feedback:</strong> ${item.feedback}</p>
+                    `;
+                    addDeleteIcon(feedbackBox, item.email, item.feedback);
+                    feedbackContainer.appendChild(feedbackBox);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
