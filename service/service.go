@@ -349,13 +349,13 @@ func Update(update models.Update) bool {
 				return false
 			}
 
-			return true
 		}
 
 		filter := bson.M{"email": update.IdName}
 		update1 := bson.M{"$set": bson.M{update.Field: update.New_Value}}
 		options := options.Update()
 		_, err := config.Customer_Collection.UpdateOne(context.TODO(), filter, update1, options)
+		fmt.Println("updated")
 		if err != nil {
 			return false
 		}
