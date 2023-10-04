@@ -17,7 +17,7 @@ func Router() *gin.Engine {
 	router.Static("/signin", "./frontend/signin")
 	//router.Static("/additems", "./frontend/inventory")
 	router.Static("/admin", "./frontend/admin")
-	router.Static("/edit", "./frontend/edit")
+	//router.Static("/edit", "./frontend/edit")
 	//router.Static("/delete", "./frontend/delete")
 	router.Static("/seller", "./frontend/seller")
 	router.Static("/feedback","./frontend/feedback")
