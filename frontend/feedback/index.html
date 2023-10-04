@@ -139,6 +139,7 @@
                         if (data === 1) {
                             // Redirect to /signin if the response is true
                             alert("Thankyou For Your WonderFull Feedback")
+                            window.location.href = "/feedback";
                             document.querySelector("input[name='role']:checked").value = "";
                             document.getElementById("email").value = "";
                             document.getElementById("feedback").value = "";
