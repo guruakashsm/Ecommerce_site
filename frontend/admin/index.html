@@ -86,6 +86,11 @@
             background-color: #555;
         }
 
+        #result {
+            text-align: center;
+            margin-top: 20px;
+        }
+
         #result-container {
             display: none;
             margin-top: 20px;
@@ -152,6 +157,19 @@
             /* Remove underline for anchor elements */
         }
 
+        select {
+            width: 100%;
+            padding: 8px;
+            /* Reduce padding */
+            margin-bottom: 8px;
+            /* Reduce margin */
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            /* Reduce border-radius */
+            font-size: 14px;
+            /* Reduce font size */
+        }
+
         .feedback-form {
             background-color: #f0f0f0;
             padding: 20px;
@@ -160,6 +178,16 @@
             text-align: center;
             max-width: 1000px;
             margin: 0 auto;
+        }
+
+        #update-form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 50px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         /* Style for role options (Seller/Customer) buttons */
@@ -203,45 +231,48 @@
             margin: 5px 0;
             color: #333;
         }
+
         #feedbackContainer {
-        margin-top: 20px;
-    }
+            margin-top: 20px;
+        }
 
-    .feedback-box {
-        background-color: #fff;
-        border: 1px solid #ddd;
-        padding: 10px;
-        margin-bottom: 20px;
-        border-radius: 5px;
-        text-align: left;
-        width: 690px;
-        border-color: #000;
-        border-width: 0.1cm;
-        position: relative; /* Add position relative for icon positioning */
-    }
+        .feedback-box {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: left;
+            width: 690px;
+            border-color: #000;
+            border-width: 0.1cm;
+            position: relative;
+            /* Add position relative for icon positioning */
+        }
 
-    .feedback-box p {
-        margin: 0;
-        font-size: 16px;
-        padding: 10px;
-    }
+        .feedback-box p {
+            margin: 0;
+            font-size: 16px;
+            padding: 10px;
+        }
 
-    .feedback-box h3 {
-        background-color: #2196f3;
-        color: #fff;
-        padding: 10px;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-        margin: 0;
-    }
-    .delete-icon {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        cursor: pointer;
-        color: red;
-        font-size: 18px;
-    }
+        .feedback-box h3 {
+            background-color: #2196f3;
+            color: #fff;
+            padding: 10px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            margin: 0;
+        }
+
+        .delete-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: red;
+            font-size: 18px;
+        }
     </style>
 </head>
 
@@ -277,7 +308,7 @@
                 <br>
                 <br>
                 <br>
-                <button><a href="http://localhost:8081/edit" class="edit-delete-button">Edit</a></button>
+                <button id="edit-button">Edit</a></button>
                 <button id="delete-button">Delete</button>
                 <br>
                 <br>
@@ -346,6 +377,40 @@
                 <button type="submit">Create Seller</button>
             </form>
         </div>
+
+
+        <div id="update-form-admin" style="display: none;">
+            <h2>Update Data:</h2>
+            <br>
+            <form id="update-form">
+                <label for="updatecollection">Select Collection:</label>
+                <select id="updatecollection" name="updatecollection">
+                    <option value="customer">Customer</option>
+                    <option value="inventory">Inventory</option>
+                    <option value="seller">Seller</option>
+                </select>
+                <br>
+                <br>
+                <label for="idname">IdName:</label>
+                <input type="text" id="idname" name="idname" required><br>
+                <br>
+                <label for="field">Field:</label>
+                <select id="field" name="field">
+                    <!-- Options will be dynamically updated based on the selected collection -->
+                </select>
+                <br>
+                <br>
+                <label for="newvalue">New Value:</label>
+                <input type="text" id="newvalue" name="newvalue" required><br>
+                <br>
+
+                <button type="submit">Update</button>
+            </form>
+            <div id="result">
+                <!-- Result will be displayed here -->
+            </div>
+        </div>
+
     </main>
 
     <footer>
@@ -366,9 +431,10 @@
         const createSellerForm = document.getElementById('create-seller-form');
         const feedbackForm = document.getElementById('feedback-form-container')
         const feedbackbutton = document.getElementById('feedback-button')
+        const editbutton = document.getElementById('edit-button')
 
         feedbackbutton.addEventListener('click', () => {
-
+            updateFormElement.style.display = "none";
             feedbackForm.style.display = "block";
             deleteFormContainer.style.display = 'none';
             createSellerForm.style.display = 'none';
@@ -378,7 +444,7 @@
 
         // Show the create seller form when the "Create Seller" button is clicked
         createSellerButton.addEventListener('click', () => {
-
+            updateFormElement.style.display = "none";
             createSellerForm.style.display = 'block';
             hideResult(); // Hide previous result, if any
             deleteFormContainer.style.display = 'none';
@@ -409,6 +475,83 @@
 
 
 
+        const updateFormElement = document.getElementById("update-form-admin");
+        const collectionSelectElement = document.getElementById("updatecollection");
+        const fieldSelectElement = document.getElementById("field");
+
+        const collectionselectOptions = {
+            customer: ["name", "email", "phonenumber", "age", "password", "firstname", "lastname", "houseno", "streetname", "city", "pincode"],
+            inventory: ["itemcategory", "itemname", "price", "quantity"],
+            seller: ["sellername", "selleremail", "password", "phoneno", "address"],
+        };
+
+        function populateFieldOptions() {
+            const selectedCollection = collectionSelectElement.value;
+            const options = collectionselectOptions[selectedCollection] || [];
+
+            // Clear existing options
+            fieldSelectElement.innerHTML = "";
+
+            // Add new options
+            options.forEach(option => {
+                const optionElement = document.createElement("option");
+                optionElement.value = option;
+                optionElement.textContent = option;
+                fieldSelectElement.appendChild(optionElement);
+            });
+        }
+
+        // Event listener for collection select
+        collectionSelectElement.addEventListener("change", populateFieldOptions);
+
+        editbutton.addEventListener('click', () => {
+            updateFormElement.style.display = "block";
+            feedbackForm.style.display = "none";
+            deleteFormContainer.style.display = 'none';
+            createSellerForm.style.display = 'none';
+            hideResult(); // Hide previous result, if any
+        });
+
+
+        document.getElementById("update-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const updatecollection = document.getElementById("updatecollection").value;
+            const idname = document.getElementById("idname").value;
+            const field = document.getElementById("field").value;
+            const newvalue = document.getElementById("newvalue").value;
+
+            const requestData = {
+                collection: updatecollection,
+                email: idname,
+                field: field,
+                newvalue: newvalue
+            };
+
+            fetch("/update", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById("result");
+                    if (data) {
+                        resultDiv.innerHTML = "<p>Update successful.</p>";
+                        document.getElementById("update-form").reset();
+                    } else {
+                        resultDiv.innerHTML = "<p>Update failed.</p>";
+                        document.getElementById("update-form").reset();
+                    }
+                })
+                .catch(error => {
+                    const resultDiv = document.getElementById("result");
+                    resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+                });
+        });
+
 
 
 
@@ -416,6 +559,8 @@
             hideResult(); // Hide previous result, if any
             createSellerForm.style.display = 'none'; // Close create seller form
             feedbackForm.style.display = 'none';
+            deleteFormContainer.style.display = 'none';
+            updateFormElement.style.display = "none";
             fetch('/getallcustomerdata')
                 .then(response => response.json())
                 .then(data => {
@@ -490,6 +635,7 @@
             createSellerForm.style.display = 'none'; // Close create seller form
             deleteFormContainer.style.display = 'none';
             feedbackForm.style.display = 'none';
+            updateFormElement.style.display = "none";
             fetch('/getallsellerdata')
                 .then(response => response.json())
                 .then(data => {
@@ -520,10 +666,12 @@
 
         // Event listener for "Get Inventory Data" button
         getInventoryButton.addEventListener('click', () => {
+
             hideResult(); // Hide previous result, if any
             createSellerForm.style.display = 'none';
             deleteFormContainer.style.display = 'none'; // Close create seller form
             feedbackForm.style.display = 'none';
+            updateFormElement.style.display = "none";
 
             fetch('/getallinventorydata')
                 .then(response => response.json())
@@ -573,9 +721,11 @@
 
         // Show the delete form when the "Delete" button is clicked
         deleteButton.addEventListener("click", () => {
+            updateFormElement.style.display = "none";
             deleteFormContainer.style.display = 'block';
             createSellerForm.style.display = 'none';
             feedbackForm.style.display = 'none';
+
             hideResult(); // Hide previous result, if any
         });
 
