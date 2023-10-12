@@ -559,8 +559,15 @@ func Deletefeedback(delete models.FeedbacktoAdmin)int32{
 	_,err:=config.Feedback_Collection.DeleteMany(context.Background(),combinedFilter)
     if err != nil{
 		return 0
-		log.Fatal(err)
 	}
 	return 1
 
+}
+
+func GetUser(id string)models.Address{
+	var address models.Address
+	filter1 := bson.M{"customerid": id}
+	config.Customer_Collection.FindOne(context.Background(), filter1).Decode(&address)
+	fmt.Println(address)
+    return address
 }
