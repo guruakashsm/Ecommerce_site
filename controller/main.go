@@ -283,3 +283,35 @@ func Deletefeedback(c *gin.Context){
 	c.JSON(http.StatusOK,result)
 
 }
+var jwtToken string
+var Totalamount float64
+func BuyNow(c *gin.Context){
+	var buynow models.BuyNow
+
+	if err := c.BindJSON(&buynow); err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	jwtToken = buynow.Token
+	Totalamount = buynow.TotalAmount
+	fmt.Println(buynow)
+}
+
+func GetUser(c *gin.Context){
+	var data models.Address
+	id,err := service.ExtractCustomerID(jwtToken,constants.SecretKey)
+	fmt.Println(id)
+	if err != nil{
+		log.Fatal(err)
+	}
+	data = service.GetUser(id)
+	c.JSON(http.StatusOK,data)
+}
+
+func TotalAmount(c *gin.Context){
+	var data models.TotalAmount
+	data.TotalAmount = Totalamount
+	fmt.Println(data)
+	c.JSON(http.StatusOK,data)
+}
