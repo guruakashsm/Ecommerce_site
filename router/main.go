@@ -22,6 +22,7 @@ func Router() *gin.Engine {
 	router.Static("/seller", "./frontend/seller")
 	router.Static("/feedback","./frontend/feedback")
 	//router.Static("/feedbacks","./frontend/feedbackReview")
+	router.Static("/order","./frontend/Payment")
 
 
 
@@ -45,9 +46,13 @@ func Router() *gin.Engine {
 	router.POST("/deleteproductbyseller",controller.DeleteProductBySeller)
 	router.POST("/updateproductbyseller",controller.UpdateProductBySeller)
 	router.POST("/sitefeedback",controller.Feedback)
-	router.GET("sellerfeedback",controller.SellerFeedback)
-	router.GET("customerfeedback",controller.CustomerFeedback)
+	router.GET("/sellerfeedback",controller.SellerFeedback)
+	router.GET("/customerfeedback",controller.CustomerFeedback)
 	router.POST("/deletefeedback",controller.Deletefeedback)
+	router.POST("/buynow",controller.BuyNow)
+	router.GET("/getuser",controller.GetUser)
+	router.GET("/totalamount",controller.TotalAmount)
+
 
 
 	return router
