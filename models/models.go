@@ -19,6 +19,15 @@ type Customer struct {
 	City            string `json:"city" bson:"city"`
 	Pincode         int64  `json:"pincode" bson:"pincode"`
 }
+type Address struct{
+	FirstName       string `json:"firstname" bson:"firstname"`
+	LastName        string `json:"lastname" bson:"lastname"`
+	Phone_No        int    `json:"phonenumber" bson:"phonenumber"`
+	House_No        string `json:"houseno" bson:"houseno"`
+	Street_Name     string `json:"streetname" bson:"streetname"`
+	City            string `json:"city" bson:"city"`
+	Pincode         int64  `json:"pincode" bson:"pincode"`
+}
 type Inventory struct {
 	SellerId     string  `json:"sellerid" bson:"sellerid"`
 	ItemCategory string  `json:"itemcategory" bson:"itemcategory"`
@@ -119,4 +128,13 @@ type Feedback struct{
 type FeedbacktoAdmin struct{
 	Email string `json:"email" bson:"email"`
 	Feedback string `json:"feedback" bson:"feedback"`
+}
+
+type BuyNow struct{
+	Token string `json:"token" bson:"token"`
+	TotalAmount float64 `json:"totalamount" bson:"totalamount"`
+}
+
+type TotalAmount struct{
+	TotalAmount float64 `json:"totalamount" bson:"totalamount"`
 }
