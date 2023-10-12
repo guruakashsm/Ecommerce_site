@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Admin Login</title>
+    <link rel="shortcut icon" href="assests/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            padding: 0;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        label {
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button[type="submit"] {
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #555;
+        }
+
+        .options {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .options button {
+            padding: 10px;
+            margin-right: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .options button:hover {
+            background-color: #555;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #result-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .customer-box {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .customer-box h3 {
+            color: #333;
+        }
+
+        .customer-box p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .inventory-box {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .inventory-box h3 {
+            color: #333;
+        }
+
+        .seller-box {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .seller-box h3 {
+            color: #333;
+        }
+
+        .seller-box p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .inventory-box p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .options button a {
+            color: #fff;
+            /* Set the text color to white */
+            text-decoration: none;
+            /* Remove underline for anchor elements */
+        }
+
+        select {
+            width: 100%;
+            padding: 8px;
+            /* Reduce padding */
+            margin-bottom: 8px;
+            /* Reduce margin */
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            /* Reduce border-radius */
+            font-size: 14px;
+            /* Reduce font size */
+        }
+
+        .feedback-form {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        #update-form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 50px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Style for role options (Seller/Customer) buttons */
+        .role-options button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .role-options button:hover {
+            background-color: #555;
+        }
+
+        /* Style for the feedback container */
+        #feedbackContainer {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        /* Style for individual feedback items */
+        .feedback-box {
+            background-color: #fff;
+            /* Maintain the existing background color */
+            padding: 40px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .feedback-box p {
+            margin: 5px 0;
+            color: #333;
+        }
+
+        #feedbackContainer {
+            margin-top: 20px;
+        }
+
+        .feedback-box {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: left;
+            width: 690px;
+            border-color: #000;
+            border-width: 0.1cm;
+            position: relative;
+            /* Add position relative for icon positioning */
+        }
+
+        .feedback-box p {
+            margin: 0;
+            font-size: 16px;
+            padding: 10px;
+        }
+
+        .feedback-box h3 {
+            background-color: #2196f3;
+            color: #fff;
+            padding: 10px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            margin: 0;
+        }
+
+        .delete-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            color: red;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+
+<body>
+    <header>
+        <h1>Admin</h1>
+    </header>
+
+    <main>
+        <form id="login-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Login</button>
+        </form>
+        <center>
+
+
+
+
+
+
+            <div class="options">
+                <button id="get-all-data">Get All Customer Data</button>
+                <button id="get-inventory">Get Inventory Data</button>
+                <button id="get-seller">Get Seller Data</button>
+                <button id="create-seller-button">Create Seller</button>
+                <button id="feedback-button">Feedbacks</a></button>
+                <br>
+                <br>
+                <br>
+                <button id="edit-button">Edit</a></button>
+                <button id="delete-button">Delete</button>
+                <br>
+                <br>
+
+
+            </div>
+        </center>
+        <div id="result-container">
+            <h2>Result:</h2>
+            <div id="data-list"></div>
+        </div>
+
+        <div id="feedback-form-container" style="display: none;" <div class="feedback-form" ">
+            <h1>Feedback</h1>
+            <br>
+            <div class=" role-options">
+            <button id="sellerButton">Seller</button>
+            <button id="customerButton">Customer</button>
+        </div>
+        <center>
+            <div id="feedbackContainer">
+                <!-- Feedback data will be displayed here -->
+            </div>
+        </center>
+        </div>
+        </div>
+
+        <div id="delete-form-container" style="display: none;">
+            <h1>Delete Data</h1>
+            <form id="delete-form">
+                <label for="collection">Select Collection:</label>
+                <select id="collection" name="collection">
+                    <option value="customer">Customer</option>
+                    <option value="inventory">Inventory</option>
+                    <option value="seller">Seller</option>
+                </select>
+                <label id="delete-by-label" for="id">Delete by:</label>
+                <input type="text" id="id" name="id" required>
+                <button type="submit">Delete User</button>
+            </form>
+        </div>
+
+        <!-- Create Seller Form (Initially hidden) -->
+        <div id="create-seller-form" style="display: none;">
+            <h2>Create Seller</h2>
+            <form id="seller-form">
+                <label for="seller-name">Seller Name:</label>
+                <input type="text" id="seller-name" name="seller-name" required>
+
+                <label for="seller-email">Seller Email:</label>
+                <input type="text" id="seller-email" name="seller-email" required>
+
+                <label for="seller-password">Password:</label>
+                <input type="text" id="seller-password" name="seller-password" required>
+
+                <label for="seller-confirm-password">Confirm Password:</label>
+                <input type="text" id="seller-confirm-password" name="seller-confirm-password" required>
+
+                <label for="seller-phone">Phone No:</label>
+                <input type="text" id="seller-phone" name="seller-phone" required>
+
+                <label for="seller-address">Address:</label>
+                <textarea id="seller-address" name="seller-address" rows="4" required></textarea>
+                <br>
+                <br>
+                <button type="submit">Create Seller</button>
+            </form>
+        </div>
+
+
+        <div id="update-form-admin" style="display: none;">
+            <h2>Update Data:</h2>
+            <br>
+            <form id="update-form">
+                <label for="updatecollection">Select Collection:</label>
+                <select id="updatecollection" name="updatecollection">
+                    <option value="customer">Customer</option>
+                    <option value="inventory">Inventory</option>
+                    <option value="seller">Seller</option>
+                </select>
+                <br>
+                <br>
+                <label for="idname">IdName:</label>
+                <input type="text" id="idname" name="idname" required><br>
+                <br>
+                <label for="field">Field:</label>
+                <select id="field" name="field">
+                    <!-- Options will be dynamically updated based on the selected collection -->
+                </select>
+                <br>
+                <br>
+                <label for="newvalue">New Value:</label>
+                <input type="text" id="newvalue" name="newvalue" required><br>
+                <br>
+
+                <button type="submit">Update</button>
+            </form>
+            <div id="result">
+                <!-- Result will be displayed here -->
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <center>
+            <p>&copy; 2023 Admin Panel</p>
+        </center>
+    </footer>
+    <script>
+        // Function to hide the currently displayed result
+        function hideResult() {
+            const resultContainer = document.getElementById('result-container');
+            resultContainer.style.display = 'none';
+            const dataList = document.getElementById('data-list');
+            dataList.innerHTML = '';
+        }
+
+        const createSellerButton = document.getElementById('create-seller-button');
+        const createSellerForm = document.getElementById('create-seller-form');
+        const feedbackForm = document.getElementById('feedback-form-container')
+        const feedbackbutton = document.getElementById('feedback-button')
+        const editbutton = document.getElementById('edit-button')
+
+        feedbackbutton.addEventListener('click', () => {
+            updateFormElement.style.display = "none";
+            feedbackForm.style.display = "block";
+            deleteFormContainer.style.display = 'none';
+            createSellerForm.style.display = 'none';
+            hideResult(); // Hide previous result, if any
+
+        });
+
+        // Show the create seller form when the "Create Seller" button is clicked
+        createSellerButton.addEventListener('click', () => {
+            updateFormElement.style.display = "none";
+            createSellerForm.style.display = 'block';
+            hideResult(); // Hide previous result, if any
+            deleteFormContainer.style.display = 'none';
+            feedbackForm.style.display = 'none';
+        });
+
+        const loginForm = document.getElementById('login-form');
+        const optionsDiv = document.querySelector('.options');
+        const getAllDataButton = document.getElementById('get-all-data');
+        const getInventoryButton = document.getElementById('get-inventory');
+        const getSellerButton = document.getElementById('get-seller');
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === 'admin' && password === 'password') {
+                alert('Login successful!');
+                hideResult(); // Hide previous result, if any
+                optionsDiv.style.display = 'block';
+                loginForm.style.display = 'none'; // Hide login form
+            } else {
+                alert('Invalid username or password. Please try again.');
+            }
+
+        });
+
+
+
+        const updateFormElement = document.getElementById("update-form-admin");
+        const collectionSelectElement = document.getElementById("updatecollection");
+        const fieldSelectElement = document.getElementById("field");
+
+        const collectionselectOptions = {
+            customer: ["name", "email", "phonenumber", "age", "password", "firstname", "lastname", "houseno", "streetname", "city", "pincode"],
+            inventory: ["itemcategory", "itemname", "price", "quantity"],
+            seller: ["sellername", "selleremail", "password", "phoneno", "address"],
+        };
+
+        function populateFieldOptions() {
+            const selectedCollection = collectionSelectElement.value;
+            const options = collectionselectOptions[selectedCollection] || [];
+
+            // Clear existing options
+            fieldSelectElement.innerHTML = "";
+
+            // Add new options
+            options.forEach(option => {
+                const optionElement = document.createElement("option");
+                optionElement.value = option;
+                optionElement.textContent = option;
+                fieldSelectElement.appendChild(optionElement);
+            });
+        }
+
+        // Event listener for collection select
+        collectionSelectElement.addEventListener("change", populateFieldOptions);
+
+        editbutton.addEventListener('click', () => {
+            updateFormElement.style.display = "block";
+            feedbackForm.style.display = "none";
+            deleteFormContainer.style.display = 'none';
+            createSellerForm.style.display = 'none';
+            hideResult(); // Hide previous result, if any
+        });
+
+
+        document.getElementById("update-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const updatecollection = document.getElementById("updatecollection").value;
+            const idname = document.getElementById("idname").value;
+            const field = document.getElementById("field").value;
+            const newvalue = document.getElementById("newvalue").value;
+
+            const requestData = {
+                collection: updatecollection,
+                email: idname,
+                field: field,
+                newvalue: newvalue
+            };
+
+            fetch("/update", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById("result");
+                    if (data) {
+                        resultDiv.innerHTML = "<p>Update successful.</p>";
+                        document.getElementById("update-form").reset();
+                    } else {
+                        resultDiv.innerHTML = "<p>Update failed.</p>";
+                        document.getElementById("update-form").reset();
+                    }
+                })
+                .catch(error => {
+                    const resultDiv = document.getElementById("result");
+                    resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+                });
+        });
+
+
+
+
+        getAllDataButton.addEventListener('click', () => {
+            hideResult(); // Hide previous result, if any
+            createSellerForm.style.display = 'none'; // Close create seller form
+            feedbackForm.style.display = 'none';
+            deleteFormContainer.style.display = 'none';
+            updateFormElement.style.display = "none";
+            fetch('/getallcustomerdata')
+                .then(response => response.json())
+                .then(data => {
+                    const resultContainer = document.getElementById('result-container');
+                    resultContainer.style.display = 'block';
+                    const dataList = document.getElementById('data-list');
+                    dataList.innerHTML = '';
+
+                    data.forEach(customer => {
+                        const customerBox = document.createElement('div');
+                        customerBox.classList.add('customer-box');
+                        customerBox.innerHTML = `
+                            <h3>Name: ${customer.name}</h3>
+                            <p>Email: ${customer.email}</p>
+                            <p>Phone No: ${customer.phonenumber}</p>
+                            <p>Age: ${customer.age}</p>
+                            <p>Password: ${customer.password}</p>
+                            <p>First Name: ${customer.firstname}</p>
+                            <p>Last Name: ${customer.lastname}</p>
+                            <p>House No: ${customer.houseno}</p>
+                            <p>Street Name: ${customer.streetname}</p>
+                            <p>City: ${customer.city}</p>
+                            <p>Pincode: ${customer.pincode}</p>
+                        `;
+                        dataList.appendChild(customerBox);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        });
+
+        // Handle the form submission for creating a seller
+        const sellerForm = document.getElementById('seller-form');
+        sellerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            hideResult(); // Hide previous result, if any
+            createSellerForm.style.display = 'none'; // Close create seller form
+            deleteFormContainer.style.display = 'none';
+
+            // Collect seller data from the form
+            const sellerData = {
+                sellername: document.getElementById('seller-name').value,
+                selleremail: document.getElementById('seller-email').value,
+                password: document.getElementById('seller-password').value,
+                confirmpassword: document.getElementById('seller-confirm-password').value,
+                phoneno: parseInt(document.getElementById('seller-phone').value),
+                address: document.getElementById('seller-address').value
+            };
+
+            // Send the seller data as JSON in the request body
+            fetch('/createseller', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(sellerData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response if needed
+                    alert('Seller created successfully.');
+                    // Optionally, clear the form or perform other actions
+                    sellerForm.reset();
+                })
+                .catch(error => {
+                    console.error('Error creating seller:', error);
+                });
+        });
+        getSellerButton.addEventListener('click', () => {
+            hideResult(); // Hide previous result, if any
+            createSellerForm.style.display = 'none'; // Close create seller form
+            deleteFormContainer.style.display = 'none';
+            feedbackForm.style.display = 'none';
+            updateFormElement.style.display = "none";
+            fetch('/getallsellerdata')
+                .then(response => response.json())
+                .then(data => {
+                    const resultContainer = document.getElementById('result-container');
+                    resultContainer.style.display = 'block';
+                    const dataList = document.getElementById('data-list');
+                    dataList.innerHTML = '';
+
+                    data.forEach(seller => {
+                        const sellerBox = document.createElement('div');
+                        sellerBox.classList.add('seller-box');
+                        sellerBox.innerHTML = `
+                    <h3>Seller Details</h3>
+                    <p><strong>Seller Id:</strong> ${seller.sellerid}</p>
+                    <p><strong>Seller Name:</strong> ${seller.sellername}</p>
+                    <p><strong>Seller Email:</strong> ${seller.selleremail}</p>
+                    <p><strong>Password:</strong> ${seller.password}</p>
+                    <p><strong>Phone No:</strong> ${seller.phoneno}</p>
+                    <p><strong>Address:</strong> ${seller.address}</p>
+                `;
+                        dataList.appendChild(sellerBox);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching seller data:', error);
+                });
+        });
+
+        // Event listener for "Get Inventory Data" button
+        getInventoryButton.addEventListener('click', () => {
+
+            hideResult(); // Hide previous result, if any
+            createSellerForm.style.display = 'none';
+            deleteFormContainer.style.display = 'none'; // Close create seller form
+            feedbackForm.style.display = 'none';
+            updateFormElement.style.display = "none";
+
+            fetch('/getallinventorydata')
+                .then(response => response.json())
+                .then(data => {
+                    const resultContainer = document.getElementById('result-container');
+                    resultContainer.style.display = 'block';
+                    const dataList = document.getElementById('data-list');
+                    dataList.innerHTML = '';
+
+                    data.forEach(inventoryItem => {
+                        const inventoryBox = document.createElement('div');
+                        inventoryBox.classList.add('inventory-box');
+                        inventoryBox.innerHTML = `
+                            <h3>Item Name: ${inventoryItem.itemname}</h3>
+                            <p>Category: ${inventoryItem.itemcategory}</p>
+                            <p>Price: $${inventoryItem.price.toFixed(2)}</p>
+                            <p>Quantity: ${inventoryItem.quantity}</p>
+                        `;
+                        dataList.appendChild(inventoryBox);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        });
+
+
+
+        const deleteForm = document.getElementById("delete-form");
+        const loginButton = document.getElementById("login-button");
+        const collectionSelect = document.getElementById("collection");
+        const deleteByLabel = document.getElementById("delete-by-label");
+        const idInput = document.getElementById("id");
+
+
+
+
+        const collectionOptions = {
+            customer: "Email",
+            inventory: "Item Name",
+            seller: "Email"
+        };
+
+        const deleteFormContainer = document.getElementById("delete-form-container"); // Container for delete form
+        const deleteButton = document.getElementById("delete-button"); // Corrected button id
+        const resultDiv = document.getElementById("result-container"); // Result container
+
+        // Show the delete form when the "Delete" button is clicked
+        deleteButton.addEventListener("click", () => {
+            updateFormElement.style.display = "none";
+            deleteFormContainer.style.display = 'block';
+            createSellerForm.style.display = 'none';
+            feedbackForm.style.display = 'none';
+
+            hideResult(); // Hide previous result, if any
+        });
+
+        // Event listener for delete form submission
+        document.getElementById("delete-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const collection = document.getElementById("collection").value;
+            const idValue = document.getElementById("id").value;
+
+            const requestData = {
+                collection: collection,
+                idValue: idValue
+            };
+
+            // Send a DELETE request to your server to delete the data
+            fetch("/deletedata", {
+                method: "POST", // Use DELETE method to delete data
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById("result");
+                    if (data === true) {
+                        alert("Deleted Sucessfull")
+                        document.getElementById("id").value = "";
+                    } else {
+                        alert("Error in Deleting")
+                    }
+                })
+                .catch(error => {
+                    const resultDiv = document.getElementById("result-container");
+                    resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
+                });
+        });
+
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const sellerButton = document.getElementById("sellerButton");
+            const customerButton = document.getElementById("customerButton");
+            const feedbackContainer = document.getElementById("feedbackContainer");
+
+            sellerButton.addEventListener("click", function () {
+                fetch("/sellerfeedback")
+                    .then(response => response.json())
+                    .then(data => {
+                        displayFeedback(data, "Seller");
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                    });
+            });
+
+            customerButton.addEventListener("click", function () {
+                fetch("/customerfeedback")
+                    .then(response => response.json())
+                    .then(data => {
+                        displayFeedback(data, "Customer");
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                    });
+            });
+
+            // Function to add a delete icon to each feedback item
+            function addDeleteIcon(feedbackBox, email, feedback) {
+                const deleteIcon = document.createElement("span");
+                deleteIcon.classList.add("delete-icon");
+                deleteIcon.innerHTML = "&#10006;"; // X icon
+                deleteIcon.addEventListener("click", function () {
+                    // Send email and feedback to the "/deletefeedback" route
+                    fetch("/deletefeedback", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ email, feedback })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data === 1) {
+                                // Feedback deleted successfully, remove the feedback item from the UI
+                                feedbackBox.remove();
+                            } else {
+                                alert("Error deleting feedback");
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error:", error);
+                        });
+                });
+                feedbackBox.appendChild(deleteIcon);
+            }
+
+            // Function to display feedback with delete icons
+            function displayFeedback(feedbackData, role) {
+                feedbackContainer.innerHTML = "";
+                feedbackData.forEach(item => {
+                    const feedbackBox = document.createElement("div");
+                    feedbackBox.classList.add("feedback-box");
+                    feedbackBox.innerHTML = `
+
+                        <p><strong>Email:</strong> ${item.email}</p>
+                        <p><strong>Feedback:</strong> ${item.feedback}</p>
+                    `;
+                    addDeleteIcon(feedbackBox, item.email, item.feedback);
+                    feedbackContainer.appendChild(feedbackBox);
+                });
+            }
+        });
+
+    </script>
