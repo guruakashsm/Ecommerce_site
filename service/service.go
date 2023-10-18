@@ -11,6 +11,7 @@ import (
 	"strconv"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -549,25 +550,101 @@ func SellerFeedback() []models.FeedbacktoAdmin {
 	return Feedback
 }
 
-
-func Deletefeedback(delete models.FeedbacktoAdmin)int32{
+func Deletefeedback(delete models.FeedbacktoAdmin) int32 {
 	filter1 := bson.M{"email": delete.Email}
 	filter2 := bson.M{"feedback": delete.Feedback}
 	combinedFilter := bson.M{
 		"$and": []bson.M{filter1, filter2},
 	}
-	_,err:=config.Feedback_Collection.DeleteMany(context.Background(),combinedFilter)
-    if err != nil{
+	_, err := config.Feedback_Collection.DeleteMany(context.Background(), combinedFilter)
+	if err != nil {
 		return 0
 	}
 	return 1
 
 }
 
-func GetUser(id string)models.Address{
+func GetUser(id string) models.Address {
 	var address models.Address
 	filter1 := bson.M{"customerid": id}
 	config.Customer_Collection.FindOne(context.Background(), filter1).Decode(&address)
-	fmt.Println(address)
-    return address
+	return address
+}
+
+func CustomerOrders(ItemsToBuy []models.Item, Data models.Address) {
+
+	var order models.CustomerOrder
+	order.Itemstobuy = ItemsToBuy
+	order.Address = Data
+	id, err := config.Buynow_Collection.InsertOne(context.Background(), order)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(id)
+
+}
+
+func Orders() []models.Customerorder {
+	var Order []models.Customerorder
+	filter := bson.M{}
+	cursor, err := config.Buynow_Collection.Find(context.Background(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for cursor.Next(context.Background()) {
+		var order models.Customerorder
+		err := cursor.Decode(&order)
+		if err != nil {
+			log.Fatal(err)
+		}
+		Order = append(Order, order)
+	}
+	fmt.Println(Order)
+	return Order
+}
+func DeleteOrder(delete models.DeleteOrder) {
+	fmt.Println(delete.Id)
+
+	// Parse the ID string to an ObjectId
+	objectID, err := primitive.ObjectIDFromHex(delete.Id)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Create a filter to match the ObjectId
+	filter := bson.M{"_id": objectID}
+
+	id, err := config.Buynow_Collection.DeleteOne(context.Background(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(id)
+}
+
+
+func CustomerOrder(token string) []models.Customerorder {
+	id,err := ExtractCustomerID(token,constants.SecretKey)
+	if err != nil{
+		log.Fatal(err)
+	}
+	var customer models.Customer
+	filter_customer := bson.M{"customerid":id}
+	config.Customer_Collection.FindOne(context.Background(),filter_customer).Decode(&customer)
+	var Order []models.Customerorder
+	filter := bson.M{"address.phonenumber":customer.Phone_No}
+	cursor, err := config.Buynow_Collection.Find(context.Background(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for cursor.Next(context.Background()) {
+		var order models.Customerorder
+		err := cursor.Decode(&order)
+		if err != nil {
+			log.Fatal(err)
+		}
+		Order = append(Order, order)
+	}
+	fmt.Println(Order)
+	return Order
 }
