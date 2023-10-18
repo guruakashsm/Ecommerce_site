@@ -1,169 +1,174 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Order</title>
+    <title>Payment</title>
     <style>
-        /* Style for the body */
         body {
-            background-color: #f0f6fc; /* Light blueish background */
+            background-color: #f5f5f5;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
         }
 
-        /* Style for the header */
         h1 {
-            background-color: #333;
+            background-color: #131921;
             color: #fff;
             text-align: center;
             padding: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Amazon Ember', Arial, sans-serif;
         }
 
-        /* Style for user information */
         #user-info {
-            background-color: #f9f9f9; /* Light gray background */
-            padding: 10px;
+            background-color: #fff;
+            padding: 20px;
             margin: 20px;
-            border: 2px solid #ccc;
-            border-radius: 10px;
-            font-family: 'Arial', sans-serif;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
         }
 
-        /* Style for image options */
-        .image-options-container {
+        h2 {
             text-align: center;
-            margin-right: 20px;
+        }
+
+        .image-options {
+            text-align: center;
         }
 
         .image-option {
             display: inline-block;
             margin: 10px;
             cursor: pointer;
+            border: 2px solid #e7e7e7;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .image-option:hover {
+            transform: scale(1.05);
+            border-color: #ff9900; /* Highlight on hover */
         }
 
         .image-option img {
             width: 150px;
             height: 150px;
-            border: 2px solid #0066cc; /* Dark blue border */
-            border-radius: 10px;
-            transition: transform 0.3s;
+            border: 2px solid #e7e7e7;
+            border-radius: 5px;
         }
 
-        .image-option img:hover {
-            transform: scale(1.1);
-        }
-
-        /* Style for the "Proceed to Buy" button */
         #buy-button {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background-color: #0066cc; /* Dark blue background */
+            display: block;
+            margin: 20px auto;
+            background-color: #ff9900; /* Amazon's orange */
             color: #fff;
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 18px;
         }
 
-        /* Style for the total amount */
         #total-amount {
             font-size: 20px;
-            position: fixed;
-            bottom: 50px;
-            right: 10px;
-            color: #333; /* Dark gray text */
+            text-align: center;
+            color: #333;
+            font-weight: bold;
         }
     </style>
-        <link rel="shortcut icon" href="assests/favicon.ico" type="image/x-icon">
+
+    <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
 </head>
 <body>
+<center><h1>Payment</h1></center>
 
-  <center><h1>Order</h1></center>  
+<div id="user-info">
+    <h3>Address:</h3>
+    <p>First Name: <span id="firstname"></span></p>
+    <p>Last Name: <span id="lastname"></span></p>
+    <p>Phone Number: <span id="phonenumber"></span></p>
+    <p>House Number: <span id="houseno"></span></p>
+    <p>Street Name: <span id="streetname"></span></p>
+    <p>City: <span id="city"></span></p>
+    <p>Pincode: <span id="pincode"></span></p>
+</div>
 
-    <div id="user-info">
-        <h3>Address:</h3>
-        <p>First Name: <span id="firstname"></span></p>
-        <p>Last Name: <span id="lastname"></span></p>
-        <p>Phone Number: <span id="phonenumber"></span></p>
-        <p>House Number: <span id="houseno"></span></p>
-        <p>Street Name: <span id="streetname"></span></p>
-        <p>City: <span id="city"></span></p>
-        <p>Pincode: <span id="pincode"></span></p>
-    </div>
-
-    <h2>Select Payment Option:</h2>
+<h2>Select Payment Option:</h2>
+<div class="image-options">
     <label class="image-option">
         <input type="radio" name="payment" value="gpay">
-        <img src="assests/gpay.png" alt="Google Pay">
+        <img src="assets/gpay.png" alt="Google Pay">
     </label>
-    <br>
+
     <label class="image-option">
         <input type="radio" name="payment" value="phonepe">
-        <img src="assests/phonepe1.avif" alt="PhonePe">
+        <img src="assets/phonepe1.avif" alt="PhonePe">
     </label>
-    <br>
+
     <label class="image-option">
-        <input type="radio" name="payment" value="phonepe">
-        <img src="assests/paytm.png" alt="PhonePe">
+        <input type="radio" name="payment" value="paytm">
+        <img src="assets/paytm.png" alt="Paytm">
     </label>
-    <br>
+
     <label class="image-option">
-        <input type="radio" name="payment" value="Credit/Debit Card">
-        <img src="assests/crditdebit.webp" alt="PhonePe">
+        <input type="radio" name="payment" value="creditdebit">
+        <img src="assets/COD.png" alt="Cash on Delivery">
     </label>
 
-    <!-- Add more payment options as needed -->
+    <label class="image-option">
+        <input type="radio" name="payment" value="creditdebit">
+        <img src="assets/crditdebit.webp" alt="Credit/Debit Card">
+    </label>
+</div>
 
-    <button id="buy-button">Proceed to Buy</button>
+<button id="buy-button">Proceed to Pay</button>
 
-    <div id="total-amount">Total Amount: $ <span id="amount"></span></div>
+<div id="total-amount">Total Amount: $<span id="amount"></span></div>
 
-    <script>
-        // Function to fetch user information from the backend
-        async function fetchUserInfo() {
-            try {
-                const response = await fetch('/getuser'); // Replace with your backend route
-                if (response.ok) {
-                    const data = await response.json();
+<script>
+    // Function to fetch user information from the backend
+    async function fetchUserInfo() {
+        try {
+            const response = await fetch('/getuser'); // Replace with your backend route
+            if (response.ok) {
+                const data = await response.json();
 
-                    // Display user information in the HTML elements
-                    document.getElementById('firstname').textContent = data.firstname;
-                    document.getElementById('lastname').textContent = data.lastname;
-                    document.getElementById('phonenumber').textContent = data.phonenumber;
-                    document.getElementById('houseno').textContent = data.houseno;
-                    document.getElementById('streetname').textContent = data.streetname;
-                    document.getElementById('city').textContent = data.city;
-                    document.getElementById('pincode').textContent = data.pincode;
-                } else {
-                    console.error('Failed to fetch user information:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error fetching user information:', error);
+                // Display user information in the HTML elements
+                document.getElementById('firstname').textContent = data.firstname;
+                document.getElementById('lastname').textContent = data.lastname;
+                document.getElementById('phonenumber').textContent = data.phonenumber;
+                document.getElementById('houseno').textContent = data.houseno;
+                document.getElementById('streetname').textContent = data.streetname;
+                document.getElementById('city').textContent = data.city;
+                document.getElementById('pincode').textContent = data.pincode;
+            } else {
+                console.error('Failed to fetch user information:', response.statusText);
             }
+        } catch (error) {
+            console.error('Error fetching user information:', error);
         }
+    }
 
-        // Function to fetch the total amount from the backend
-        async function fetchTotalAmount() {
-            try {
-                const response = await fetch('/totalamount'); // Replace with your backend route
-                if (response.ok) {
-                    const data = await response.json();
+    // Function to fetch the total amount from the backend
+    async function fetchTotalAmount() {
+        try {
+            const response = await fetch('/totalamount'); // Replace with your backend route
+            if (response.ok) {
+                const data = await response.json();
 
-                    // Display the total amount in the HTML
-                    document.getElementById('amount').textContent = data.totalamount;
-                } else {
-                    console.error('Failed to fetch total amount:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error fetching total amount:', error);
+                // Display the total amount in the HTML
+                document.getElementById('amount').textContent = data.totalamount;
+            } else {
+                console.error('Failed to fetch total amount:', response.statusText);
             }
+        } catch (error) {
+            console.error('Error fetching total amount:', error);
         }
+    }
 
-        // Call the fetchUserInfo and fetchTotalAmount functions when the page loads
-        fetchUserInfo();
-        fetchTotalAmount();
-    </script>
+    // Call the fetchUserInfo and fetchTotalAmount functions when the page loads
+    fetchUserInfo();
+    fetchTotalAmount();
+</script>
 </body>
 </html>
