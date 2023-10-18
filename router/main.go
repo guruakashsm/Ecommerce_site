@@ -16,15 +16,16 @@ func Router() *gin.Engine {
 	router.Static("/signup", "./frontend/signup")
 	router.Static("/signin", "./frontend/signin")
 	//router.Static("/additems", "./frontend/inventory")
+	router.Static("/inventory","./frontend/inven")
 	router.Static("/admin", "./frontend/admin")
+	router.Static("/cart","./frontend/cart")
 	//router.Static("/edit", "./frontend/edit")
 	//router.Static("/delete", "./frontend/delete")
 	router.Static("/seller", "./frontend/seller")
-	router.Static("/feedback","./frontend/feedback")
+	router.Static("/feedback", "./frontend/feedback")
 	//router.Static("/feedbacks","./frontend/feedbackReview")
-	router.Static("/order","./frontend/Payment")
-
-
+	router.Static("/order", "./frontend/Payment")
+    router.Static("/ordereditems","./frontend/order")
 
 	// Define your routes
 	router.GET("/getallcustomerdata", controller.Getalldata)
@@ -41,20 +42,21 @@ func Router() *gin.Engine {
 	router.POST("/search", controller.Search)
 	router.POST("/update", controller.Update)
 	router.GET("/inventorydata", controller.Getallinventorydata)
-	router.POST("/sellercheck",controller.CheckSeller)
-	router.POST("/deleteproduct",controller.DeleteProduct)
-	router.POST("/deleteproductbyseller",controller.DeleteProductBySeller)
-	router.POST("/updateproductbyseller",controller.UpdateProductBySeller)
-	router.POST("/sitefeedback",controller.Feedback)
-	router.GET("/sellerfeedback",controller.SellerFeedback)
-	router.GET("/customerfeedback",controller.CustomerFeedback)
-	router.POST("/deletefeedback",controller.Deletefeedback)
-	router.POST("/buynow",controller.BuyNow)
-	router.GET("/getuser",controller.GetUser)
-	router.GET("/totalamount",controller.TotalAmount)
-
+	router.POST("/sellercheck", controller.CheckSeller)
+	router.POST("/deleteproduct", controller.DeleteProduct)
+	router.POST("/deleteproductbyseller", controller.DeleteProductBySeller)
+	router.POST("/updateproductbyseller", controller.UpdateProductBySeller)
+	router.POST("/sitefeedback", controller.Feedback)
+	router.GET("/sellerfeedback", controller.SellerFeedback)
+	router.GET("/customerfeedback", controller.CustomerFeedback)
+	router.POST("/deletefeedback", controller.Deletefeedback)
+	router.POST("/buynow", controller.BuyNow)
+	router.GET("/getuser", controller.GetUser)
+	router.GET("/totalamount", controller.TotalAmount)
+	router.GET("/orders",controller.Orders)
+	router.DELETE("/deleteorder",controller.DeleteOrder)
+	router.POST("/customerorders",controller.CustomerOrder)
 
 
 	return router
 }
-
