@@ -19,14 +19,14 @@ type Customer struct {
 	City            string `json:"city" bson:"city"`
 	Pincode         int64  `json:"pincode" bson:"pincode"`
 }
-type Address struct{
-	FirstName       string `json:"firstname" bson:"firstname"`
-	LastName        string `json:"lastname" bson:"lastname"`
-	Phone_No        int    `json:"phonenumber" bson:"phonenumber"`
-	House_No        string `json:"houseno" bson:"houseno"`
-	Street_Name     string `json:"streetname" bson:"streetname"`
-	City            string `json:"city" bson:"city"`
-	Pincode         int64  `json:"pincode" bson:"pincode"`
+type Address struct {
+	FirstName   string `json:"firstname" bson:"firstname"`
+	LastName    string `json:"lastname" bson:"lastname"`
+	Phone_No    int    `json:"phonenumber" bson:"phonenumber"`
+	House_No    string `json:"houseno" bson:"houseno"`
+	Street_Name string `json:"streetname" bson:"streetname"`
+	City        string `json:"city" bson:"city"`
+	Pincode     int64  `json:"pincode" bson:"pincode"`
 }
 type Inventory struct {
 	SellerId     string  `json:"sellerid" bson:"sellerid"`
@@ -37,7 +37,7 @@ type Inventory struct {
 	Image        string  `json:"image" bson:"image"`
 }
 type Inventory1 struct {
-	SellerName     string  `json:"sellername" bson:"sellername"`
+	SellerName   string  `json:"sellername" bson:"sellername"`
 	ItemCategory string  `json:"itemcategory" bson:"itemcategory"`
 	ItemName     string  `json:"itemname" bson:"itemname"`
 	Price        float64 `json:"price" bson:"price"`
@@ -106,35 +106,58 @@ type Update struct {
 	Field      string `json:"field" bson:"field"`
 	New_Value  string `json:"newvalue" bson:"newvalue"`
 }
-type DeleteBySeller struct{
+type DeleteBySeller struct {
 	ProductName string `json:"productname" bson:"productname"`
 }
-type DeleteProduct struct{
+type DeleteProduct struct {
 	Token string `json:"token" bson:"token"`
-	Name string `json:"name" bson:"name"` 
+	Name  string `json:"name" bson:"name"`
 }
-type UpdateProduct struct{
+type UpdateProduct struct {
 	ProductName string `json:"productname" bson:"productname"`
-	Attribute string `json:"attribute" bson:"attribute"`
-	New_Value int32 `json:"newvalue" bson:"newvalue"`
+	Attribute   string `json:"attribute" bson:"attribute"`
+	New_Value   int32  `json:"newvalue" bson:"newvalue"`
 }
 
-type Feedback struct{
-	Role string `json:"role" bson:"role"`
-	Email string `json:"email" bson:"email"`
+type Feedback struct {
+	Role     string `json:"role" bson:"role"`
+	Email    string `json:"email" bson:"email"`
 	Feedback string `json:"feedback" bson:"feedback"`
 }
 
-type FeedbacktoAdmin struct{
-	Email string `json:"email" bson:"email"`
+type FeedbacktoAdmin struct {
+	Email    string `json:"email" bson:"email"`
 	Feedback string `json:"feedback" bson:"feedback"`
 }
 
-type BuyNow struct{
-	Token string `json:"token" bson:"token"`
+type BuyNow struct {
+	Token       string  `json:"token"`
+	TotalAmount float64 `json:"totalAmount"`
+	ItemsToBuy  []Item  `json:"itemsToBuy"`
+}
+
+type Item struct {
+	Name     string `json:"name"`
+	Quantity int    `json:"quantity"`
+}
+
+type TotalAmount struct {
 	TotalAmount float64 `json:"totalamount" bson:"totalamount"`
 }
 
-type TotalAmount struct{
-	TotalAmount float64 `json:"totalamount" bson:"totalamount"`
+type CustomerOrder struct{
+	Itemstobuy []Item `json:"itemstobuy" bson:"itemstobuy"`
+	Address  Address `json:"address" bson:"address"`
+}
+
+type Customerorder struct{
+	Id string `json:"_id" bson:"_id"`
+	Itemstobuy []Item `json:"itemstobuy" bson:"itemstobuy"`
+	Address  Address `json:"address" bson:"address"`
+}
+type DeleteOrder struct{
+	Id string `json:"_id" bson:"_id"`
+}
+type Token struct{
+	Token string `json:"token" bson:"token"`
 }
