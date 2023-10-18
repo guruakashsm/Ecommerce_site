@@ -4,7 +4,6 @@ import (
 	"ecommerce/constants"
 	"ecommerce/models"
 	"ecommerce/service"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -113,7 +112,7 @@ func Addtocart(c *gin.Context) {
 func CreateProfile(c *gin.Context) {
 	var profile models.Customer
 	if err := c.BindJSON(&profile); err != nil {
-		
+
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
@@ -128,13 +127,13 @@ func Inventory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	sellerid,err := service.ExtractCustomerID(inventory.SellerId,constants.SecretKey)
+	sellerid, err := service.ExtractCustomerID(inventory.SellerId, constants.SecretKey)
 	if err != nil {
 		log.Fatal(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Token : while Extracting"})
 	}
 	inventory.SellerId = sellerid
-	success,err := service.Inventory(inventory)
+	success, err := service.Inventory(inventory)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
@@ -196,7 +195,7 @@ func CheckSeller(c *gin.Context) {
 		return
 	}
 
-	token,success,err := service.CheckSeller(check)
+	token, success, err := service.CheckSeller(check)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
@@ -206,12 +205,10 @@ func CheckSeller(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 	}
-	
 
 }
 
-
-func DeleteProduct(c *gin.Context){
+func DeleteProduct(c *gin.Context) {
 	var delete models.DeleteProduct
 	if err := c.BindJSON(&delete); err != nil {
 
@@ -224,30 +221,30 @@ func DeleteProduct(c *gin.Context){
 
 }
 
-func DeleteProductBySeller(c *gin.Context){
+func DeleteProductBySeller(c *gin.Context) {
 	var delete models.DeleteBySeller
 	if err := c.BindJSON(&delete); err != nil {
 
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	result:= service.DeleteProductBySeller(delete)
+	result := service.DeleteProductBySeller(delete)
 	c.JSON(http.StatusOK, result)
 
 }
 
-func UpdateProductBySeller(c *gin.Context){
+func UpdateProductBySeller(c *gin.Context) {
 	var update models.UpdateProduct
 	if err := c.BindJSON(&update); err != nil {
 
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	result:= service.UpdateProductBySeller(update)
+	result := service.UpdateProductBySeller(update)
 	c.JSON(http.StatusOK, result)
 }
 
-func Feedback(c *gin.Context){
+func Feedback(c *gin.Context) {
 	var feedback models.Feedback
 
 	if err := c.BindJSON(&feedback); err != nil {
@@ -255,23 +252,21 @@ func Feedback(c *gin.Context){
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	fmt.Println(feedback)
 	result := service.Feedback(feedback)
 	c.JSON(http.StatusOK, result)
 }
 
-func SellerFeedback(c *gin.Context){
+func SellerFeedback(c *gin.Context) {
 	result := service.SellerFeedback()
-	fmt.Println(result)
-	c.JSON(http.StatusOK,result)
+	c.JSON(http.StatusOK, result)
 }
 
-func CustomerFeedback(c *gin.Context){
+func CustomerFeedback(c *gin.Context) {
 	result := service.CustomerFeedback()
-	c.JSON(http.StatusOK,result)
+	c.JSON(http.StatusOK, result)
 }
 
-func Deletefeedback(c *gin.Context){
+func Deletefeedback(c *gin.Context) {
 	var feedback models.FeedbacktoAdmin
 
 	if err := c.BindJSON(&feedback); err != nil {
@@ -280,12 +275,15 @@ func Deletefeedback(c *gin.Context){
 		return
 	}
 	result := service.Deletefeedback(feedback)
-	c.JSON(http.StatusOK,result)
+	c.JSON(http.StatusOK, result)
 
 }
+
 var jwtToken string
 var Totalamount float64
-func BuyNow(c *gin.Context){
+var ItemsToBuy []models.Item
+
+func BuyNow(c *gin.Context) {
 	var buynow models.BuyNow
 
 	if err := c.BindJSON(&buynow); err != nil {
@@ -293,25 +291,54 @@ func BuyNow(c *gin.Context){
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
+	ItemsToBuy = buynow.ItemsToBuy
 	jwtToken = buynow.Token
 	Totalamount = buynow.TotalAmount
-	fmt.Println(buynow)
+
 }
 
-func GetUser(c *gin.Context){
+func GetUser(c *gin.Context) {
 	var data models.Address
-	id,err := service.ExtractCustomerID(jwtToken,constants.SecretKey)
-	fmt.Println(id)
-	if err != nil{
+	id, err := service.ExtractCustomerID(jwtToken, constants.SecretKey)
+	if err != nil {
 		log.Fatal(err)
 	}
 	data = service.GetUser(id)
-	c.JSON(http.StatusOK,data)
+	service.CustomerOrders(ItemsToBuy, data)
+	c.JSON(http.StatusOK, data)
 }
 
-func TotalAmount(c *gin.Context){
+func TotalAmount(c *gin.Context) {
 	var data models.TotalAmount
 	data.TotalAmount = Totalamount
-	fmt.Println(data)
-	c.JSON(http.StatusOK,data)
+	c.JSON(http.StatusOK, data)
+}
+
+func Orders(c *gin.Context) {
+	data := service.Orders()
+	c.JSON(http.StatusOK, data)
+}
+
+func DeleteOrder(c *gin.Context) {
+	var delete models.DeleteOrder
+	if err := c.BindJSON(&delete); err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	service.DeleteOrder(delete)
+	c.JSON(http.StatusOK, gin.H{"success": true})
+
+}
+func CustomerOrder(c *gin.Context) {
+	var token models.Token
+	if err := c.BindJSON(&token); err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+
+	data := service.CustomerOrder(token.Token)
+	c.JSON(http.StatusOK, data)
+
 }
