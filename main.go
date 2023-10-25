@@ -14,5 +14,5 @@ func main() {
     if port == "" {
         port = "8080" // Default to 8080 if PORT is not set
     }
-    log.Fatal(r.Run("0.0.0.o:" + port))
+    log.Fatal(r.Run("0.0.0.0:" + port))
 }
