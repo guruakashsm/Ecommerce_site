@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Payment</title>
+    <style>
+        body {
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            background-color: #131921;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            font-family: 'Amazon Ember', Arial, sans-serif;
+        }
+
+        #user-info {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .image-options {
+            text-align: center;
+        }
+
+        .image-option {
+            display: inline-block;
+            margin: 10px;
+            cursor: pointer;
+            border: 2px solid #e7e7e7;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .image-option:hover {
+            transform: scale(1.05);
+            border-color: #ff9900;
+            /* Highlight on hover */
+        }
+
+        .image-option img {
+            width: 150px;
+            height: 150px;
+            border: 2px solid #e7e7e7;
+            border-radius: 5px;
+        }
+
+        #buy-button {
+            display: block;
+            margin: 20px auto;
+            background-color: #ff9900;
+            /* Amazon's orange */
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        #total-amount {
+            font-size: 20px;
+            text-align: center;
+            color: #333;
+            font-weight: bold;
+        }
+    </style>
+
+    <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <center>
+        <h1>Payment</h1>
+    </center>
+
+    <div id="user-info">
+        <h3>Address:</h3>
+        <p>First Name: <span id="firstname"></span></p>
+        <p>Last Name: <span id="lastname"></span></p>
+        <p>Phone Number: <span id="phonenumber"></span></p>
+        <p>House Number: <span id="houseno"></span></p>
+        <p>Street Name: <span id="streetname"></span></p>
+        <p>City: <span id="city"></span></p>
+        <p>Pincode: <span id="pincode"></span></p>
+    </div>
+
+    <h2>Select Payment Option:</h2>
+    <div class="image-options">
+        <label class="image-option">
+            <input type="radio" name="payment" value="gpay">
+            <img src="assets/gpay.png" alt="Google Pay">
+        </label>
+
+        <label class="image-option">
+            <input type="radio" name="payment" value="phonepe">
+            <img src="assets/phonepe1.avif" alt="PhonePe">
+        </label>
+
+        <label class="image-option">
+            <input type="radio" name="payment" value="paytm">
+            <img src="assets/paytm.png" alt="Paytm">
+        </label>
+
+        <label class="image-option">
+            <input type="radio" name="payment" value="creditdebit">
+            <img src="assets/COD.png" alt="Cash on Delivery">
+        </label>
+
+        <label class="image-option">
+            <input type="radio" name="payment" value="creditdebit">
+            <img src="assets/crditdebit.webp" alt="Credit/Debit Card">
+        </label>
+    </div>
+
+    <button id="buy-button">Proceed to Pay</button>
+
+    <div id="total-amount">Total Amount: $<span id="amount"></span></div>
+
+    <script>
+
+        async function fetchUserInfo() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const token = urlParams.get('token'); // Extract the token from the URL
+
+                if (token) {
+                    const data = {
+                        token: token
+                    };
+
+                    const response = await fetch('/getuser', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    }); // Send a POST request with the token in the request body
+
+                    if (response.ok) {
+                        const userData = await response.json();
+
+                        // Display user information in the HTML elements
+                        document.getElementById('firstname').textContent = userData.firstname;
+                        document.getElementById('lastname').textContent = userData.lastname;
+                        document.getElementById('phonenumber').textContent = userData.phonenumber;
+                        document.getElementById('houseno').textContent = userData.houseno;
+                        document.getElementById('streetname').textContent = userData.streetname;
+                        document.getElementById('city').textContent = userData.city;
+                        document.getElementById('pincode').textContent = userData.pincode;
+                    } else {
+                        console.error('Failed to fetch user information:', response.statusText);
+                    }
+                } else {
+                    console.error('Token is missing in the URL.');
+                }
+            } catch (error) {
+                console.error('Error fetching user information:', error);
+            }
+        }
+        async function fetchTotalAmount() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const token = urlParams.get('token'); // Extract the token from the URL
+
+                if (token) {
+                    const data = {
+                        token: token
+                    };
+
+                    const response = await fetch('/totalamount', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    }); // Send a POST request with the token in the request body
+
+                    if (response.ok) {
+                        const userData = await response.json();
+                        document.getElementById('amount').textContent = userData.totalamount;
+                      
+                    } else {
+                        console.error('Failed to fetch user information:', response.statusText);
+                    }
+                } else {
+                    console.error('Token is missing in the URL.');
+                }
+            } catch (error) {
+                console.error('Error fetching user information:', error);
+            }
+        }
+        fetchUserInfo();
+        fetchTotalAmount();
+    </script>
+</body>
+
+</html>
