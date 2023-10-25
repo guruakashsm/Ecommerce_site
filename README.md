@@ -33,7 +33,13 @@ GoCommerce is designed to provide a reliable and efficient platform for online r
 
 ## Demo
 
-You can experience GoCommerce in action by compileing the code 
+You can experience GoCommerce in action by compileing the code
+Otherwise you can experience a live site @ https://anon.up.railway.app/index/
+1. SignUp with details
+2. Sigin with Username & Password
+3. For admin page Username :admin & Password:password
+4. You can create a seller account in the admin page
+5. You can Search and Add to Cart with item category in search box
 
 ## Getting Started
 
