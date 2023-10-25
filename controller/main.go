@@ -4,6 +4,7 @@ import (
 	"ecommerce/constants"
 	"ecommerce/models"
 	"ecommerce/service"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -96,7 +97,6 @@ func Addtocart(c *gin.Context) {
 	}
 	token, err := service.ExtractCustomerID(addtocart.Token, constants.SecretKey)
 	if err != nil {
-
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Token"})
 		return
 	}
@@ -104,6 +104,7 @@ func Addtocart(c *gin.Context) {
 	addtocart1.CustomerId = token
 	addtocart1.Name = addtocart.Name
 	addtocart1.Price = addtocart.Price
+	addtocart1.SellerQuantity = addtocart.Sellerquantity
 	result := service.Addtocart(addtocart1)
 	c.JSON(http.StatusOK, result)
 
@@ -127,6 +128,7 @@ func Inventory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
+	fmt.Println(inventory)
 	sellerid, err := service.ExtractCustomerID(inventory.SellerId, constants.SecretKey)
 	if err != nil {
 		log.Fatal(err)
@@ -215,7 +217,7 @@ func DeleteProduct(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-
+	fmt.Println(delete)
 	result := service.DeleteProduct(delete)
 	c.JSON(http.StatusOK, result)
 
@@ -279,38 +281,42 @@ func Deletefeedback(c *gin.Context) {
 
 }
 
-var jwtToken string
-var Totalamount float64
-var ItemsToBuy []models.Item
 
-func BuyNow(c *gin.Context) {
-	var buynow models.BuyNow
 
-	if err := c.BindJSON(&buynow); err != nil {
+
+
+func GetUser(c *gin.Context) {
+	var data models.Address
+	var token models.Token
+	var ItemsToBuy []models.Item
+	if err := c.BindJSON(&token); err != nil {
 
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	ItemsToBuy = buynow.ItemsToBuy
-	jwtToken = buynow.Token
-	Totalamount = buynow.TotalAmount
-
-}
-
-func GetUser(c *gin.Context) {
-	var data models.Address
-	id, err := service.ExtractCustomerID(jwtToken, constants.SecretKey)
-	if err != nil {
-		log.Fatal(err)
-	}
+	fmt.Println(token.Token)
+	id, _ := service.ExtractCustomerID(token.Token, constants.SecretKey)
+	
 	data = service.GetUser(id)
+	ItemsToBuy = service.Itemstobuy(id)
+	fmt.Println(ItemsToBuy)
 	service.CustomerOrders(ItemsToBuy, data)
+	
+	service.Buynow(id)
 	c.JSON(http.StatusOK, data)
 }
 
 func TotalAmount(c *gin.Context) {
 	var data models.TotalAmount
-	data.TotalAmount = Totalamount
+	var token models.Token
+	if err := c.BindJSON(&token); err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	fmt.Println(token.Token)
+	id, _ := service.ExtractCustomerID(token.Token, constants.SecretKey)
+	data.TotalAmount = service.TotalAmount(id)
 	c.JSON(http.StatusOK, data)
 }
 
@@ -342,3 +348,5 @@ func CustomerOrder(c *gin.Context) {
 	c.JSON(http.StatusOK, data)
 
 }
+
+
