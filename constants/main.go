@@ -8,3 +8,4 @@ const Inventory_Collection = "Inventory"
 const Feedback_Collection = "Feedback"
 const SecretKey = "EcommerceSiteforS7Project"
 const BuyItems_Collection = "Buynow"
+
