@@ -154,7 +154,7 @@
                             <p>Category: ${item.itemcategory}</p>
                             <p>Price: $${item.price.toFixed(2)}</p>
                             <p>Quantity: ${item.quantity}</p>
-                            <p>Stock Left: ${item.sellerquantity}</p>
+                            ${item.sellerquantity < 10 ? `<p>Stock Left: ${item.sellerquantity}</p>` : ''}
                         </div>
                         ${hasImage ? `<img src="data:image/jpeg;base64,${item.image}" alt="Item Image" class="product-image">` : ''}
                         <div class="quantity">
