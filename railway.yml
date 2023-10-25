@@ -1,0 +1,16 @@
+version: 2
+builders:
+  - name: go
+    use: railwayapp/go:1.16
+steps:
+  - name: Install Go Dependencies
+    use: railwayapp/golang-step
+    args:
+      - go.mod
+  - name: Build Go Binary
+    use: railwayapp/golang-step
+    args:
+      - go build -o myapp
+environments:
+  - name: production
+    memory: 512MB
