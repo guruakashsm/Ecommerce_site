@@ -11,7 +11,7 @@ func Router() *gin.Engine {
 	router := gin.Default()
 
 	// Serve static files for specific routes
-	router.Static("/", "./frontend/index")
+	router.Static("/index", "./frontend/index")
 	router.Static("/home", "./frontend/home")
 	router.Static("/signup", "./frontend/signup")
 	router.Static("/signin", "./frontend/signin")
