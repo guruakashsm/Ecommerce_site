@@ -23,10 +23,27 @@ func UpdateCart(cart models.Cart) *mongo.UpdateResult {
 			bson.D{{Key: "name", Value: cart.Name}},
 		}},
 	}
-	_, err := config.Cart_Collection.Find(context.Background(), filter)
-	if err != nil {
-		log.Fatal(err)
+	var data models.Cart
+	config.Cart_Collection.FindOne(context.Background(), filter).Decode(&data)
+	if data.Quantity > cart.Quantity {
+		var inventory models.Inventory
+		filter := bson.M{"itemname": cart.Name}
+		config.Inventory_Collection.FindOne(context.Background(), filter).Decode(&inventory)
+		quantity := data.Quantity - cart.Quantity
+		inventory.Stock_Available = inventory.Stock_Available + quantity
+		update := bson.M{"$set": bson.M{"sellerquantity": inventory.Stock_Available}}
+		config.Inventory_Collection.UpdateOne(context.Background(), filter, update)
 	}
+	if data.Quantity < cart.Quantity {
+		var inventory models.Inventory
+		filter := bson.M{"itemname": cart.Name}
+		config.Inventory_Collection.FindOne(context.Background(), filter).Decode(&inventory)
+		quantity := cart.Quantity - data.Quantity
+		inventory.Stock_Available = inventory.Stock_Available - quantity
+		update := bson.M{"$set": bson.M{"sellerquantity": inventory.Stock_Available}}
+		config.Inventory_Collection.UpdateOne(context.Background(), filter, update)
+	}
+
 	update := bson.M{"$set": bson.M{"name": cart.Name, "quantity": cart.Quantity, "totalprice": cart.Price, "price": cart.Price / float64(cart.Quantity)}}
 	result, err := config.Cart_Collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
@@ -69,9 +86,18 @@ func Search(productName string) []models.Inventory1 {
 	for cursor.Next(context.Background()) {
 		var inventory models.Inventory1
 		err := cursor.Decode(&inventory)
+		if inventory.Stock_Available <= 0 {
+			// filter := bson.M{"itemname":inventory.ItemName}
+			// _,err:=config.Inventory_Collection.DeleteOne(context.Background(),filter)
+			// if err != nil {
+			// 	log.Fatal(err)
+			// }
+			continue
+		}
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		Inventory = append(Inventory, inventory)
 	}
 	return Inventory
@@ -187,6 +213,12 @@ func Addtocart(addtocart models.Addtocart1) bool {
 		// Item not found, so insert a new item with quantity 1
 		cart := addcart{CustomerId: addtocart.CustomerId, Name: addtocart.Name, Price: addtocart.Price, Quantity: 1}
 		_, err := config.Cart_Collection.InsertOne(context.Background(), cart)
+		var inventory models.Inventory
+		filter := bson.M{"itemname": addtocart.Name}
+		config.Inventory_Collection.FindOne(context.Background(), filter).Decode(&inventory)
+		inventory.Stock_Available--
+		update := bson.M{"$set": bson.M{"sellerquantity": inventory.Stock_Available}}
+		config.Inventory_Collection.UpdateOne(context.Background(), filter, update)
 		if err != nil {
 			log.Fatal(err)
 			return false
@@ -210,6 +242,13 @@ func Addtocart(addtocart models.Addtocart1) bool {
 	// Use the UpdateOne method to increment the quantity
 	update := bson.M{"$set": bson.M{"quantity": cart.Quantity, "price": cart.Price}}
 	_, err = config.Cart_Collection.UpdateOne(context.Background(), filter, update)
+	var inventory models.Inventory
+	filter1 := bson.M{"itemname": addtocart.Name}
+	config.Inventory_Collection.FindOne(context.Background(), filter1).Decode(&inventory)
+	inventory.Stock_Available--
+	fmt.Println(inventory.Stock_Available)
+	update1 := bson.M{"$set": bson.M{"sellerquantity": inventory.Stock_Available}}
+	config.Inventory_Collection.UpdateOne(context.Background(), filter1, update1)
 	if err != nil {
 		log.Fatal(err)
 		return false
@@ -291,11 +330,12 @@ func Inventory(inventory models.Inventory) (bool, error) {
 	if cursor.RemainingBatchLength() == 0 {
 
 		inventory1 := models.Inventory1{
-			ItemCategory: inventory.ItemCategory,
-			ItemName:     inventory.ItemName,
-			Price:        inventory.Price,
-			Quantity:     inventory.Quantity,
-			Image:        inventory.Image,
+			ItemCategory:    inventory.ItemCategory,
+			ItemName:        inventory.ItemName,
+			Price:           inventory.Price,
+			Quantity:        inventory.Quantity,
+			Image:           inventory.Image,
+			Stock_Available: inventory.Stock_Available,
 		}
 		var seller models.Seller
 		err := config.Seller_Collection.FindOne(context.TODO(), bson.M{"sellerid": inventory.SellerId}).Decode(&seller)
@@ -464,6 +504,17 @@ func DeleteProduct(delete models.DeleteProduct) bool {
 	combinedFilter := bson.M{
 		"$and": []bson.M{filter1, filter2},
 	}
+	filter3 := bson.M{"itemname": delete.Name}
+	var data models.Inventory1
+	config.Inventory_Collection.FindOne(context.Background(), filter3).Decode(&data)
+	fmt.Println(data)
+	delete.Quantity = delete.Quantity + int(data.Stock_Available)
+	fmt.Println(delete.Quantity)
+	update1 := bson.M{"$set": bson.M{"sellerquantity": delete.Quantity}}
+	_, err = config.Inventory_Collection.UpdateOne(context.Background(), filter3, update1)
+	if err != nil {
+		log.Fatal(err)
+	}
 	_, err = config.Cart_Collection.DeleteOne(context.Background(), combinedFilter)
 	if err != nil {
 		log.Fatal(err)
@@ -622,17 +673,16 @@ func DeleteOrder(delete models.DeleteOrder) {
 	fmt.Println(id)
 }
 
-
 func CustomerOrder(token string) []models.Customerorder {
-	id,err := ExtractCustomerID(token,constants.SecretKey)
-	if err != nil{
+	id, err := ExtractCustomerID(token, constants.SecretKey)
+	if err != nil {
 		log.Fatal(err)
 	}
 	var customer models.Customer
-	filter_customer := bson.M{"customerid":id}
-	config.Customer_Collection.FindOne(context.Background(),filter_customer).Decode(&customer)
+	filter_customer := bson.M{"customerid": id}
+	config.Customer_Collection.FindOne(context.Background(), filter_customer).Decode(&customer)
 	var Order []models.Customerorder
-	filter := bson.M{"address.phonenumber":customer.Phone_No}
+	filter := bson.M{"address.phonenumber": customer.Phone_No}
 	cursor, err := config.Buynow_Collection.Find(context.Background(), filter)
 	if err != nil {
 		log.Fatal(err)
@@ -647,4 +697,59 @@ func CustomerOrder(token string) []models.Customerorder {
 	}
 	fmt.Println(Order)
 	return Order
+}
+
+func Buynow(id string) {
+	filter := bson.M{"customerid": id}
+	_, err := config.Cart_Collection.DeleteMany(context.Background(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func Itemstobuy(id string) []models.Item {
+	filter := bson.M{"customerid": id}
+	cursor, err := config.Cart_Collection.Find(context.Background(), filter)
+	if err != nil {
+
+		log.Fatal(err)
+	}
+	var Item []models.Item
+	defer cursor.Close(context.Background())
+	for cursor.Next(context.Background()) {
+		var item models.Item
+		err := cursor.Decode(&item)
+		if err != nil {
+
+			log.Fatal(err)
+		}
+		Item = append(Item, item)
+	}
+	//fmt.Println(Item)
+	return Item
+}
+
+func TotalAmount(id string) float64 {
+	filter := bson.M{"customerid": id}
+	cursor, err := config.Cart_Collection.Find(context.Background(), filter)
+	if err != nil {
+
+		log.Fatal(err)
+	}
+	var Cart float64
+	defer cursor.Close(context.Background())
+	for cursor.Next(context.Background()) {
+		var cart models.Cart
+		err := cursor.Decode(&cart)
+		if err != nil {
+
+			log.Fatal(err)
+		}
+		if cart.TotalPrice == 0 {
+			Cart = Cart + cart.Price
+		} else {
+			Cart = Cart + cart.TotalPrice
+		}
+	}
+	return Cart
 }
