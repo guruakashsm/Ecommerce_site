@@ -211,19 +211,19 @@
         <div class="header-search-container">
           <input type="search" id="searchField" class="search-field" placeholder="Enter your product name...">
           <button id="searchBtn" class="search-btn">Search</button>
-      </div>
+        </div>
 
 
-      <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
             const token1 = token; // Replace with your actual token value
             const searchBtn = document.getElementById("searchBtn");
             searchBtn.addEventListener("click", function () {
-                const url = `/inventory/?token=${token1}`;
-                window.location.href = url;
+              const url = `/inventory/?token=${token1}`;
+              window.location.href = url;
             });
-        });
-    </script>
+          });
+        </script>
 
 
         <div class="header-user-actions">
@@ -250,14 +250,14 @@
     </div>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-          const token1 = token; // Replace with your actual token value
-          const searchBtn = document.getElementById("personoutline");
-          searchBtn.addEventListener("click", function () {
-              const url = `/ordereditems?token=${token1}`;
-              window.location.href = url;
-          });
+        const token1 = token; // Replace with your actual token value
+        const searchBtn = document.getElementById("personoutline");
+        searchBtn.addEventListener("click", function () {
+          const url = `/ordereditems?token=${token1}`;
+          window.location.href = url;
+        });
       });
-  </script>
+    </script>
     <nav class="desktop-navigation-menu">
 
       <div class="container">
@@ -276,31 +276,31 @@
               <ul class="dropdown-panel-list">
 
                 <li class="menu-title">
-                  <a href="#">Electronics</a>
+                  <a href="#" class="item-link" data-item="ELECTRONICS">Electronics</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Desktop</a>
+                  <a href="#" class="item-link" data-item="DESKTOP">Desktop</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Laptop</a>
+                  <a href="#" class="item-link" data-item="LAPTOP">Laptop</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Camera</a>
+                  <a href="#" class="item-link" data-item="CAMERA">Camera</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Tablet</a>
+                  <a href="#" class="item-link" data-item="TABLET">Tablet</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Headphone</a>
+                  <a href="#" class="item-link" data-item="HEADPHONE">Headphone</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">
+                  <a href="#" class="item-link" data-item="HEADPHONE">
                     <img src="./assets/images/electronics-banner-1.jpg" alt="headphone collection" width="250"
                       height="119">
                   </a>
@@ -311,31 +311,31 @@
               <ul class="dropdown-panel-list">
 
                 <li class="menu-title">
-                  <a href="#">Men's</a>
+                  <a href="#" class="item-link" data-item="MEN">Men's</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Formal</a>
+                  <a href="#" class="item-link" data-item="FORMAL">Formal</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Casual</a>
+                  <a href="#" class="item-link" data-item="CASUAL">Casual</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Sports</a>
+                  <a href="#" class="item-link" data-item="SPORTS">Sports</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Jacket</a>
+                  <a href="#" class="item-link" data-item="JACKET"Jacket</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Sunglasses</a>
+                  <a href="#" class="item-link" data-item="SUNGLASSES">Sunglasses</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">
+                  <a href="#" class="item-link" data-item="MENS">
                     <img src="./assets/images/mens-banner.jpg" alt="men's fashion" width="250" height="119">
                   </a>
                 </li>
@@ -345,31 +345,31 @@
               <ul class="dropdown-panel-list">
 
                 <li class="menu-title">
-                  <a href="#">Women's</a>
+                  <a href="#" class="item-link" data-item="WOMEN">Women's</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Formal</a>
+                  <a href="#" class="item-link" data-item="FORMAL">Formal</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Casual</a>
+                  <a href="#" class="item-link" data-item="CASUAL">Casual</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Perfume</a>
+                  <a href="#" class="item-link" data-item="PERFUME">Perfume</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Cosmetics</a>
+                  <a href="#" class="item-link" data-item="COMETICS">Cosmetics</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Bags</a>
+                  <a href="#" class="item-link" data-item="BAGS">Bags</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">
+                  <a href="#" class="item-link" data-item="WOMEN">
                     <img src="./assets/images/womens-banner.jpg" alt="women's fashion" width="250" height="119">
                   </a>
                 </li>
@@ -379,31 +379,31 @@
               <ul class="dropdown-panel-list">
 
                 <li class="menu-title">
-                  <a href="#">Electronics</a>
+                  <a href="#" class="item-link" data-item="ELECTRONICS">Electronics</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Smart Watch</a>
+                  <a href="#" class="item-link" data-item="SMART WATCH">Smart Watch</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Smart TV</a>
+                  <a href="#" class="item-link" data-item="SMART TV">Smart TV</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Keyboard</a>
+                  <a href="#" class="item-link" data-item="KEYBOARD">Keyboard</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Mouse</a>
+                  <a href="#" class="item-link" data-item="MOUSE">Mouse</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">Microphone</a>
+                  <a href="#" class="item-link" data-item="MICROPHONE">Microphone</a>
                 </li>
 
                 <li class="panel-list-item">
-                  <a href="#">
+                  <a href="#" class="item-link" data-item="MOUSE">
                     <img src="./assets/images/electronics-banner-2.jpg" alt="mouse collection" width="250" height="119">
                   </a>
                 </li>
@@ -419,19 +419,19 @@
             <ul class="dropdown-list">
 
               <li class="dropdown-item">
-                <a href="#">Shirt</a>
+                <a href="#" class="item-link" data-item="MEN SHIRT">Shirt</a>
               </li>
 
               <li class="dropdown-item">
-                <a href="#">Shorts & Jeans</a>
+                <a href="#" class="item-link" data-item="MEN JEANS">Shorts & Jeans</a>
               </li>
 
               <li class="dropdown-item">
-                <a href="#">Safety Shoes</a>
+                <a href="#" class="item-link" data-item="SAFETY SHOES">Safety Shoes</a>
               </li>
 
               <li class="dropdown-item">
-                <a href="#">Wallet</a>
+                <a href="#" class="item-link" data-item="WALLET">Wallet</a>
               </li>
 
             </ul>
@@ -443,19 +443,19 @@
             <ul class="dropdown-list">
 
               <li class="dropdown-item">
-                <a href="#">Dress & Frock</a>
+                <a href="#" class="item-link" data-item="WOMEN DRESS">Dress & Frock</a>
               </li>
 
               <li class="dropdown-item">
-                <a href="#">Earrings</a>
+                <a href="#" class="item-link" data-item="EARRINGS">Earrings</a>
               </li>
 
               <li class="dropdown-item">
-                <a href="#">Necklace</a>
+                <a href="#" class="item-link" data-item="NECKLACE">Necklace</a>
               </li>
 
               <li class="dropdown-item">
-                <a href="#">Makeup Kit</a>
+                <a href="#" class="item-link" data-item="MAKEUP KIT">Makeup Kit</a>
               </li>
 
             </ul>
@@ -467,19 +467,19 @@
             <ul class="dropdown-list">
 
               <li class="dropdown-item">
-                <a href="#">Earrings</a>
+                <a href="#" class="item-link" data-item="EARRINGS">Earrings</a>
               </li>
 
               <li class="dropdown-item">
-                <a href="#">Couple Rings</a>
+                <a href="#" class="item-link" data-item="COUPLE RINGS">Couple Rings</a>
               </li>
 
               <li class="dropdown-item">
-                <a href="#">Necklace</a>
+                <a href="#" class="item-link" data-item="NECKLACE">Necklace</a>
               </li>
 
               <li class="dropdown-item">
-                <a href="#">Bracelets</a>
+                <a href="#" class="item-link" data-item="BRACELETS">Bracelets</a>
               </li>
 
             </ul>
@@ -491,19 +491,19 @@
             <ul class="dropdown-list">
 
               <li class="dropdown-item">
-                <a href="#">Clothes Perfume</a>
+                <a href="#" class="item-link" data-item="CLOTHES PERFUME">Clothes Perfume</a>
               </li>
 
               <li class="dropdown-item">
-                <a href="#">Deodorant</a>
+                <a href="#" class="item-link" data-item="DEODARANT">Deodorant</a>
               </li>
 
               <li class="dropdown-item">
-                <a href="#">Flower Fragrance</a>
+                <a href="#" class="item-link" data-item="FLOWER FRAGRANCE">Flower Fragrance</a>
               </li>
 
               <li class="dropdown-item">
-                <a href="#">Air Freshener</a>
+                <a href="#" class="item-link" data-item="AIR FRESHENER">Air Freshener</a>
               </li>
 
             </ul>
@@ -581,19 +581,19 @@
           <ul class="submenu-category-list" data-accordion>
 
             <li class="submenu-category">
-              <a href="#" class="submenu-title">Shirt</a>
+              <a href="#" class="item-link" data-item="MENS SHIRT" class="submenu-title">Shirt</a>
             </li>
 
             <li class="submenu-category">
-              <a href="#" class="submenu-title">Shorts & Jeans</a>
+              <a href="#" class="item-link" data-item="MENS SHORTS " class="submenu-title">Shorts & Jeans</a>
             </li>
 
             <li class="submenu-category">
-              <a href="#" class="submenu-title">Safety Shoes</a>
+              <a href="#" class="item-link" data-item="SAFETY SHOES" class="submenu-title">Safety Shoes</a>
             </li>
 
             <li class="submenu-category">
-              <a href="#" class="submenu-title">Wallet</a>
+              <a href="#" class="item-link" data-item="WALLET" class="submenu-title">Wallet</a>
             </li>
 
           </ul>
@@ -826,7 +826,7 @@
                 starting at &dollar; <b>20</b>.00
               </p>
 
-              <a href="#" class="banner-btn">Shop now</a>
+              <a href="#" class="item-link" data-item="WOMEN" style="height: 0.7cm;width: 2cm;background: var(--salmon-pink); color: var(--white); width: -webkit-max-content; width: -moz-max-content; width: max-content; font-size: var(--fs-11); font-weight: var(--weight-600); text-transform: uppercase; padding: 4px 10px; -webkit-border-radius: var(--border-radius-sm); border-radius: var(--border-radius-sm); -webkit-transition: var(--transition-timing); -o-transition: var(--transition-timing); transition: var(--transition-timing);">Shop now</a>
 
             </div>
 
@@ -846,7 +846,7 @@
                 starting at &dollar; <b>15</b>.00
               </p>
 
-              <a href="#" class="banner-btn">Shop now</a>
+              <a href="#" class="item-link" data-item="SUNGLASSES" style="height: 0.7cm;width: 2cm;background: var(--salmon-pink); color: var(--white); width: -webkit-max-content; width: -moz-max-content; width: max-content; font-size: var(--fs-11); font-weight: var(--weight-600); text-transform: uppercase; padding: 4px 10px; -webkit-border-radius: var(--border-radius-sm); border-radius: var(--border-radius-sm); -webkit-transition: var(--transition-timing); -o-transition: var(--transition-timing); transition: var(--transition-timing);">Shop now</a>
 
             </div>
 
@@ -866,7 +866,7 @@
                 starting at &dollar; <b>29</b>.99
               </p>
 
-              <a href="#" class="banner-btn">Shop now</a>
+              <a href="#" class="item-link" data-item="SUMMER DRESS" style="height: 0.7cm;width: 2cm;background: var(--salmon-pink); color: var(--white); width: -webkit-max-content; width: -moz-max-content; width: max-content; font-size: var(--fs-11); font-weight: var(--weight-600); text-transform: uppercase; padding: 4px 10px; -webkit-border-radius: var(--border-radius-sm); border-radius: var(--border-radius-sm); -webkit-transition: var(--transition-timing); -o-transition: var(--transition-timing); transition: var(--transition-timing);">Shop now</a>
 
             </div>
 
@@ -906,7 +906,7 @@
                 <p class="category-item-amount">(53)</p>
               </div>
 
-              <a href="#" class="category-btn">Show all</a>
+              <a style="font-size: small;font-style:bold; color: #FF8F9C;" href="#" class="item-link" data-item="DRESS & FROCK">Show all</a>
 
             </div>
 
@@ -926,7 +926,7 @@
                 <p class="category-item-amount">(58)</p>
               </div>
 
-              <a href="#" class="category-btn">Show all</a>
+              <a style="font-size: small;font-style:bold; color: #FF8F9C;" href="#" class="item-link" data-item="WINTER WEAR">Show all</a>
 
             </div>
 
@@ -946,7 +946,7 @@
                 <p class="category-item-amount">(68)</p>
               </div>
 
-              <a href="#" class="category-btn">Show all</a>
+              <a style="font-size: small;font-style:bold; color: #FF8F9C;" href="#" class="item-link" data-item="GLASS & LENS">Show all</a>
 
             </div>
 
@@ -966,7 +966,7 @@
                 <p class="category-item-amount">(84)</p>
               </div>
 
-              <a href="#" class="category-btn">Show all</a>
+              <a style="font-size: small;font-style:bold; color: #FF8F9C;" href="#" class="item-link" data-item="SHORTS & JEANS">Show all</a>
 
             </div>
 
@@ -986,7 +986,7 @@
                 <p class="category-item-amount">(35)</p>
               </div>
 
-              <a href="#" class="category-btn">Show all</a>
+              <a style="font-size: small;font-style:bold; color: #FF8F9C;" href="#" class="item-link" data-item="T SHIRT">Show all</a>
 
             </div>
 
@@ -1006,7 +1006,7 @@
                 <p class="category-item-amount">(16)</p>
               </div>
 
-              <a href="#" class="category-btn">Show all</a>
+              <a style="font-size: small;font-style:bold; color: #FF8F9C;" href="#" class="item-link" data-item="JACKET">Show all</a>
 
             </div>
 
@@ -1026,7 +1026,7 @@
                 <p class="category-item-amount">(27)</p>
               </div>
 
-              <a href="#" class="category-btn">Show all</a>
+              <a style="font-size: small;font-style:bold; color: #FF8F9C;" href="#" class="item-link" data-item="WATCH">Show all</a>
 
             </div>
 
@@ -1046,7 +1046,7 @@
                 <p class="category-item-amount">(39)</p>
               </div>
 
-              <a href="#" class="category-btn">Show all</a>
+              <a style="font-size: small;font-style:bold; color: #FF8F9C;" href="#" class="item-link" data-item="HAT & CAP">Show all</a>
 
             </div>
 
@@ -1311,7 +1311,7 @@
                 <ul class="sidebar-submenu-category-list" data-accordion>
 
                   <li class="sidebar-submenu-category">
-                    <a href="#" class="sidebar-submenu-title">
+                    <a href="#" class="item-link" data-item="SHAMPOO" class="sidebar-submenu-title">
                       <p class="product-name">Shampoo</p>
                       <data value="68" class="stock" title="Available Stock">68</data>
                     </a>
@@ -1452,7 +1452,7 @@
 
                   <div class="showcase-content">
 
-                    <a href="#">
+                    <a href="#" class="item-link" data-item="BABY SHOES">
                       <h4 class="showcase-title">baby fabric shoes</h4>
                     </a>
 
@@ -1482,7 +1482,7 @@
 
                   <div class="showcase-content">
 
-                    <a href="#">
+                    <a href="#" class="item-link" data-item="MEN HOODIES">
                       <h4 class="showcase-title">men's hoodies t-shirt</h4>
                     </a>
                     <div class="showcase-rating">
@@ -1511,7 +1511,7 @@
 
                   <div class="showcase-content">
 
-                    <a href="#">
+                    <a href="#" class="item-link" data-item="GIRLS TSHIRT">
                       <h4 class="showcase-title">girls t-shirt</h4>
                     </a>
                     <div class="showcase-rating">
@@ -1540,7 +1540,7 @@
 
                   <div class="showcase-content">
 
-                    <a href="#">
+                    <a href="#" class="item-link" data-item="MEN HAT">
                       <h4 class="showcase-title">woolen hat for men</h4>
                     </a>
                     <div class="showcase-rating">
@@ -1595,7 +1595,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="FULL SLEEVE TSHIRT">
                         <h4 class="showcase-title">Relaxed Short full Sleeve T-Shirt</h4>
                       </a>
 
@@ -1619,7 +1619,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="GIRL TOP">
                         <h4 class="showcase-title">Girls pnk Embro design Top</h4>
                       </a>
 
@@ -1643,7 +1643,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="BLACK SHIRT">
                         <h4 class="showcase-title">Black Floral Wrap Midi Skirt</h4>
                       </a>
 
@@ -1667,7 +1667,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="COTTON SHIRT">
                         <h4 class="showcase-title">Pure Garment Dyed Cotton Shirt</h4>
                       </a>
 
@@ -1695,7 +1695,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="JACKET">
                         <h4 class="showcase-title">MEN Yarn Fleece Full-Zip Jacket</h4>
                       </a>
 
@@ -1719,7 +1719,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="LEATHER JACKET">
                         <h4 class="showcase-title">Mens Winter Leathers Jackets</h4>
                       </a>
 
@@ -1767,7 +1767,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="SWEATSHORTS">
                         <h4 class="showcase-title">Better Basics French Terry Sweatshorts</h4>
                       </a>
 
@@ -1805,7 +1805,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="WHITE SHOES">
                         <h4 class="showcase-title">Running & Trekking Shoes - White</h4>
                       </a>
 
@@ -1829,7 +1829,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="BLACK SHOES">
                         <h4 class="showcase-title">Trekking & Running Shoes - black</h4>
                       </a>
 
@@ -1853,7 +1853,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="WOMEN SHOES">
                         <h4 class="showcase-title">Womens Party Wear Shoes</h4>
                       </a>
 
@@ -1877,7 +1877,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="SPORTS SHOES">
                         <h4 class="showcase-title">Sports Claw Women's Shoes</h4>
                       </a>
 
@@ -1905,7 +1905,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="TREKKING SHOES">
                         <h4 class="showcase-title">Air Trekking Shoes - white</h4>
                       </a>
 
@@ -1929,7 +1929,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="BOOT">
                         <h4 class="showcase-title">Boot With Suede Detail</h4>
                       </a>
 
@@ -1953,7 +1953,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="MEN SHOES">
                         <h4 class="showcase-title">Men's Leather Formal Wear shoes</h4>
                       </a>
 
@@ -1977,7 +1977,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="MEN SHOES">
                         <h4 class="showcase-title">Casual Men's Brown shoes</h4>
                       </a>
 
@@ -2015,7 +2015,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="POKET WATCH">
                         <h4 class="showcase-title">Pocket Watch Leather Pouch</h4>
                       </a>
 
@@ -2039,7 +2039,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="SILVER NECKLACE">
                         <h4 class="showcase-title">Silver Deer Heart Necklace</h4>
                       </a>
 
@@ -2063,7 +2063,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="WOMEN PERFUME">
                         <h4 class="showcase-title">Titan 100 Ml Womens Perfume</h4>
                       </a>
 
@@ -2087,7 +2087,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="MENS BELT">
                         <h4 class="showcase-title">Men's Leather Reversible Belt</h4>
                       </a>
 
@@ -2115,7 +2115,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="PLATINUM RING">
                         <h4 class="showcase-title">platinum Zircon Classic Ring</h4>
                       </a>
 
@@ -2139,7 +2139,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="SMART WATCH">
                         <h4 class="showcase-title">Smart watche Vital Plus</h4>
                       </a>
 
@@ -2163,7 +2163,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="SHAMPOO CONDITIONER0">
                         <h4 class="showcase-title">shampoo conditioner packs</h4>
                       </a>
 
@@ -2187,7 +2187,7 @@
 
                     <div class="showcase-content">
 
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="ROSE GOLD EARRINGS">
                         <h4 class="showcase-title">Rose Gold Peacock Earrings</h4>
                       </a>
 
@@ -2241,7 +2241,7 @@
                       <ion-icon name="star-outline"></ion-icon>
                     </div>
                     <form id="cart-form">
-                      <a href="#">
+                      <a href="#" class="item-link" data-item="SHAMPOO CONDITIONER">
                         <h3 class="showcase-title">shampoo, conditioner & facewash pack</h3>
                       </a>
 
@@ -2329,8 +2329,8 @@
                       <ion-icon name="star-outline"></ion-icon>
                     </div>
 
-                    <h3 class="showcase-title">
-                      <a href="#" class="showcase-title">Rose Gold diamonds Earring</a>
+                    <h3 href="#" class="item-link" data-item="ROSE GOLD EARRINGS">
+                      <a  class="showcase-title">Rose Gold diamonds Earring</a>
                     </h3>
 
                     <p class="showcase-desc">
@@ -2442,7 +2442,7 @@
 
                   <a href="#" class="showcase-category">jacket</a>
 
-                  <a href="#">
+                  <a href="#" class="item-link" data-item="MENS JACKET">
                     <h3 class="showcase-title">Mens Winter Leathers Jackets</h3>
                   </a>
 
@@ -2495,7 +2495,7 @@
                 <div class="showcase-content">
                   <a href="#" class="showcase-category">shirt</a>
 
-                  <h3>
+                  <h3 href="#" class="item-link" data-item="COTTON SHIRT">
                     <a href="#" class="showcase-title">Pure Garment Dyed Cotton Shirt</a>
                   </h3>
 
@@ -2546,7 +2546,7 @@
                 <div class="showcase-content">
                   <a href="#" class="showcase-category">Jacket</a>
 
-                  <h3>
+                  <h3 href="#" class="item-link" data-item="FULL ZIP JACKET">
                     <a href="#" class="showcase-title">MEN Yarn Fleece Full-Zip Jacket</a>
                   </h3>
 
@@ -2599,7 +2599,7 @@
                 <div class="showcase-content">
                   <a href="#" class="showcase-category">skirt</a>
 
-                  <h3>
+                  <h3 href="#" class="item-link" data-item="SKIRT">
                     <a href="#" class="showcase-title">Black Floral Wrap Midi Skirt</a>
                   </h3>
 
@@ -2650,7 +2650,7 @@
                 <div class="showcase-content">
                   <a href="#" class="showcase-category">casual</a>
 
-                  <h3>
+                  <h3 href="#" class="item-link" data-item="BROWN SHOES">
                     <a href="#" class="showcase-title">Casual Men's Brown shoes</a>
                   </h3>
 
@@ -2703,7 +2703,7 @@
                 <div class="showcase-content">
                   <a href="#" class="showcase-category">watches</a>
 
-                  <h3>
+                  <h3 href="#" class="item-link" data-item="LEATHER POUCH">
                     <a href="#" class="showcase-title">Pocket Watch Leather Pouch</a>
                   </h3>
 
@@ -2754,7 +2754,7 @@
                 <div class="showcase-content">
                   <a href="#" class="showcase-category">watches</a>
 
-                  <h3>
+                  <h3href="#" class="item-link" data-item="SMART WATCH" >
                     <a href="#" class="showcase-title">Smart watche Vital Plus</a>
                   </h3>
 
@@ -2807,7 +2807,7 @@
                 <div class="showcase-content">
                   <a href="#" class="showcase-category">party wear</a>
 
-                  <h3>
+                  <h3 href="#" class="item-link" data-item="PARTY SHOES">
                     <a href="#" class="showcase-title">Womens Party Wear Shoes</a>
                   </h3>
 
@@ -2858,7 +2858,7 @@
                 <div class="showcase-content">
                   <a href="#" class="showcase-category">jacket</a>
 
-                  <h3>
+                  <h3 href="#" class="item-link" data-item="LEATHER JACKET">
                     <a href="#" class="showcase-title">Mens Winter Leathers Jackets</a>
                   </h3>
 
@@ -2911,7 +2911,7 @@
                 <div class="showcase-content">
                   <a href="#" class="showcase-category">sports</a>
 
-                  <h3>
+                  <h3 href="#" class="item-link" data-item="BLACK SHOES">
                     <a href="#" class="showcase-title">Trekking & Running Shoes - black</a>
                   </h3>
 
@@ -2962,7 +2962,7 @@
                 <div class="showcase-content">
                   <a href="#" class="showcase-category">formal</a>
 
-                  <h3>
+                  <h3 href="#" class="item-link" data-item="LEATHER SHOES">
                     <a href="#" class="showcase-title">Men's Leather Formal Wear shoes</a>
                   </h3>
 
@@ -3015,7 +3015,7 @@
                 <div class="showcase-content">
                   <a href="#" class="showcase-category">shorts</a>
 
-                  <h3>
+                  <h3 href="#" class="item-link" data-item="SWEATSHORTS" >
                     <a href="#" class="showcase-title">Better Basics French Terry Sweatshorts</a>
                   </h3>
 
@@ -3073,7 +3073,7 @@
               <img src="./assets/images/testimonial-1.jpg" alt="alan doe" class="testimonial-banner" width="80"
                 height="80">
 
-              <p class="testimonial-name">Alan Doe</p>
+              <p class="testimonial-name">Guruakash<br> Sivasenthil <br>Balaji</p>
 
               <p class="testimonial-title">CEO & Founder Invision</p>
 
@@ -3104,7 +3104,7 @@
 
               <h2 class="cta-title">Summer collection</h2>
 
-              <p class="cta-text">Starting @ $10</p>
+              <p style=" color: var(--sonic-silver);font-size: var(--fs-7);margin-bottom: 5px;--fs-7: 1rem; "href="#" class="item-link" data-item="SUMMER COLLECTION" class="cta-text">Starting @ $10</p>
 
               <button class="cta-btn">Shop now</button>
 
@@ -3148,7 +3148,7 @@
                 <div class="service-content">
 
                   <h3 class="service-title">Next Day delivery</h3>
-                  <p class="service-desc">UK Orders Only</p>
+                  <p class="service-desc">India Orders Only</p>
 
                 </div>
 
@@ -3225,7 +3225,7 @@
 
           <div class="blog-card">
 
-            <a href="#">
+            <a href="#" class="item-link" data-item="WOMEN DRESS">
               <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
                 width="300" class="blog-banner">
             </a>
@@ -3234,7 +3234,7 @@
 
               <a href="#" class="blog-category">Fashion</a>
 
-              <a href="#">
+              <a >
                 <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
               </a>
 
@@ -3248,7 +3248,7 @@
 
           <div class="blog-card">
 
-            <a href="#">
+            <a href="#" class="item-link" data-item="WOMEN DRESS">
               <img src="./assets/images/blog-2.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
                 class="blog-banner" width="300">
             </a>
@@ -3271,7 +3271,7 @@
 
           <div class="blog-card">
 
-            <a href="#">
+            <a href="#" class="item-link" data-item="SHOES">
               <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
                 class="blog-banner" width="300">
             </a>
@@ -3294,7 +3294,7 @@
 
           <div class="blog-card">
 
-            <a href="#">
+            <a href="#" class="item-link" data-item="ELECTRONICS">
               <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
                 class="blog-banner" width="300">
             </a>
@@ -3679,6 +3679,22 @@
         });
     });
   </script>
+      <script>
+        // JavaScript to handle the item clicks and generate dynamic URLs
+        const itemLinks = document.querySelectorAll(".item-link");
+        const baseURL = "/items"; // The base URL for your items route
+
+        itemLinks.forEach(link => {
+            link.addEventListener("click", function (event) {
+                event.preventDefault();
+                const itemName = link.getAttribute("data-item"); // Get the item name
+                const token = urlParams.get('token'); // Replace with your dynamic token logic
+
+                const url = `${baseURL}?item=${itemName}&token=${token}`;
+                window.location.href = url; // Redirect to the dynamic URL
+            });
+        });
+    </script>
 
   <!--
     - custom js link
