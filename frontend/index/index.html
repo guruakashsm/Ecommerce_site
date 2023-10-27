@@ -3,12 +3,15 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <link rel="shortcut icon" href="assests/favicon.ico" type="image/x-icon">
     <title>Anon navigation menu</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <style>
+
+
         * {
             margin: 0;
             padding: 0;
@@ -25,11 +28,11 @@
             margin: 0;
             width: 100vw;
             height: 100vh;
-            justify-content: flex-start;
-            align-items: flex-start;
+            justify-content: left;
+            align-items: left;
             background: url('assests/site.jpg') top left/cover no-repeat;
             padding-top: 150px;
-            padding-left: 100PX;
+            padding-left: 100px;
             /* Add padding to move the content down */
         }
 
@@ -37,14 +40,14 @@
             color: #fff;
             text-align: left;
             font-size: large;
-            margin-left: -510px;
-            margin-top: 18%;
+            margin-left: -430px;
+            margin-top: 13%;
             padding-right: 40%;
             font-weight: 100%;
             font-size: 150%;
             /* Adjust this value to control the left spacing */
             font-style: italic;
-            
+
             /* Apply the custom font */
         }
 
@@ -52,7 +55,7 @@
 
         .navigation {
             position: relative;
-            width: 800px;
+            width: 810px;
             height: 70px;
             background: #fff;
             display: flex;
@@ -89,7 +92,7 @@
             position: relative;
             display: block;
             line-height: 75px;
-            
+
             font-size: 1.5em;
             text-align: center;
             transition: 0.5s;
@@ -170,7 +173,6 @@
         .navigation ul li:nth-child(5).active~.indicator {
             transform: translateX(calc(70px * 4));
         }
-       
     </style>
 </head>
 
