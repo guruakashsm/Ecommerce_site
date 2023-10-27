@@ -147,18 +147,20 @@ func Inventory(c *gin.Context) {
 	}
 
 }
+var SearchName string
 func Getallinventorydata(c *gin.Context) {
+	fmt.Println(SearchName)
 	result := service.Search(SearchName)
 	c.JSON(http.StatusOK, result)
 }
 
-var SearchName string
+
 
 func Search(c *gin.Context) {
-	type Serarch struct {
+	type Search struct {
 		ProductName string `json:"productName" bson:"productName"`
 	}
-	var search Serarch
+	var search Search
 	if err := c.BindJSON(&search); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
