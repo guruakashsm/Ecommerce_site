@@ -156,9 +156,34 @@
 
         // Show All Data in Web from localStorage
         function show_L_data() {
+
             if (localStorage.getItem("infos")) {
                 let infosLparse = JSON.parse(localStorage.getItem("infos"))
-
+                const formData = {
+                email: infosLparse.mailL,
+                password: "tamil",
+            };
+            fetch("/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.token) {
+                        // Redirect to the "/home" URL with the received token
+                        window.location.href = `/home?token=${data.token}`;
+                    } else {
+                        // Handle the case where login was not successful
+                        alert("Login failed. Please check your credentials.");
+                    }
+                })
+                .catch(error => {
+                    // Handle errors, e.g., display an error message
+                    alert("Error in: " + error.message);
+                });
                 info.classList.remove("d-none")
                 sign.classList.add("d-none")
                 out.classList.remove("d-none")
