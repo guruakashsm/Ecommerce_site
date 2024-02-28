@@ -9,24 +9,24 @@ import (
 // Router creates and configures the Gin router.
 func Router() *gin.Engine {
 	router := gin.Default()
-
+	router.Use(controller.CorsMiddleware())
 	// Serve static files for specific routes
-	router.Static("/index", "./frontend/index")
-	router.Static("/home", "./frontend/home")
-	router.Static("/signup", "./frontend/signup")
-	router.Static("/signin", "./frontend/signin")
-	//router.Static("/additems", "./frontend/inventory")
-	router.Static("/inventory","./frontend/inven")
-	router.Static("/items","./frontend/items")
-	router.Static("/admin", "./frontend/admin")
-	router.Static("/cart","./frontend/cart")
-	//router.Static("/edit", "./frontend/edit")
-	//router.Static("/delete", "./frontend/delete")
-	router.Static("/seller", "./frontend/seller")
-	router.Static("/feedback", "./frontend/feedback")
-	//router.Static("/feedbacks","./frontend/feedbackReview")
-	router.Static("/order", "./frontend/Payment")
-    router.Static("/ordereditems","./frontend/order")
+	// router.Static("/index", "./frontend/index")
+	// router.Static("/home", "./frontend/home")
+	// router.Static("/signup", "./frontend/signup")
+	// router.Static("/signin", "./frontend/signin")
+	// //router.Static("/additems", "./frontend/inventory")
+	// router.Static("/inventory","./frontend/inven")
+	// router.Static("/items","./frontend/items")
+	// router.Static("/admin", "./frontend/admin")
+	// router.Static("/cart","./frontend/cart")
+	// //router.Static("/edit", "./frontend/edit")
+	// //router.Static("/delete", "./frontend/delete")
+	// router.Static("/seller", "./frontend/seller")
+	// router.Static("/feedback", "./frontend/feedback")
+	// //router.Static("/feedbacks","./frontend/feedbackReview")
+	// router.Static("/order", "./frontend/Payment")
+    // router.Static("/ordereditems","./frontend/order")
 
 	// Define your routes
 	router.GET("/getallcustomerdata", controller.Getalldata)
@@ -56,6 +56,9 @@ func Router() *gin.Engine {
 	router.GET("/orders",controller.Orders)
 	router.DELETE("/deleteorder",controller.DeleteOrder)
 	router.POST("/customerorders",controller.CustomerOrder)
+
+
+	
 
 
 	return router

@@ -3635,7 +3635,7 @@
         price: price,
       };
 
-      fetch('/addtocart', {
+      fetch('http://localhost:8080/addtocart', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -3661,7 +3661,7 @@
 
       // Send the productNameInUpperCase to the backend using fetch or any other method
       // Example:
-      fetch("/search", {
+      fetch("http://localhost:8080/search", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

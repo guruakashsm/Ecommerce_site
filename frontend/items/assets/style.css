@@ -1,0 +1,113 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.product-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.product {
+    background-color: #f9f9f9;
+    /* Light gray background */
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.product h2 {
+    color: #007bff;
+    /* Blue */
+    font-size: 2rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.product p {
+    color: #555;
+    /* Dark Gray */
+    margin: 10px;
+    text-align: left;
+    font-size: 1.5rem;
+}
+
+.product-info {
+    flex: 1;
+    padding-right: 20px;
+}
+
+.product .quantity {
+    display: flex;
+    justify-content: center;
+}
+
+.product .quantity button {
+    background-color: #28a745;
+    /* Green */
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.product .add-to-cart {
+    text-align: center;
+}
+
+.product .add-to-cart button {
+    background-color: #ff5722;
+    /* Deep Orange */
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+#total-cost {
+    text-align: right;
+    margin-top: 20px;
+    font-size: 1.2rem;
+}
+
+#buy-now-button {
+    display: inline-block;
+    margin: 20px 0;
+    background-color: #007bff;
+    /* Blue */
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.product img.product-image {
+    width: 200px;
+    /* Set a fixed width */
+    height: 200px;
+    /* Set a fixed height */
+    object-fit: cover;
+    /* Maintain aspect ratio and cover the container */
+    margin-top: 20px;
+    border-radius: 30px;
+}

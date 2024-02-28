@@ -1,0 +1,132 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    /* Light gray background */
+    margin: 0;
+    padding: 0;
+}
+
+/* Update the login form style */
+#login-form {
+    background-color: #fff;
+    padding: 60px;
+    border-radius: 5px;
+    margin: 20px auto;
+    width: 80%;
+    max-width: 400px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Update the dashboard style */
+#dashboard {
+    background-color: #333;
+    /* Blue background */
+    color: #fff;
+    /* White text */
+    text-align: center;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 20px auto;
+    width: 80%;
+    max-width: 400px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Add styles for buttons */
+button {
+    background-color: #000;
+    /* Blue button background */
+    color: #fff;
+    /* White text */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #5f6266;
+    /* Darker blue on hover */
+}
+
+/* Update h1 styles */
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+    /* Add some space below h1 */
+}
+
+/* Update label styles */
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+/* Update input styles */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="number"],
+input[type="file"],
+select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    /* Add border to form elements */
+    border-radius: 3px;
+}
+
+/* Add a style for success messages */
+.success-message {
+    color: #4CAF50;
+    /* Green text for success messages */
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Add a style for error messages */
+.error-message {
+    color: #FF5733;
+    /* Red text for error messages */
+    text-align: center;
+    margin-top: 10px;
+}
+
+.form-box {
+    background-color: #fff;
+    padding: 80px;
+    border-radius: 5px;
+    margin: 20px auto;
+    width: 80%;
+    max-width: 400px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#orders-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 20px auto;
+    width: 80%;
+    max-width: 400px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.order-info {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.customer-info {
+    font-size: 14px;
+    color: #333;
+}
+
+.item-list {
+    list-style-type: disc;
+    margin-left: 20px;
+}
