@@ -17,6 +17,7 @@ var Seller_Collection *mongo.Collection
 var Inventory_Collection *mongo.Collection
 var Feedback_Collection *mongo.Collection
 var Buynow_Collection *mongo.Collection
+var Admin_Collection *mongo.Collection
 
 
 
@@ -34,6 +35,7 @@ func init() {
 	Inventory_Collection = client.Database(constants.DB_Name).Collection(constants.Inventory_Collection)
 	Feedback_Collection = client.Database(constants.DB_Name).Collection(constants.Feedback_Collection)
 	Buynow_Collection = client.Database(constants.DB_Name).Collection(constants.BuyItems_Collection)
+	Admin_Collection = client.Database(constants.DB_Name).Collection(constants.Admin_Collection)
 
 	fmt.Println("All Collection Connected")
 }

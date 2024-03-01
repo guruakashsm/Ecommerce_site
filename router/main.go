@@ -56,6 +56,10 @@ func Router() *gin.Engine {
 	router.GET("/orders",controller.Orders)
 	router.DELETE("/deleteorder",controller.DeleteOrder)
 	router.POST("/customerorders",controller.CustomerOrder)
+	router.POST("/validatetoken", controller.ValidateToken)
+	router.POST("/adminlogin", controller.AdminLogin)
+
+
 
 
 	

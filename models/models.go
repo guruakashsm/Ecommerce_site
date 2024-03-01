@@ -9,15 +9,9 @@ type Customer struct {
 	Email           string `json:"email" bson:"email"`
 	Name            string `json:"name" bson:"name"`
 	Phone_No        int    `json:"phonenumber" bson:"phonenumber"`
-	Age             int    `json:"age" bson:"age"`
 	Password        string `json:"password" bson:"password"`
 	ConfirmPassword string `json:"confirmpassword" bson:"confirmpassword"`
-	FirstName       string `json:"firstname" bson:"firstname"`
-	LastName        string `json:"lastname" bson:"lastname"`
-	House_No        string `json:"houseno" bson:"houseno"`
-	Street_Name     string `json:"streetname" bson:"streetname"`
-	City            string `json:"city" bson:"city"`
-	Pincode         int64  `json:"pincode" bson:"pincode"`
+	Address         string `json:"address" bson:"address"`
 }
 type Address struct {
 	FirstName   string `json:"firstname" bson:"firstname"`
@@ -165,4 +159,19 @@ type DeleteOrder struct {
 }
 type Token struct {
 	Token string `json:"token" bson:"token"`
+}
+type Userdata struct {
+	Token    string `json:"token" bson:"token"`
+	UserName string `json:"username" bson:"username"`
+}
+
+type AdminData struct {
+	Id         primitive.ObjectID `json:"_id" bson:"_id"`
+	Email      string             `json:"email" bson:"email"`
+	Password   string             `json:"password" bson:"password"`
+	TOTP       string             `json:"totp" bson:"totp"`
+	IP_Address string             `json:"ip" bson:"ip"`
+	SecretKey  string             `json:"secretkey" bson:"secretkey"`
+	WrongInput int                `json:"wronginput" bson:"wronginput"`
+	Token      string             `json:"token" bson:"token"`
 }

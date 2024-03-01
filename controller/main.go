@@ -154,6 +154,18 @@ func Getallinventorydata(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+func ValidateToken(c *gin.Context){
+	var userdata models.Userdata
+	if err := c.BindJSON(&userdata); err != nil {
+
+		log.Fatal(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	result := service.Validatetoken(userdata.Token)
+	c.JSON(http.StatusOK, gin.H{"result": result})
+}
+
 
 
 func Search(c *gin.Context) {
@@ -366,4 +378,24 @@ func CorsMiddleware() gin.HandlerFunc {
         c.Next()
     }
 
+}
+
+
+func AdminLogin(c *gin.Context){
+     var login models.AdminData
+	 if err := c.BindJSON(&login); err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+
+	token,result := service.AdminLoginCheck(&login)
+	if result != 5{
+		c.JSON(http.StatusOK, gin.H{"result": result})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"token": token})
+	
+
+	
 }

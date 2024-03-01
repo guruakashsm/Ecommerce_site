@@ -7,5 +7,7 @@ const Cart_collection = "Cart"
 const Inventory_Collection = "Inventory"
 const Feedback_Collection = "Feedback"
 const SecretKey = "EcommerceSiteforS7Project"
+const AdminSecretKey = "AdminAnonSite"
 const BuyItems_Collection = "Buynow"
+const Admin_Collection = "Admins"
 

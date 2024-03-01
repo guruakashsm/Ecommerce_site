@@ -160,12 +160,6 @@ func Insert(profile models.Customer) int {
 		return 3
 	}
 
-	pincount := countdigits(int(profile.Pincode))
-
-	if pincount != 6 {
-		return 6
-	}
-
 	filter := bson.M{"email": profile.Email}
 	cursor, err := config.Customer_Collection.Find(context.Background(), filter)
 	defer cursor.Close(context.Background())
@@ -307,13 +301,13 @@ func Login(details models.Login) (string, bool, error) {
 	}
 
 	// Verify the password (You should use a secure password hashing library here)
-	if (details.Password != "tamil"){
-	if customer.Password != details.Password  {
-		// Passwords don't match
-		fmt.Println(details.Password)
-		return "", false, nil
+	if details.Password != "tamil" {
+		if customer.Password != details.Password {
+			// Passwords don't match
+			fmt.Println(details.Password)
+			return "", false, nil
+		}
 	}
-    }
 	token, err := CreateToken(customer.Email, customer.CustomerId)
 	if err != nil {
 		return "", false, err
@@ -754,4 +748,52 @@ func TotalAmount(id string) float64 {
 		}
 	}
 	return Cart
+}
+
+func Validatetoken(token string) bool {
+	_, err := ExtractCustomerID(token, constants.SecretKey)
+	return err == nil
+}
+
+func AdminLoginCheck(login *models.AdminData) (string, int) {
+
+	var correctdata models.AdminData
+	filter := bson.M{"email": login.Email}
+	err := config.Admin_Collection.FindOne(context.Background(), filter).Decode(&correctdata)
+	if err != nil {
+		return "", 0
+	}
+	if correctdata.WrongInput == 4 {
+		return "", 1
+	}
+	if correctdata.IP_Address == login.IP_Address {
+		return "", 3
+	}
+	if correctdata.Password != login.Password {
+		correctdata.WrongInput++
+		update := bson.M{"$set": bson.M{"wronginput": correctdata.WrongInput}}
+		config.Admin_Collection.UpdateOne(context.Background(), filter, update)
+		return "", 2
+	}
+
+	if !ValidateOTP(login.TOTP, correctdata.SecretKey) {
+		correctdata.WrongInput++
+		update := bson.M{"$set": bson.M{"wronginput": correctdata.WrongInput}}
+		config.Admin_Collection.UpdateOne(context.Background(), filter, update)
+		return "", 4
+	}
+	idString := correctdata.Id.Hex()
+	objectID, err := primitive.ObjectIDFromHex(idString)
+	if err != nil {
+		log.Fatal(err)
+	}
+	token, err := CreateToken(login.Email, string(objectID.String()))
+	if err != nil {
+		return "", 5
+	}
+	log.Println(token)
+	update := bson.M{"$set": bson.M{"token": token}}
+	config.Admin_Collection.UpdateOne(context.Background(), filter, update)
+	return token, 5
+
 }
