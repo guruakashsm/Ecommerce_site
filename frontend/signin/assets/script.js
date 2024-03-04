@@ -16,7 +16,7 @@ document.getElementById("signin-button").addEventListener("click", function (eve
         return
     }
     // Send a POST request to your Go backend
-    fetch("http://localhost:8080/login", {
+    fetch("http://localhost:8081/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -30,10 +30,10 @@ document.getElementById("signin-button").addEventListener("click", function (eve
                 setTimeout(()=>{
                     if (rememberMeCheckbox.checked) {
                         localStorage.setItem('token', `${data.token}`);
-                        window.location.href = `../home/index.html`;
+                        window.location.href = `../home/?token=${data.token}`;
                       } else {
                         localStorage.setItem('token', `${data.token}`);
-                        window.location.href = `../home/index.html/?token=${data.token}`;
+                        window.location.href = `../home/?token=${data.token}`;
                       }
                 },1000);
 

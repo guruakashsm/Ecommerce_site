@@ -13,7 +13,7 @@ import (
 
 func Getinventorydata(c *gin.Context) {
 	Inventorydata := service.Getinventorydata()
-	c.JSON(http.StatusOK, Inventorydata)
+	c.JSON(http.StatusOK, gin.H{"Inventory":Inventorydata})
 }
 func Getalldata(c *gin.Context) {
 	alltransaction := service.Getalldata()
@@ -32,7 +32,7 @@ func CreateSeller(c *gin.Context) {
 }
 func Getallsellerdata(c *gin.Context) {
 	Getallsellerdata := service.Getallsellerdata()
-	c.JSON(http.StatusOK, Getallsellerdata)
+	c.JSON(http.StatusOK, gin.H{"seller":Getallsellerdata})
 
 }
 func UpdateCart(c *gin.Context) {
@@ -147,14 +147,16 @@ func Inventory(c *gin.Context) {
 	}
 
 }
+
 var SearchName string
+
 func Getallinventorydata(c *gin.Context) {
 	fmt.Println(SearchName)
 	result := service.Search(SearchName)
 	c.JSON(http.StatusOK, result)
 }
 
-func ValidateToken(c *gin.Context){
+func ValidateToken(c *gin.Context) {
 	var userdata models.Userdata
 	if err := c.BindJSON(&userdata); err != nil {
 
@@ -165,8 +167,6 @@ func ValidateToken(c *gin.Context){
 	result := service.Validatetoken(userdata.Token)
 	c.JSON(http.StatusOK, gin.H{"result": result})
 }
-
-
 
 func Search(c *gin.Context) {
 	type Search struct {
@@ -295,10 +295,6 @@ func Deletefeedback(c *gin.Context) {
 
 }
 
-
-
-
-
 func GetUser(c *gin.Context) {
 	var data models.Address
 	var token models.Token
@@ -310,12 +306,12 @@ func GetUser(c *gin.Context) {
 	}
 	fmt.Println(token.Token)
 	id, _ := service.ExtractCustomerID(token.Token, constants.SecretKey)
-	
+
 	data = service.GetUser(id)
 	ItemsToBuy = service.Itemstobuy(id)
 	fmt.Println(ItemsToBuy)
 	service.CustomerOrders(ItemsToBuy, data)
-	
+
 	service.Buynow(id)
 	c.JSON(http.StatusOK, data)
 }
@@ -363,39 +359,52 @@ func CustomerOrder(c *gin.Context) {
 
 }
 
-
 func CorsMiddleware() gin.HandlerFunc {
-    return func(c *gin.Context) {
-        c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-        c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-        c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
-        if c.Request.Method == "OPTIONS" {
-            c.AbortWithStatus(http.StatusNoContent)
-            return
-        }
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusNoContent)
+			return
+		}
 
-        c.Next()
-    }
+		c.Next()
+	}
 
 }
 
-
-func AdminLogin(c *gin.Context){
-     var login models.AdminData
-	 if err := c.BindJSON(&login); err != nil {
+func AdminLogin(c *gin.Context) {
+	var login models.AdminData
+	if err := c.BindJSON(&login); err != nil {
 
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
 
-	token,result := service.AdminLoginCheck(&login)
-	if result != 5{
+	token, result := service.AdminLoginCheck(&login)
+	if result != 5 {
 		c.JSON(http.StatusOK, gin.H{"result": result})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"token": token})
-	
+}
 
+func GetAllDetailsForAdmin(c *gin.Context) {
+	data := service.AdminNeededData()
+	c.JSON(http.StatusOK, gin.H{"result": data})
+}
+
+func GetWorkers(c *gin.Context){
+	data := service.GetWorkerdata()
+	c.JSON(http.StatusOK, gin.H{"result": data})
+
+}
+
+func GetFeedback(c *gin.Context){
+	data := service.GetFeedBacks()
+		c.JSON(http.StatusOK, gin.H{"result": data})
 	
 }
+

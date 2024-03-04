@@ -10,4 +10,5 @@ const SecretKey = "EcommerceSiteforS7Project"
 const AdminSecretKey = "AdminAnonSite"
 const BuyItems_Collection = "Buynow"
 const Admin_Collection = "Admins"
-
+const Sales_Collection = "Sales"
+const Worker_Collection = "Workers"

@@ -127,6 +127,7 @@ type Feedback struct {
 type FeedbacktoAdmin struct {
 	Email    string `json:"email" bson:"email"`
 	Feedback string `json:"feedback" bson:"feedback"`
+	Role     string `json:"role" bson:"role"`
 }
 
 type BuyNow struct {
@@ -174,4 +175,26 @@ type AdminData struct {
 	SecretKey  string             `json:"secretkey" bson:"secretkey"`
 	WrongInput int                `json:"wronginput" bson:"wronginput"`
 	Token      string             `json:"token" bson:"token"`
+}
+
+type AdminPageData struct{
+	UserCount int64 `json:"usercount" bson:"usercount"`
+	SellerCount int64 `json:"sellercount" bson:"sellercount"`
+	ProductCount int64 `json:"productcount" bson:"productount"`
+	SalesCount int64 `json:"salescount" bson:"salescount"`
+	TotalSalesAmount int32 `json:"totalsalesamount" bson:"totalsalesamount"`
+}
+
+type Sales struct {
+	TotalSalesAmount int `bson:"totalsalesamount"`
+	TotalNoOfSales   int `bson:"totalnoofsales"`
+}
+
+type Workers struct{
+	UserName string `bson:"username" json:"username"`
+	Email string `bson:"email" json:"email"`
+	Role string `bson:"role" json:"role"`
+	Age string `bson:"age" json:"age"`
+	Salary string `bson:"salary" json:"salary"`
+	Status string `bson:"status" json:"status"`
 }

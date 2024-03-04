@@ -747,6 +747,26 @@ func TotalAmount(id string) float64 {
 			Cart = Cart + cart.TotalPrice
 		}
 	}
+	var currentValues models.Sales
+	err = config.Sales_Collection.FindOne(context.Background(), bson.M{}).Decode(&currentValues)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Update the values
+	updatedTotalSalesAmount := currentValues.TotalSalesAmount + int(Cart)
+	updatedTotalNoOfSales := currentValues.TotalNoOfSales + 1
+
+	// Update the document in the collection
+	_, err = config.Sales_Collection.UpdateOne(
+		context.Background(),
+		bson.M{},
+		bson.M{
+			"$set": bson.M{
+				"totalsalesamount": updatedTotalSalesAmount,
+				"totalnoofsales":   updatedTotalNoOfSales,
+			},
+		},
+	)
 	return Cart
 }
 
@@ -792,8 +812,65 @@ func AdminLoginCheck(login *models.AdminData) (string, int) {
 		return "", 5
 	}
 	log.Println(token)
-	update := bson.M{"$set": bson.M{"token": token}}
+	update := bson.M{"$set": bson.M{"token": token, "wronginput": 0}}
 	config.Admin_Collection.UpdateOne(context.Background(), filter, update)
 	return token, 5
 
+}
+
+func AdminNeededData() models.AdminPageData {
+	var adminpagedata models.AdminPageData
+	var sales models.Sales
+	adminpagedata.ProductCount, _ = config.Inventory_Collection.CountDocuments(context.Background(), bson.D{})
+
+	adminpagedata.UserCount, _ = config.Customer_Collection.CountDocuments(context.Background(), bson.D{})
+
+	adminpagedata.SellerCount, _ = config.Seller_Collection.CountDocuments(context.Background(), bson.D{})
+
+	config.Sales_Collection.FindOne(context.Background(), bson.M{}).Decode(&sales)
+
+	adminpagedata.SalesCount = int64(sales.TotalNoOfSales)
+
+	adminpagedata.TotalSalesAmount = int32(sales.TotalSalesAmount)
+
+	return adminpagedata
+}
+
+
+func GetWorkerdata() []models.Workers{
+	var workers []models.Workers
+
+	filter := bson.M{}
+	cursor, err := config.Worker_Collection.Find(context.Background(), filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for cursor.Next(context.Background()) {
+		var worker models.Workers
+		err := cursor.Decode(&worker)
+		if err != nil {
+			log.Fatal(err)
+		}
+		workers = append(workers, worker)
+	}
+	return workers
+}
+
+func GetFeedBacks() []models.FeedbacktoAdmin{
+	filter := bson.M{}
+	cursor, err := config.Feedback_Collection.Find(context.Background(), filter)
+	var Feedback []models.FeedbacktoAdmin
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for cursor.Next(context.Background()) {
+		var feedback models.FeedbacktoAdmin
+		err := cursor.Decode(&feedback)
+		if err != nil {
+			log.Fatal(err)
+		}
+		Feedback = append(Feedback, feedback)
+	}
+	return Feedback
 }
