@@ -874,3 +874,48 @@ func GetFeedBacks() []models.FeedbacktoAdmin{
 	}
 	return Feedback
 }
+
+func CreateWorker(worker models.Workers) string {
+    filter := bson.M{"email": worker.Email}
+    result := config.Worker_Collection.FindOne(context.Background(), filter)
+    if result.Err() == nil {
+        return "User Already Exists"
+    }
+    if result.Err() != nil && result.Err() != mongo.ErrNoDocuments {
+        return "Error in Query: " + result.Err().Error()
+    }
+    _, err := config.Worker_Collection.InsertOne(context.Background(), worker)
+    if err != nil {
+        return "Error in Creating: " + err.Error()
+    }
+    return "Created Successfully"
+}
+
+
+func CreateAdmin(admin models.AdminSignup)(string,string){
+	filter := bson.M{"email":admin.Email}
+
+	result :=config.Admin_Collection.FindOne(context.Background(),filter)
+    if result.Err() == nil {
+        return "User Already Exists",""
+    }
+    if result.Err() != nil && result.Err() != mongo.ErrNoDocuments {
+        return "Error in Query: " + result.Err().Error(),""
+    }
+	key,err := GenerateSecret()
+	if err != nil{
+		return "Error In Generating TOTP",""
+	}
+	var AdminData models.Admin
+	AdminData.Email = admin.Email
+	AdminData.Password = admin.Password
+	AdminData.IP_Address = admin.IP
+	AdminData.SecretKey = key
+	AdminData.Token = ""
+	AdminData.WrongInput = 0
+	_, err = config.Admin_Collection.InsertOne(context.Background(), AdminData)
+    if err != nil {
+        return "Error in Creating: " + err.Error(),""
+    }
+    return "Created Successfully",key
+}

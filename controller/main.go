@@ -408,3 +408,28 @@ func GetFeedback(c *gin.Context){
 	
 }
 
+func CreateWorker(c *gin.Context){
+	var worker models.Workers
+	if err := c.BindJSON(&worker); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+
+	data := service.CreateWorker(worker)
+	c.JSON(http.StatusOK, gin.H{"result": data})
+}
+
+func CreateAdmin(c *gin.Context){
+	var admin models.AdminSignup
+	if err := c.BindJSON(&admin); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	result,data:= service.CreateAdmin(admin)
+	if result == "Created Successfully"{
+		c.JSON(http.StatusOK, gin.H{"result": data})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"error": result})
+}
+

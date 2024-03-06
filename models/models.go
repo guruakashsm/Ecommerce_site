@@ -55,6 +55,7 @@ type Seller struct {
 	ConfirmPassword string `json:"confirmpassword" bson:"confirmpassword"`
 	Phone_No        int    `json:"phoneno" bson:"phoneno"`
 	Address         string `json:"address" bson:"address"`
+	Image string `json:"image" bson:"image"`
 }
 type Delete struct {
 	Collection string `json:"collection" bson:"collection"`
@@ -176,6 +177,14 @@ type AdminData struct {
 	WrongInput int                `json:"wronginput" bson:"wronginput"`
 	Token      string             `json:"token" bson:"token"`
 }
+type Admin struct {
+	Email      string             `json:"email" bson:"email"`
+	Password   string             `json:"password" bson:"password"`
+	IP_Address string             `json:"ip" bson:"ip"`
+	SecretKey  string             `json:"secretkey" bson:"secretkey"`
+	WrongInput int                `json:"wronginput" bson:"wronginput"`
+	Token      string             `json:"token" bson:"token"`
+}
 
 type AdminPageData struct{
 	UserCount int64 `json:"usercount" bson:"usercount"`
@@ -194,7 +203,16 @@ type Workers struct{
 	UserName string `bson:"username" json:"username"`
 	Email string `bson:"email" json:"email"`
 	Role string `bson:"role" json:"role"`
-	Age string `bson:"age" json:"age"`
-	Salary string `bson:"salary" json:"salary"`
+	No string `bson:"no" json:"no"`
+	Salary int64 `bson:"salary" json:"salary"`
 	Status string `bson:"status" json:"status"`
+	Image string `bson:"image" json:"image"`
+}
+
+type AdminSignup struct{
+   AdminName string `json:"name" bson:"name"`
+   Email string `bson:"email" json:"email"`
+   Password string `bson:"password" json:"password"`
+   ConfirmPassword string `bson:"confirmpassword" json:"confirmpassword"`
+   IP string `bson:"ip" json:"ip"`
 }
