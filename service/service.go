@@ -836,8 +836,7 @@ func AdminNeededData() models.AdminPageData {
 	return adminpagedata
 }
 
-
-func GetWorkerdata() []models.Workers{
+func GetWorkerdata() []models.Workers {
 	var workers []models.Workers
 
 	filter := bson.M{}
@@ -856,7 +855,7 @@ func GetWorkerdata() []models.Workers{
 	return workers
 }
 
-func GetFeedBacks() []models.FeedbacktoAdmin{
+func GetFeedBacks() []models.FeedbacktoAdmin {
 	filter := bson.M{}
 	cursor, err := config.Feedback_Collection.Find(context.Background(), filter)
 	var Feedback []models.FeedbacktoAdmin
@@ -876,35 +875,34 @@ func GetFeedBacks() []models.FeedbacktoAdmin{
 }
 
 func CreateWorker(worker models.Workers) string {
-    filter := bson.M{"email": worker.Email}
-    result := config.Worker_Collection.FindOne(context.Background(), filter)
-    if result.Err() == nil {
-        return "User Already Exists"
-    }
-    if result.Err() != nil && result.Err() != mongo.ErrNoDocuments {
-        return "Error in Query: " + result.Err().Error()
-    }
-    _, err := config.Worker_Collection.InsertOne(context.Background(), worker)
-    if err != nil {
-        return "Error in Creating: " + err.Error()
-    }
-    return "Created Successfully"
+	filter := bson.M{"email": worker.Email}
+	result := config.Worker_Collection.FindOne(context.Background(), filter)
+	if result.Err() == nil {
+		return "User Already Exists"
+	}
+	if result.Err() != nil && result.Err() != mongo.ErrNoDocuments {
+		return "Error in Query: " + result.Err().Error()
+	}
+	_, err := config.Worker_Collection.InsertOne(context.Background(), worker)
+	if err != nil {
+		return "Error in Creating: " + err.Error()
+	}
+	return "Created Successfully"
 }
 
+func CreateAdmin(admin models.AdminSignup) (string, string) {
+	filter := bson.M{"email": admin.Email}
 
-func CreateAdmin(admin models.AdminSignup)(string,string){
-	filter := bson.M{"email":admin.Email}
-
-	result :=config.Admin_Collection.FindOne(context.Background(),filter)
-    if result.Err() == nil {
-        return "User Already Exists",""
-    }
-    if result.Err() != nil && result.Err() != mongo.ErrNoDocuments {
-        return "Error in Query: " + result.Err().Error(),""
-    }
-	key,err := GenerateSecret()
-	if err != nil{
-		return "Error In Generating TOTP",""
+	result := config.Admin_Collection.FindOne(context.Background(), filter)
+	if result.Err() == nil {
+		return "User Already Exists", ""
+	}
+	if result.Err() != nil && result.Err() != mongo.ErrNoDocuments {
+		return "Error in Query: " + result.Err().Error(), ""
+	}
+	key, err := GenerateSecret()
+	if err != nil {
+		return "Error In Generating TOTP", ""
 	}
 	var AdminData models.Admin
 	AdminData.Email = admin.Email
@@ -914,8 +912,86 @@ func CreateAdmin(admin models.AdminSignup)(string,string){
 	AdminData.Token = ""
 	AdminData.WrongInput = 0
 	_, err = config.Admin_Collection.InsertOne(context.Background(), AdminData)
-    if err != nil {
-        return "Error in Creating: " + err.Error(),""
-    }
-    return "Created Successfully",key
+	if err != nil {
+		return "Error in Creating: " + err.Error(), ""
+	}
+	return "Created Successfully", key
+}
+
+func GetData(data models.Getdata) (*models.ReturnData, error) {
+	var returndata models.ReturnData
+
+	if data.Collection == "customer" {
+		log.Println("In customer")
+		var profile models.Customer
+		filter := bson.M{"email": data.Id}
+		err := config.Customer_Collection.FindOne(context.Background(), filter).Decode(&profile)
+		if err != nil {
+			log.Println(err)
+			return nil,err
+		}
+		returndata.Name = profile.Name
+		returndata.CustomerId = profile.CustomerId
+		returndata.Address = profile.Address
+		returndata.Email = profile.Email
+		returndata.Phone_No = profile.Phone_No
+		returndata.Password = profile.Password
+		return &returndata,nil
+
+	}else if data.Collection == "seller"{
+		log.Println("In seller")
+		var profile models.Seller
+		filter := bson.M{"selleremail": data.Id}
+		log.Println()
+		err := config.Seller_Collection.FindOne(context.Background(), filter).Decode(&profile)
+		if err != nil {
+			log.Println(err)
+			return nil,err
+		}
+		returndata.Seller_Name = profile.Seller_Name
+		returndata.Phone_No = profile.Phone_No
+		returndata.Address = profile.Address
+		returndata.Password = profile.Password
+		returndata.SellerId = profile.SellerId
+		returndata.Seller_Email = profile.Seller_Email
+		returndata.Seller_Name = profile.Seller_Name
+		returndata.Image = profile.Image
+		return &returndata,nil
+	}else if data.Collection == "inventory"{
+		log.Println("In inventory")
+		var profile models.Inventory1
+		filter := bson.M{"itemname": data.Id}
+		err := config.Inventory_Collection.FindOne(context.Background(), filter).Decode(&profile)
+		if err != nil {
+			log.Println(err)
+			return nil,err
+		}
+		returndata.ItemCategory = profile.ItemCategory
+		returndata.ItemName = profile.ItemName
+		returndata.Quantity = profile.Quantity
+		returndata.Seller_Name = profile.SellerName
+		returndata.Price = profile.Price
+		returndata.Stock_Available = profile.Stock_Available
+		returndata.Image = profile.Image
+		return &returndata,nil
+	}else if data.Collection == "worker"{
+		log.Println("In worker")
+		var profile models.Workers
+		filter := bson.M{"email": data.Id}
+		err := config.Worker_Collection.FindOne(context.Background(), filter).Decode(&profile)
+		if err != nil {
+			log.Println(err)
+			return nil,err
+		}
+		returndata.Email = profile.Email
+		returndata.No = profile.No
+		returndata.Role = profile.Role
+		returndata.Status = profile.Status
+		returndata.UserName = profile.UserName
+		returndata.Salary = profile.Salary
+		returndata.Image = profile.Image
+		return &returndata,nil
+	}
+	return nil,nil
+
 }

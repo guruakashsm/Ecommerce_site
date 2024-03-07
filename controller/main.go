@@ -188,7 +188,7 @@ func Update(c *gin.Context) {
 		return
 	}
 	result := service.Update(update)
-	c.JSON(http.StatusOK, result)
+	c.JSON(http.StatusOK, gin.H{"result":result})
 }
 
 func Delete(c *gin.Context) {
@@ -431,5 +431,21 @@ func CreateAdmin(c *gin.Context){
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"error": result})
+}
+
+func GetData(c *gin.Context){
+	var data models.Getdata
+	if err := c.BindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	log.Println(data)
+	result,err:= service.GetData(data)
+	if err !=nil{
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Internal Server Error"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": result})
 }
 

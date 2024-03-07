@@ -216,3 +216,40 @@ type AdminSignup struct{
    ConfirmPassword string `bson:"confirmpassword" json:"confirmpassword"`
    IP string `bson:"ip" json:"ip"`
 }
+
+type Getdata struct{
+	Id string `json:"id" bson:"id"`
+	Collection string `json:"collection" bson:"collection"`
+}
+
+type ReturnData struct{
+	// worker
+	UserName string `bson:"username" json:"username"`
+	Role string `bson:"role" json:"role"`
+	No string `bson:"no" json:"no"`
+	Salary int64 `bson:"salary" json:"salary"`
+	Status string `bson:"status" json:"status"`
+	// inventory
+	
+	ItemCategory    string  `json:"itemcategory" bson:"itemcategory"`
+	ItemName        string  `json:"itemname" bson:"itemname"`
+	Price           float64 `json:"price" bson:"price"`
+	Quantity        string  `json:"quantity" bson:"quantity"`
+	Stock_Available int32   `json:"sellerquantity" bson:"sellerquantity"`
+	// seller
+	
+	Seller_Email    string `json:"selleremail" bson:"selleremail"`
+	//customer
+	CustomerId      string `json:"customerid" bson:"customerid"`
+	Name            string `json:"name" bson:"name"`
+	//common feilds
+
+	Seller_Name     string `json:"sellername" bson:"sellername"`
+	Image           string  `json:"image" bson:"image"`
+	Email           string `json:"email" bson:"email"`
+	SellerId        string  `json:"sellerid" bson:"sellerid"`
+	Address         string `json:"address" bson:"address"`
+	Phone_No        int    `json:"phonenumber" bson:"phonenumber"`
+	Password        string `json:"password" bson:"password"`
+	ConfirmPassword string `json:"confirmpassword" bson:"confirmpassword"`
+}
