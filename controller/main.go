@@ -13,7 +13,7 @@ import (
 
 func Getinventorydata(c *gin.Context) {
 	Inventorydata := service.Getinventorydata()
-	c.JSON(http.StatusOK, gin.H{"Inventory":Inventorydata})
+	c.JSON(http.StatusOK, gin.H{"Inventory": Inventorydata})
 }
 func Getalldata(c *gin.Context) {
 	alltransaction := service.Getalldata()
@@ -32,7 +32,7 @@ func CreateSeller(c *gin.Context) {
 }
 func Getallsellerdata(c *gin.Context) {
 	Getallsellerdata := service.Getallsellerdata()
-	c.JSON(http.StatusOK, gin.H{"seller":Getallsellerdata})
+	c.JSON(http.StatusOK, gin.H{"seller": Getallsellerdata})
 
 }
 func UpdateCart(c *gin.Context) {
@@ -188,7 +188,7 @@ func Update(c *gin.Context) {
 		return
 	}
 	result := service.Update(update)
-	c.JSON(http.StatusOK, gin.H{"result":result})
+	c.JSON(http.StatusOK, gin.H{"result": result})
 }
 
 func Delete(c *gin.Context) {
@@ -396,19 +396,19 @@ func GetAllDetailsForAdmin(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"result": data})
 }
 
-func GetWorkers(c *gin.Context){
+func GetWorkers(c *gin.Context) {
 	data := service.GetWorkerdata()
 	c.JSON(http.StatusOK, gin.H{"result": data})
 
 }
 
-func GetFeedback(c *gin.Context){
+func GetFeedback(c *gin.Context) {
 	data := service.GetFeedBacks()
-		c.JSON(http.StatusOK, gin.H{"result": data})
-	
+	c.JSON(http.StatusOK, gin.H{"result": data})
+
 }
 
-func CreateWorker(c *gin.Context){
+func CreateWorker(c *gin.Context) {
 	var worker models.Workers
 	if err := c.BindJSON(&worker); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
@@ -419,33 +419,63 @@ func CreateWorker(c *gin.Context){
 	c.JSON(http.StatusOK, gin.H{"result": data})
 }
 
-func CreateAdmin(c *gin.Context){
+func CreateAdmin(c *gin.Context) {
 	var admin models.AdminSignup
 	if err := c.BindJSON(&admin); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	result,data:= service.CreateAdmin(admin)
-	if result == "Created Successfully"{
+	result, data := service.CreateAdmin(admin)
+	if result == "Created Successfully" {
 		c.JSON(http.StatusOK, gin.H{"result": data})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"error": result})
 }
 
-func GetData(c *gin.Context){
+func GetData(c *gin.Context) {
 	var data models.Getdata
 	if err := c.BindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
 	log.Println(data)
-	result,err:= service.GetData(data)
-	if err !=nil{
+	result, err := service.GetData(data)
+	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Internal Server Error"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": result})
+}
+
+func AddEvent(c *gin.Context) {
+	var upload models.UploadCalender
+	if err := c.BindJSON(&upload); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	err := service.AddEvent(upload)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Internal Server Error"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Added Successfully"})
+}
+
+func GetEvent(c *gin.Context) {
+	var GetData models.GetCalender
+	if err := c.BindJSON(&GetData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	data,err := service.GetEvent(GetData)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Internal Server Error"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": data})
 }
 

@@ -995,3 +995,34 @@ func GetData(data models.Getdata) (*models.ReturnData, error) {
 	return nil,nil
 
 }
+
+
+func AddEvent(upload models.UploadCalender)error{
+	_,err:=config.Calender_Collection.InsertOne(context.Background(),upload)
+	if err != nil{
+		log.Println(err)
+		return err
+	}
+	return nil
+}
+
+func GetEvent(GetData models.GetCalender)([]models.UploadCalender,error){
+	filter := bson.M{"email":GetData.AdminEmail}
+	cursor, err := config.Calender_Collection.Find(context.Background(), filter)
+	var Data []models.UploadCalender
+	if err != nil {
+		log.Println(err)
+		return nil,err
+	}
+
+	for cursor.Next(context.Background()) {
+		var data models.UploadCalender
+		err := cursor.Decode(&data)
+		if err != nil {
+			log.Println(err)
+			return nil,err
+		}
+		Data = append(Data, data)
+	}
+	return Data,nil
+}
