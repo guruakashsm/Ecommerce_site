@@ -12,6 +12,9 @@ type Customer struct {
 	Password        string `json:"password" bson:"password"`
 	ConfirmPassword string `json:"confirmpassword" bson:"confirmpassword"`
 	Address         string `json:"address" bson:"address"`
+	IsEmailVerified bool `json:"isemailverified" bson:"isemailverified"`
+    WrongInput        int    `json:"wronginput" bson:"wronginput"`
+    VerificationString        string `json:"verification" bson:"verification"`
 }
 type Address struct {
 	FirstName   string `json:"firstname" bson:"firstname"`
@@ -264,4 +267,10 @@ type UploadCalender struct {
 
 type GetCalender struct {
 	AdminEmail string   `json:"email" bson:"email"`
+}
+
+
+type VerifyEmail struct{
+	Email string `json:"email" bson:"email"`
+	VerificationString        string `json:"verification" bson:"verification"`
 }

@@ -47,7 +47,7 @@ func UpdateCart(cart models.Cart) *mongo.UpdateResult {
 	update := bson.M{"$set": bson.M{"name": cart.Name, "quantity": cart.Quantity, "totalprice": cart.Price, "price": cart.Price / float64(cart.Quantity)}}
 	result, err := config.Cart_Collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return result
 
@@ -59,7 +59,7 @@ func Cart(customerid string) []models.Cart {
 	cursor, err := config.Cart_Collection.Find(context.Background(), filter)
 	if err != nil {
 
-		log.Fatal(err)
+		log.Println(err)
 	}
 	defer cursor.Close(context.Background())
 	var Cart []models.Cart
@@ -68,7 +68,7 @@ func Cart(customerid string) []models.Cart {
 		err := cursor.Decode(&cart)
 		if err != nil {
 
-			log.Fatal(err)
+			log.Println(err)
 		}
 		Cart = append(Cart, cart)
 	}
@@ -79,7 +79,7 @@ func Search(productName string) []models.Inventory1 {
 	filter := bson.M{"itemcategory": productName}
 	cursor, err := config.Inventory_Collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	defer cursor.Close(context.Background())
 	var Inventory []models.Inventory1
@@ -90,12 +90,12 @@ func Search(productName string) []models.Inventory1 {
 			// filter := bson.M{"itemname":inventory.ItemName}
 			// _,err:=config.Inventory_Collection.DeleteOne(context.Background(),filter)
 			// if err != nil {
-			// 	log.Fatal(err)
+			// 	log.Println(err)
 			// }
 			continue
 		}
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 
 		Inventory = append(Inventory, inventory)
@@ -106,7 +106,7 @@ func Getalldata() []models.Customer {
 	filter := bson.D{}
 	cursor, err := config.Customer_Collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	defer cursor.Close(context.Background())
 	var Profiles []models.Customer
@@ -114,7 +114,7 @@ func Getalldata() []models.Customer {
 		var profile models.Customer
 		err := cursor.Decode(&profile)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		Profiles = append(Profiles, profile)
 	}
@@ -124,7 +124,7 @@ func Getinventorydata() []models.Inventory {
 	filter := bson.D{}
 	cursor, err := config.Inventory_Collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	defer cursor.Close(context.Background())
 	var Inventorydata []models.Inventory
@@ -132,7 +132,7 @@ func Getinventorydata() []models.Inventory {
 		var inventory models.Inventory
 		err := cursor.Decode(&inventory)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		Inventorydata = append(Inventorydata, inventory)
 	}
@@ -159,28 +159,55 @@ func Insert(profile models.Customer) int {
 	if profile.Password != profile.ConfirmPassword {
 		return 3
 	}
-
+    
 	filter := bson.M{"email": profile.Email}
-	cursor, err := config.Customer_Collection.Find(context.Background(), filter)
-	defer cursor.Close(context.Background())
-	if err != nil {
-		log.Fatal(err)
-	}
+    existingCustomer := config.Customer_Collection.FindOne(context.Background(), filter)
 
-	profile.CustomerId = GenerateUniqueCustomerID()
+// Check if the document already exists
+if existingCustomer.Err() == nil {
+    var existingProfile models.Customer // Replace with the actual type of your document
+    if err := existingCustomer.Decode(&existingProfile); err != nil {
+        log.Println(err)
+        return 0
+    }
 
-	if cursor.RemainingBatchLength() == 0 {
+    // Check if the email is verified
+    if existingProfile.IsEmailVerified {
+        return 2
+    } else {
+		profile.CustomerId = GenerateUniqueCustomerID()
+		profile.IsEmailVerified = false
+		profile.WrongInput = 0
+		profile.VerificationString = GetRandomString(6)
+        _, updateErr := config.Customer_Collection.ReplaceOne(context.Background(), filter, profile)
+        if updateErr != nil {
+            return 0
+        } 
+		SendEmailforCustomerVerification(profile.Email,profile.VerificationString,"GURU")
 
-		inserted, err := config.Customer_Collection.InsertOne(context.Background(), profile)
-		if err != nil {
-			log.Fatal(err)
-			return 0
-		}
+       
+        return 1
+    }
+} else if existingCustomer.Err() == mongo.ErrNoDocuments {
+   
+    profile.CustomerId = GenerateUniqueCustomerID()
+    profile.IsEmailVerified = false
+    profile.WrongInput = 0
+	profile.VerificationString = GetRandomString(6)
 
-		fmt.Println("Inserted", inserted.InsertedID)
-		return 1
-	}
-	return 2
+    inserted, insertErr := config.Customer_Collection.InsertOne(context.Background(), profile)
+    if insertErr != nil {
+        log.Println(insertErr)
+        return 0
+    }
+	SendEmailforCustomerVerification(profile.Email,profile.CustomerId,"GURU")
+    fmt.Println("Inserted", inserted.InsertedID)
+    return 1
+} else {
+    log.Println(existingCustomer.Err())
+    return 0
+}
+
 }
 func Addtocart(addtocart models.Addtocart1) bool {
 	filter := bson.D{
@@ -192,7 +219,7 @@ func Addtocart(addtocart models.Addtocart1) bool {
 
 	cursor, err := config.Cart_Collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	defer cursor.Close(context.Background())
@@ -214,7 +241,7 @@ func Addtocart(addtocart models.Addtocart1) bool {
 		update := bson.M{"$set": bson.M{"sellerquantity": inventory.Stock_Available}}
 		config.Inventory_Collection.UpdateOne(context.Background(), filter, update)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 			return false
 		}
 
@@ -227,7 +254,7 @@ func Addtocart(addtocart models.Addtocart1) bool {
 		err = cursor.Decode(&cart)
 
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 	}
 	// Item already exists, update its quantity
@@ -244,7 +271,7 @@ func Addtocart(addtocart models.Addtocart1) bool {
 	update1 := bson.M{"$set": bson.M{"sellerquantity": inventory.Stock_Available}}
 	config.Inventory_Collection.UpdateOne(context.Background(), filter1, update1)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return false
 	}
 	return true
@@ -254,7 +281,7 @@ func Getallsellerdata() []models.Seller {
 	filter := bson.D{}
 	cursor, err := config.Seller_Collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	defer cursor.Close(context.Background())
 	var Seller []models.Seller
@@ -262,7 +289,7 @@ func Getallsellerdata() []models.Seller {
 		var seller models.Seller
 		err := cursor.Decode(&seller)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		Seller = append(Seller, seller)
 	}
@@ -276,14 +303,14 @@ func CreateSeller(seller models.Seller) bool {
 	cursor, err := config.Seller_Collection.Find(context.Background(), filter)
 	defer cursor.Close(context.Background())
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	if cursor.RemainingBatchLength() == 0 {
 		seller.SellerId = GenerateUniqueCustomerID()
 		_, err := config.Seller_Collection.InsertOne(context.Background(), seller)
 		if err != nil {
 
-			log.Fatal(err)
+			log.Println(err)
 
 		}
 		return true
@@ -320,7 +347,7 @@ func Inventory(inventory models.Inventory) (bool, error) {
 	filter := bson.M{"itemname": inventory.ItemName}
 	cursor, err := config.Inventory_Collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return false, err
 	}
 	if cursor.RemainingBatchLength() == 0 {
@@ -443,7 +470,7 @@ func Delete(delete models.Delete) bool {
 		filter := bson.M{"email": delete.IdValue}
 		_, err := config.Customer_Collection.DeleteOne(context.Background(), filter)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 			return false
 		}
 		return true
@@ -452,7 +479,7 @@ func Delete(delete models.Delete) bool {
 		filter := bson.M{"selleremail": delete.IdValue}
 		_, err := config.Seller_Collection.DeleteOne(context.Background(), filter)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 			return false
 		}
 		return true
@@ -461,7 +488,7 @@ func Delete(delete models.Delete) bool {
 		filter := bson.M{"itemname": delete.IdValue}
 		_, err := config.Inventory_Collection.DeleteOne(context.Background(), filter)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 			return false
 		}
 		return true
@@ -492,7 +519,7 @@ func CheckSeller(check models.Login) (string, bool, error) {
 func DeleteProduct(delete models.DeleteProduct) bool {
 	customerid, err := ExtractCustomerID(delete.Token, constants.SecretKey)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return false
 	}
 	filter1 := bson.M{"customerid": customerid}
@@ -509,11 +536,11 @@ func DeleteProduct(delete models.DeleteProduct) bool {
 	update1 := bson.M{"$set": bson.M{"sellerquantity": delete.Quantity}}
 	_, err = config.Inventory_Collection.UpdateOne(context.Background(), filter3, update1)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	_, err = config.Cart_Collection.DeleteOne(context.Background(), combinedFilter)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return false
 	}
 
@@ -554,7 +581,7 @@ func countdigits(number int) int {
 func Feedback(feedback models.Feedback) int {
 	insertedid, err := config.Feedback_Collection.InsertOne(context.Background(), feedback)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return 3
 	}
 	fmt.Println(insertedid.InsertedID)
@@ -566,13 +593,13 @@ func CustomerFeedback() []models.FeedbacktoAdmin {
 	cursor, err := config.Feedback_Collection.Find(context.Background(), filter)
 	var Feedback []models.FeedbacktoAdmin
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	for cursor.Next(context.Background()) {
 		var feedback models.FeedbacktoAdmin
 		err := cursor.Decode(&feedback)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		Feedback = append(Feedback, feedback)
 	}
@@ -584,13 +611,13 @@ func SellerFeedback() []models.FeedbacktoAdmin {
 	cursor, err := config.Feedback_Collection.Find(context.Background(), filter)
 	var Feedback []models.FeedbacktoAdmin
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	for cursor.Next(context.Background()) {
 		var feedback models.FeedbacktoAdmin
 		err := cursor.Decode(&feedback)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		Feedback = append(Feedback, feedback)
 	}
@@ -625,7 +652,7 @@ func CustomerOrders(ItemsToBuy []models.Item, Data models.Address) {
 	order.Address = Data
 	id, err := config.Buynow_Collection.InsertOne(context.Background(), order)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	fmt.Println(id)
 
@@ -636,13 +663,13 @@ func Orders() []models.Customerorder {
 	filter := bson.M{}
 	cursor, err := config.Buynow_Collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	for cursor.Next(context.Background()) {
 		var order models.Customerorder
 		err := cursor.Decode(&order)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		Order = append(Order, order)
 	}
@@ -655,7 +682,7 @@ func DeleteOrder(delete models.DeleteOrder) {
 	// Parse the ID string to an ObjectId
 	objectID, err := primitive.ObjectIDFromHex(delete.Id)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	// Create a filter to match the ObjectId
@@ -663,7 +690,7 @@ func DeleteOrder(delete models.DeleteOrder) {
 
 	id, err := config.Buynow_Collection.DeleteOne(context.Background(), filter)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	fmt.Println(id)
@@ -672,7 +699,7 @@ func DeleteOrder(delete models.DeleteOrder) {
 func CustomerOrder(token string) []models.Customerorder {
 	id, err := ExtractCustomerID(token, constants.SecretKey)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	var customer models.Customer
 	filter_customer := bson.M{"customerid": id}
@@ -681,13 +708,13 @@ func CustomerOrder(token string) []models.Customerorder {
 	filter := bson.M{"address.phonenumber": customer.Phone_No}
 	cursor, err := config.Buynow_Collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	for cursor.Next(context.Background()) {
 		var order models.Customerorder
 		err := cursor.Decode(&order)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		Order = append(Order, order)
 	}
@@ -699,7 +726,7 @@ func Buynow(id string) {
 	filter := bson.M{"customerid": id}
 	_, err := config.Cart_Collection.DeleteMany(context.Background(), filter)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
 
@@ -708,7 +735,7 @@ func Itemstobuy(id string) []models.Item {
 	cursor, err := config.Cart_Collection.Find(context.Background(), filter)
 	if err != nil {
 
-		log.Fatal(err)
+		log.Println(err)
 	}
 	var Item []models.Item
 	defer cursor.Close(context.Background())
@@ -717,7 +744,7 @@ func Itemstobuy(id string) []models.Item {
 		err := cursor.Decode(&item)
 		if err != nil {
 
-			log.Fatal(err)
+			log.Println(err)
 		}
 		Item = append(Item, item)
 	}
@@ -730,7 +757,7 @@ func TotalAmount(id string) float64 {
 	cursor, err := config.Cart_Collection.Find(context.Background(), filter)
 	if err != nil {
 
-		log.Fatal(err)
+		log.Println(err)
 	}
 	var Cart float64
 	defer cursor.Close(context.Background())
@@ -739,7 +766,7 @@ func TotalAmount(id string) float64 {
 		err := cursor.Decode(&cart)
 		if err != nil {
 
-			log.Fatal(err)
+			log.Println(err)
 		}
 		if cart.TotalPrice == 0 {
 			Cart = Cart + cart.Price
@@ -750,7 +777,7 @@ func TotalAmount(id string) float64 {
 	var currentValues models.Sales
 	err = config.Sales_Collection.FindOne(context.Background(), bson.M{}).Decode(&currentValues)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	// Update the values
 	updatedTotalSalesAmount := currentValues.TotalSalesAmount + int(Cart)
@@ -805,7 +832,7 @@ func AdminLoginCheck(login *models.AdminData) (string, int) {
 	idString := correctdata.Id.Hex()
 	objectID, err := primitive.ObjectIDFromHex(idString)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	token, err := CreateToken(login.Email, string(objectID.String()))
 	if err != nil {
@@ -842,13 +869,13 @@ func GetWorkerdata() []models.Workers {
 	filter := bson.M{}
 	cursor, err := config.Worker_Collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	for cursor.Next(context.Background()) {
 		var worker models.Workers
 		err := cursor.Decode(&worker)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		workers = append(workers, worker)
 	}
@@ -860,14 +887,14 @@ func GetFeedBacks() []models.FeedbacktoAdmin {
 	cursor, err := config.Feedback_Collection.Find(context.Background(), filter)
 	var Feedback []models.FeedbacktoAdmin
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	for cursor.Next(context.Background()) {
 		var feedback models.FeedbacktoAdmin
 		err := cursor.Decode(&feedback)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		Feedback = append(Feedback, feedback)
 	}
@@ -928,7 +955,7 @@ func GetData(data models.Getdata) (*models.ReturnData, error) {
 		err := config.Customer_Collection.FindOne(context.Background(), filter).Decode(&profile)
 		if err != nil {
 			log.Println(err)
-			return nil,err
+			return nil, err
 		}
 		returndata.Name = profile.Name
 		returndata.CustomerId = profile.CustomerId
@@ -936,9 +963,9 @@ func GetData(data models.Getdata) (*models.ReturnData, error) {
 		returndata.Email = profile.Email
 		returndata.Phone_No = profile.Phone_No
 		returndata.Password = profile.Password
-		return &returndata,nil
+		return &returndata, nil
 
-	}else if data.Collection == "seller"{
+	} else if data.Collection == "seller" {
 		log.Println("In seller")
 		var profile models.Seller
 		filter := bson.M{"selleremail": data.Id}
@@ -946,7 +973,7 @@ func GetData(data models.Getdata) (*models.ReturnData, error) {
 		err := config.Seller_Collection.FindOne(context.Background(), filter).Decode(&profile)
 		if err != nil {
 			log.Println(err)
-			return nil,err
+			return nil, err
 		}
 		returndata.Seller_Name = profile.Seller_Name
 		returndata.Phone_No = profile.Phone_No
@@ -956,15 +983,15 @@ func GetData(data models.Getdata) (*models.ReturnData, error) {
 		returndata.Seller_Email = profile.Seller_Email
 		returndata.Seller_Name = profile.Seller_Name
 		returndata.Image = profile.Image
-		return &returndata,nil
-	}else if data.Collection == "inventory"{
+		return &returndata, nil
+	} else if data.Collection == "inventory" {
 		log.Println("In inventory")
 		var profile models.Inventory1
 		filter := bson.M{"itemname": data.Id}
 		err := config.Inventory_Collection.FindOne(context.Background(), filter).Decode(&profile)
 		if err != nil {
 			log.Println(err)
-			return nil,err
+			return nil, err
 		}
 		returndata.ItemCategory = profile.ItemCategory
 		returndata.ItemName = profile.ItemName
@@ -973,15 +1000,15 @@ func GetData(data models.Getdata) (*models.ReturnData, error) {
 		returndata.Price = profile.Price
 		returndata.Stock_Available = profile.Stock_Available
 		returndata.Image = profile.Image
-		return &returndata,nil
-	}else if data.Collection == "worker"{
+		return &returndata, nil
+	} else if data.Collection == "worker" {
 		log.Println("In worker")
 		var profile models.Workers
 		filter := bson.M{"email": data.Id}
 		err := config.Worker_Collection.FindOne(context.Background(), filter).Decode(&profile)
 		if err != nil {
 			log.Println(err)
-			return nil,err
+			return nil, err
 		}
 		returndata.Email = profile.Email
 		returndata.No = profile.No
@@ -990,29 +1017,28 @@ func GetData(data models.Getdata) (*models.ReturnData, error) {
 		returndata.UserName = profile.UserName
 		returndata.Salary = profile.Salary
 		returndata.Image = profile.Image
-		return &returndata,nil
+		return &returndata, nil
 	}
-	return nil,nil
+	return nil, nil
 
 }
 
-
-func AddEvent(upload models.UploadCalender)error{
-	_,err:=config.Calender_Collection.InsertOne(context.Background(),upload)
-	if err != nil{
+func AddEvent(upload models.UploadCalender) error {
+	_, err := config.Calender_Collection.InsertOne(context.Background(), upload)
+	if err != nil {
 		log.Println(err)
 		return err
 	}
 	return nil
 }
 
-func GetEvent(GetData models.GetCalender)([]models.UploadCalender,error){
-	filter := bson.M{"email":GetData.AdminEmail}
+func GetEvent(GetData models.GetCalender) ([]models.UploadCalender, error) {
+	filter := bson.M{"email": GetData.AdminEmail}
 	cursor, err := config.Calender_Collection.Find(context.Background(), filter)
 	var Data []models.UploadCalender
 	if err != nil {
 		log.Println(err)
-		return nil,err
+		return nil, err
 	}
 
 	for cursor.Next(context.Background()) {
@@ -1020,9 +1046,31 @@ func GetEvent(GetData models.GetCalender)([]models.UploadCalender,error){
 		err := cursor.Decode(&data)
 		if err != nil {
 			log.Println(err)
-			return nil,err
+			return nil, err
 		}
 		Data = append(Data, data)
 	}
-	return Data,nil
+	return Data, nil
+}
+
+func EmailVerification (data models.VerifyEmail)(string,error){
+	filter := bson.M{"email":data.Email}
+	var customer models.Customer
+	err := config.Customer_Collection.FindOne(context.Background(),filter).Decode(&customer)
+    if err != nil{
+		return "",err
+	}
+	if customer.VerificationString == data.VerificationString{
+		update := bson.M{"$set": bson.M{"isemailverified": true}}
+		filter := bson.M{"email":data.Email}
+	
+	_,err := config.Customer_Collection.UpdateOne(context.Background(),filter,update)
+    if err != nil{
+		return "",err
+	}
+	return "Signup Successful",nil
+	}else{
+		return "Wrong OTP",nil
+	}
+	
 }

@@ -37,6 +37,7 @@ func Router() *gin.Engine {
 	router.POST("/create", controller.CreateProfile)
 	router.POST("/deletedata", controller.Delete)
 	router.POST("/addtocart", controller.Addtocart)
+	router.POST("/verifyemail", controller.VerifyEmail)
 	router.POST("/login", controller.Login)
 	router.POST("/products", controller.Products)
 	router.POST("/updatecart", controller.UpdateCart)

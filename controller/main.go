@@ -479,3 +479,18 @@ func GetEvent(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": data})
 }
 
+func VerifyEmail(c *gin.Context) {
+	var Data models.VerifyEmail
+	if err := c.BindJSON(&Data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	data,err := service.EmailVerification(Data)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Internal Server Error"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": data})
+}
+
