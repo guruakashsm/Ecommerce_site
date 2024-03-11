@@ -44,7 +44,6 @@ func Router() *gin.Engine {
 	router.POST("/inventory", controller.Inventory)
 	router.POST("/search", controller.Search)
 	router.POST("/update", controller.Update)
-	router.GET("/inventorydata", controller.Getallinventorydata)
 	router.POST("/sellercheck", controller.CheckSeller)
 	router.POST("/deleteproduct", controller.DeleteProduct)
 	router.POST("/deleteproductbyseller", controller.DeleteProductBySeller)

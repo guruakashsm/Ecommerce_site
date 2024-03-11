@@ -100,6 +100,7 @@ func Search(productName string) []models.Inventory1 {
 
 		Inventory = append(Inventory, inventory)
 	}
+	
 	return Inventory
 }
 func Getalldata() []models.Customer {

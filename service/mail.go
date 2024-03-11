@@ -56,7 +56,7 @@ func (sender *GmailSender) SendEmail(
 }
 
 func SendEmailforCustomerVerification(toEmail, id, name string) {
-	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "snuk gatz ohoa agyt")
+	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "")
 	subject := "A test Email"
 	htmlTemplate := `
         <!DOCTYPE html>

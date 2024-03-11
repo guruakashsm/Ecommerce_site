@@ -285,3 +285,7 @@ type Block struct {
 	Email              string `json:"email" bson:"email"`
 	Collection string `json:"collection" bson:"collection"`
 }
+
+type Search struct {
+	ProductName string `json:"productName" bson:"productName"`
+}

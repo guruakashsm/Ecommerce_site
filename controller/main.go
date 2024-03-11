@@ -150,13 +150,9 @@ func Inventory(c *gin.Context) {
 
 }
 
-var SearchName string
 
-func Getallinventorydata(c *gin.Context) {
-	fmt.Println(SearchName)
-	result := service.Search(SearchName)
-	c.JSON(http.StatusOK, result)
-}
+
+
 
 func ValidateToken(c *gin.Context) {
 	var userdata models.Userdata
@@ -171,15 +167,14 @@ func ValidateToken(c *gin.Context) {
 }
 
 func Search(c *gin.Context) {
-	type Search struct {
-		ProductName string `json:"productName" bson:"productName"`
-	}
-	var search Search
+	var search models.Search
 	if err := c.BindJSON(&search); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	SearchName = search.ProductName
+	result := service.Search(search.ProductName)
+	c.JSON(http.StatusOK, gin.H{"data":result})
+	
 }
 
 func Update(c *gin.Context) {
