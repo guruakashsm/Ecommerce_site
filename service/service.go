@@ -159,54 +159,54 @@ func Insert(profile models.Customer) int {
 	if profile.Password != profile.ConfirmPassword {
 		return 3
 	}
-    
+
 	filter := bson.M{"email": profile.Email}
-    existingCustomer := config.Customer_Collection.FindOne(context.Background(), filter)
+	existingCustomer := config.Customer_Collection.FindOne(context.Background(), filter)
 
-// Check if the document already exists
-if existingCustomer.Err() == nil {
-    var existingProfile models.Customer // Replace with the actual type of your document
-    if err := existingCustomer.Decode(&existingProfile); err != nil {
-        log.Println(err)
-        return 0
-    }
+	// Check if the document already exists
+	if existingCustomer.Err() == nil {
+		var existingProfile models.Customer // Replace with the actual type of your document
+		if err := existingCustomer.Decode(&existingProfile); err != nil {
+			log.Println(err)
+			return 0
+		}
 
-    // Check if the email is verified
-    if existingProfile.IsEmailVerified {
-        return 2
-    } else {
+		// Check if the email is verified
+		if existingProfile.IsEmailVerified {
+			return 2
+		} else {
+			profile.CustomerId = GenerateUniqueCustomerID()
+			profile.IsEmailVerified = false
+			profile.WrongInput = 0
+			profile.VerificationString = GenerateOTP(6)
+			_, updateErr := config.Customer_Collection.ReplaceOne(context.Background(), filter, profile)
+			if updateErr != nil {
+				return 0
+			}
+			go SendEmailforCustomerVerification(profile.Email, profile.VerificationString, "GURU")
+
+			return 1
+		}
+	} else if existingCustomer.Err() == mongo.ErrNoDocuments {
+
 		profile.CustomerId = GenerateUniqueCustomerID()
 		profile.IsEmailVerified = false
+		profile.BlockedUser = false
 		profile.WrongInput = 0
-		profile.VerificationString = GetRandomString(6)
-        _, updateErr := config.Customer_Collection.ReplaceOne(context.Background(), filter, profile)
-        if updateErr != nil {
-            return 0
-        } 
-		SendEmailforCustomerVerification(profile.Email,profile.VerificationString,"GURU")
+		profile.VerificationString = GenerateOTP(6)
 
-       
-        return 1
-    }
-} else if existingCustomer.Err() == mongo.ErrNoDocuments {
-   
-    profile.CustomerId = GenerateUniqueCustomerID()
-    profile.IsEmailVerified = false
-    profile.WrongInput = 0
-	profile.VerificationString = GetRandomString(6)
-
-    inserted, insertErr := config.Customer_Collection.InsertOne(context.Background(), profile)
-    if insertErr != nil {
-        log.Println(insertErr)
-        return 0
-    }
-	SendEmailforCustomerVerification(profile.Email,profile.CustomerId,"GURU")
-    fmt.Println("Inserted", inserted.InsertedID)
-    return 1
-} else {
-    log.Println(existingCustomer.Err())
-    return 0
-}
+		inserted, insertErr := config.Customer_Collection.InsertOne(context.Background(), profile)
+		if insertErr != nil {
+			log.Println(insertErr)
+			return 0
+		}
+		go SendEmailforCustomerVerification(profile.Email, profile.VerificationString, profile.Name)
+		fmt.Println("Inserted", inserted.InsertedID)
+		return 1
+	} else {
+		log.Println(existingCustomer.Err())
+		return 0
+	}
 
 }
 func Addtocart(addtocart models.Addtocart1) bool {
@@ -307,41 +307,50 @@ func CreateSeller(seller models.Seller) bool {
 	}
 	if cursor.RemainingBatchLength() == 0 {
 		seller.SellerId = GenerateUniqueCustomerID()
+		seller.BlockedUser = false
+		seller.WrongInput = 0
 		_, err := config.Seller_Collection.InsertOne(context.Background(), seller)
 		if err != nil {
 
 			log.Println(err)
 
 		}
+		go SendSellerInvitation(seller.Seller_Email, seller.Seller_Name, seller.Password, "https://anon.up.railway.app/seller/")
 		return true
 	}
 	return false
 }
-func Login(details models.Login) (string, bool, error) {
+func Login(details models.Login) (string, error, int) {
 	var customer models.Customer
 
 	filter := bson.M{"email": details.Email}
 	err := config.Customer_Collection.FindOne(context.Background(), filter).Decode(&customer)
 	if err != nil {
-		// Handle the case where the user is not found
-		return "", false, err
+		return "User not found", err, 0
+	}
+	if customer.WrongInput == 10 {
+		return "Too many no of try", nil, 0
+	}
+	if !customer.IsEmailVerified {
+		return "Please verify your email", nil, 0
+	}
+	if customer.BlockedUser {
+		return "Your ID has been Blocked", nil, 0
+	}
+	if customer.Password != details.Password {
+		customer.WrongInput++
+		update := bson.M{"$set": bson.M{"wronginput": customer.WrongInput}}
+		config.Customer_Collection.UpdateOne(context.Background(), filter, update)
+		return "Wrong Password", nil, 0
 	}
 
-	// Verify the password (You should use a secure password hashing library here)
-	if details.Password != "tamil" {
-		if customer.Password != details.Password {
-			// Passwords don't match
-			fmt.Println(details.Password)
-			return "", false, nil
-		}
-	}
 	token, err := CreateToken(customer.Email, customer.CustomerId)
 	if err != nil {
-		return "", false, err
+		return "Internal server error", err, 0
 
 	}
 
-	return token, true, nil
+	return token, nil, 1
 }
 func Inventory(inventory models.Inventory) (bool, error) {
 	filter := bson.M{"itemname": inventory.ItemName}
@@ -390,13 +399,14 @@ func Update(update models.Update) bool {
 		if err != nil {
 			return false
 		}
+		go SendEditDataNotification(update.IdName,update.Field,update.New_Value)
 		return true
 	} else if update.Collection == "customer" {
 		if update.Field == "phonenumber" || update.Field == "age" || update.Field == "pincode" {
 
 			intValue, err := strconv.Atoi(update.New_Value)
 			if err != nil {
-				// Handle the error, e.g., return an error response or log it
+				return false
 			} else {
 				update.New_Value = strconv.Itoa(intValue)
 			}
@@ -423,7 +433,7 @@ func Update(update models.Update) bool {
 		if err != nil {
 			return false
 		}
-
+		go SendEditDataNotification(update.IdName,update.Field,update.New_Value)
 		return true
 
 	} else if update.Collection == "inventory" {
@@ -459,6 +469,7 @@ func Update(update models.Update) bool {
 
 			return false
 		}
+
 		return true
 	}
 
@@ -508,6 +519,13 @@ func CheckSeller(check models.Login) (string, bool, error) {
 	if check.Password != seller.Password {
 		return "", false, fmt.Errorf("InvalidPassword")
 	}
+	if seller.BlockedUser == true {
+		return "", false, fmt.Errorf("Your ID Has been blocked by admin")
+	}
+	if seller.WrongInput == 10 {
+		return "", false, fmt.Errorf("To many no of attempts")
+	}
+
 	result, err := CreateToken(seller.Seller_Email, seller.SellerId)
 	if err != nil {
 		return "", false, err
@@ -942,6 +960,7 @@ func CreateAdmin(admin models.AdminSignup) (string, string) {
 	if err != nil {
 		return "Error in Creating: " + err.Error(), ""
 	}
+	go SendAdminInvitation(admin.Email, admin.AdminName, admin.Password, "https://anon.up.railway.app/admin/", admin.IP, key)
 	return "Created Successfully", key
 }
 
@@ -963,6 +982,9 @@ func GetData(data models.Getdata) (*models.ReturnData, error) {
 		returndata.Email = profile.Email
 		returndata.Phone_No = profile.Phone_No
 		returndata.Password = profile.Password
+		returndata.IsEmailVerified = profile.IsEmailVerified
+		returndata.BlockedUser = profile.BlockedUser
+		returndata.WrongInput = profile.WrongInput
 		return &returndata, nil
 
 	} else if data.Collection == "seller" {
@@ -983,6 +1005,8 @@ func GetData(data models.Getdata) (*models.ReturnData, error) {
 		returndata.Seller_Email = profile.Seller_Email
 		returndata.Seller_Name = profile.Seller_Name
 		returndata.Image = profile.Image
+		returndata.BlockedUser = profile.BlockedUser
+		returndata.WrongInput = profile.WrongInput
 		return &returndata, nil
 	} else if data.Collection == "inventory" {
 		log.Println("In inventory")
@@ -1053,24 +1077,79 @@ func GetEvent(GetData models.GetCalender) ([]models.UploadCalender, error) {
 	return Data, nil
 }
 
-func EmailVerification (data models.VerifyEmail)(string,error){
-	filter := bson.M{"email":data.Email}
+func EmailVerification(data models.VerifyEmail) (string, error) {
+	filter := bson.M{"email": data.Email}
 	var customer models.Customer
-	err := config.Customer_Collection.FindOne(context.Background(),filter).Decode(&customer)
-    if err != nil{
-		return "",err
+	err := config.Customer_Collection.FindOne(context.Background(), filter).Decode(&customer)
+	if err != nil {
+		return "", err
 	}
-	if customer.VerificationString == data.VerificationString{
+	if customer.VerificationString == data.VerificationString {
 		update := bson.M{"$set": bson.M{"isemailverified": true}}
-		filter := bson.M{"email":data.Email}
-	
-	_,err := config.Customer_Collection.UpdateOne(context.Background(),filter,update)
-    if err != nil{
-		return "",err
+		filter := bson.M{"email": data.Email}
+
+		_, err := config.Customer_Collection.UpdateOne(context.Background(), filter, update)
+		if err != nil {
+			return "", err
+		}
+		go SendThankYouEmail(customer.Email, customer.Name)
+		return "Signup Successful", nil
+	} else {
+		return "Wrong OTP", nil
 	}
-	return "Signup Successful",nil
-	}else{
-		return "Wrong OTP",nil
+
+}
+
+func Block(data models.Block) (string, error) {
+	if data.Collection == "customer" {
+		var customer models.Customer
+		filter := bson.M{"email": data.Email}
+		err := config.Customer_Collection.FindOne(context.Background(), filter).Decode(&customer)
+		if err != nil {
+			log.Println(err)
+			return "No result Found", err
+		}
+		message := ""
+		if customer.BlockedUser {
+			customer.BlockedUser = false
+			message = "Customer has been Unblocked"
+		} else {
+			customer.BlockedUser = true
+			message = "Customer has been Blocked"
+		}
+		update := bson.M{"$set": bson.M{"blockeduser": customer.BlockedUser}}
+		_, err = config.Customer_Collection.UpdateOne(context.Background(), filter, update)
+		if err != nil {
+			log.Println(err)
+			return "Can't Update Data", err
+		}
+		go SendBlockingNotification(customer.Email,customer.Name,"Due to improper behaviour")
+		return message, nil
+	} else if data.Collection == "seller" {
+		var Seller models.Seller
+		filter := bson.M{"selleremail": data.Email}
+		err := config.Seller_Collection.FindOne(context.Background(), filter).Decode(&Seller)
+		if err != nil {
+			log.Println(err)
+			return "No result Found", err
+		}
+		message := ""
+		if Seller.BlockedUser{
+			Seller.BlockedUser = false
+			message = "Seller has been Unblocked"
+		} else {
+			Seller.BlockedUser = true
+			message = "Seller has been Blocked"
+		}
+		update := bson.M{"$set": bson.M{"blockeduser": Seller.BlockedUser}}
+		_, err = config.Seller_Collection.UpdateOne(context.Background(), filter, update)
+		if err != nil {
+			log.Println(err)
+			return "Can't Update Data", err
+		}
+		go SendBlockingNotification(Seller.Seller_Email,Seller.Seller_Name,"Due to improper behaviour")
+		return message, nil
+
 	}
-	
+	return "Invalid Collection", nil
 }

@@ -59,16 +59,18 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	token, success, err := service.Login(request)
+	token, err,no := service.Login(request)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
 	}
-	if success {
+	if no == 1 {
 		c.JSON(http.StatusOK, gin.H{"token": token})
-	} else {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
-	}
+		return
+	}else if(no == 0){
+		c.JSON(http.StatusOK, gin.H{"message": token})
+		return
+	} 
 }
 
 func Products(c *gin.Context) {
@@ -492,5 +494,21 @@ func VerifyEmail(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": data})
+}
+
+func Block(c *gin.Context){
+	var data  models.Block
+	if err := c.BindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	log.Println(data)
+	result,err := service.Block(data)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Internal Server Error"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": result})
 }
 

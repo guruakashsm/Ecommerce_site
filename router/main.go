@@ -67,6 +67,7 @@ func Router() *gin.Engine {
 	router.POST("/createadmin",controller.CreateAdmin)
 	router.POST("/addevent",controller.AddEvent)
 	router.POST("/getevent",controller.GetEvent)
+	router.POST("/block",controller.Block)
 
 
 

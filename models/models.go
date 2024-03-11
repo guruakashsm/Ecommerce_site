@@ -5,16 +5,17 @@ import (
 )
 
 type Customer struct {
-	CustomerId      string `json:"customerid" bson:"customerid"`
-	Email           string `json:"email" bson:"email"`
-	Name            string `json:"name" bson:"name"`
-	Phone_No        int    `json:"phonenumber" bson:"phonenumber"`
-	Password        string `json:"password" bson:"password"`
-	ConfirmPassword string `json:"confirmpassword" bson:"confirmpassword"`
-	Address         string `json:"address" bson:"address"`
-	IsEmailVerified bool `json:"isemailverified" bson:"isemailverified"`
-    WrongInput        int    `json:"wronginput" bson:"wronginput"`
-    VerificationString        string `json:"verification" bson:"verification"`
+	CustomerId         string `json:"customerid" bson:"customerid"`
+	Email              string `json:"email" bson:"email"`
+	Name               string `json:"name" bson:"name"`
+	Phone_No           int    `json:"phonenumber" bson:"phonenumber"`
+	Password           string `json:"password" bson:"password"`
+	ConfirmPassword    string `json:"confirmpassword" bson:"confirmpassword"`
+	Address            string `json:"address" bson:"address"`
+	IsEmailVerified    bool   `json:"isemailverified" bson:"isemailverified"`
+	WrongInput         int    `json:"wronginput" bson:"wronginput"`
+	VerificationString string `json:"verification" bson:"verification"`
+	BlockedUser        bool `json:"blockeduser" bson:"blockeduser"`
 }
 type Address struct {
 	FirstName   string `json:"firstname" bson:"firstname"`
@@ -59,6 +60,8 @@ type Seller struct {
 	Phone_No        int    `json:"phoneno" bson:"phoneno"`
 	Address         string `json:"address" bson:"address"`
 	Image           string `json:"image" bson:"image"`
+	WrongInput         int    `json:"wronginput" bson:"wronginput"`
+	BlockedUser        bool `json:"blockeduser" bson:"blockeduser"`
 }
 type Delete struct {
 	Collection string `json:"collection" bson:"collection"`
@@ -245,6 +248,10 @@ type ReturnData struct {
 	//customer
 	CustomerId string `json:"customerid" bson:"customerid"`
 	Name       string `json:"name" bson:"name"`
+	IsEmailVerified    bool   `json:"isemailverified" bson:"isemailverified"`
+	WrongInput         int    `json:"wronginput" bson:"wronginput"`
+	VerificationString string `json:"verification" bson:"verification"`
+	BlockedUser        bool `json:"blockeduser" bson:"blockeduser"`
 	//common feilds
 
 	Seller_Name     string `json:"sellername" bson:"sellername"`
@@ -266,11 +273,15 @@ type UploadCalender struct {
 }
 
 type GetCalender struct {
-	AdminEmail string   `json:"email" bson:"email"`
+	AdminEmail string `json:"email" bson:"email"`
 }
 
+type VerifyEmail struct {
+	Email              string `json:"email" bson:"email"`
+	VerificationString string `json:"verification" bson:"verification"`
+}
 
-type VerifyEmail struct{
-	Email string `json:"email" bson:"email"`
-	VerificationString        string `json:"verification" bson:"verification"`
+type Block struct {
+	Email              string `json:"email" bson:"email"`
+	Collection string `json:"collection" bson:"collection"`
 }
