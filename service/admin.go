@@ -1,0 +1,436 @@
+package service
+
+import (
+	"context"
+	"ecommerce/config"
+	"ecommerce/models"
+	"fmt"
+	"log"
+	"strconv"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+// Admin Login
+func AdminLoginCheck(login *models.AdminData) (string, int) {
+
+	var correctdata models.AdminData
+	filter := bson.M{"email": login.Email}
+	err := config.Admin_Collection.FindOne(context.Background(), filter).Decode(&correctdata)
+	if err != nil {
+		return "", 0
+	}
+	if correctdata.WrongInput == 4 {
+		return "", 1
+	}
+	if correctdata.IP_Address == login.IP_Address {
+		return "", 3
+	}
+	if correctdata.Password != login.Password {
+		correctdata.WrongInput++
+		update := bson.M{"$set": bson.M{"wronginput": correctdata.WrongInput}}
+		config.Admin_Collection.UpdateOne(context.Background(), filter, update)
+		return "", 2
+	}
+
+	if !ValidateOTP(login.TOTP, correctdata.SecretKey) {
+		correctdata.WrongInput++
+		update := bson.M{"$set": bson.M{"wronginput": correctdata.WrongInput}}
+		config.Admin_Collection.UpdateOne(context.Background(), filter, update)
+		return "", 4
+	}
+	idString := correctdata.Id.Hex()
+	objectID, err := primitive.ObjectIDFromHex(idString)
+	if err != nil {
+		log.Println(err)
+	}
+	token, err := CreateToken(login.Email, string(objectID.String()))
+	if err != nil {
+		return "", 5
+	}
+	log.Println(token)
+	update := bson.M{"$set": bson.M{"token": token, "wronginput": 0}}
+	config.Admin_Collection.UpdateOne(context.Background(), filter, update)
+	return token, 5
+
+}
+
+// TO get all Customer
+func GetallCustomerdata() ([]models.Customer, string, error) {
+	filter := bson.D{}
+	cursor, err := config.Customer_Collection.Find(context.Background(), filter)
+	if err != nil {
+		log.Println(err)
+	}
+	defer cursor.Close(context.Background())
+	var Profiles []models.Customer
+	for cursor.Next(context.Background()) {
+		var profile models.Customer
+		err := cursor.Decode(&profile)
+		if err != nil {
+			return nil, "Error in Decode", err
+		}
+		Profiles = append(Profiles, profile)
+	}
+	return Profiles, "Success", nil
+}
+
+// Get All Inventory
+func Getinventorydata() []models.Inventory {
+	filter := bson.D{}
+	cursor, err := config.Inventory_Collection.Find(context.Background(), filter)
+	if err != nil {
+		log.Println(err)
+	}
+	defer cursor.Close(context.Background())
+	var Inventorydata []models.Inventory
+	for cursor.Next(context.Background()) {
+		var inventory models.Inventory
+		err := cursor.Decode(&inventory)
+		if err != nil {
+			log.Println(err)
+		}
+		Inventorydata = append(Inventorydata, inventory)
+	}
+	return Inventorydata
+}
+
+// Get All Seller
+func Getallsellerdata() []models.Seller {
+	filter := bson.D{}
+	cursor, err := config.Seller_Collection.Find(context.Background(), filter)
+	if err != nil {
+		log.Println(err)
+	}
+	defer cursor.Close(context.Background())
+	var Seller []models.Seller
+	for cursor.Next(context.Background()) {
+		var seller models.Seller
+		err := cursor.Decode(&seller)
+		if err != nil {
+			log.Println(err)
+		}
+		Seller = append(Seller, seller)
+	}
+	return Seller
+}
+
+// Create Seller
+func CreateSeller(seller models.Seller) bool {
+	if seller.Password != seller.ConfirmPassword {
+		return false
+	}
+	filter := bson.M{"selleremail": seller.Seller_Email}
+	cursor, err := config.Seller_Collection.Find(context.Background(), filter)
+	defer cursor.Close(context.Background())
+	if err != nil {
+		log.Println(err)
+	}
+	if cursor.RemainingBatchLength() == 0 {
+		seller.SellerId = GenerateUniqueCustomerID()
+		seller.BlockedUser = false
+		seller.WrongInput = 0
+		_, err := config.Seller_Collection.InsertOne(context.Background(), seller)
+		if err != nil {
+
+			log.Println(err)
+
+		}
+		go SendSellerInvitation(seller.Seller_Email, seller.Seller_Name, seller.Password, "https://anon.up.railway.app/seller/")
+		return true
+	}
+	return false
+}
+
+// Update Any Data
+func Update(update models.Update) bool {
+	if update.Collection == "seller" {
+		filter := bson.M{"selleremail": update.IdName}
+		update1 := bson.M{"$set": bson.M{update.Field: update.New_Value}}
+		options := options.Update()
+		_, err := config.Seller_Collection.UpdateOne(context.TODO(), filter, update1, options)
+		if err != nil {
+			return false
+		}
+		go SendEditDataNotification(update.IdName, update.Field, update.New_Value)
+		return true
+	} else if update.Collection == "customer" {
+		if update.Field == "phonenumber" || update.Field == "age" || update.Field == "pincode" {
+
+			intValue, err := strconv.Atoi(update.New_Value)
+			if err != nil {
+				return false
+			} else {
+				update.New_Value = strconv.Itoa(intValue)
+			}
+			if !isValidNumber(update.New_Value) {
+				return false
+			}
+			filter := bson.M{"email": update.IdName}
+			update1 := bson.M{"$set": bson.M{update.Field: intValue}}
+			options := options.Update()
+			_, err1 := config.Customer_Collection.UpdateOne(context.TODO(), filter, update1, options)
+
+			if err1 != nil {
+
+				return false
+			}
+
+		}
+
+		filter := bson.M{"email": update.IdName}
+		update1 := bson.M{"$set": bson.M{update.Field: update.New_Value}}
+		options := options.Update()
+		_, err := config.Customer_Collection.UpdateOne(context.TODO(), filter, update1, options)
+		fmt.Println("updated")
+		if err != nil {
+			return false
+		}
+		go SendEditDataNotification(update.IdName, update.Field, update.New_Value)
+		return true
+
+	} else if update.Collection == "inventory" {
+		if update.Field == "price" {
+			// Check if New_Value is a valid integer
+			intValue, err := strconv.Atoi(update.New_Value)
+			if err != nil {
+				// Handle the error, e.g., return an error response or log it
+				return false
+			}
+
+			// Check if the input value is a valid number (numeric characters only)
+			if !isValidNumber(update.New_Value) {
+				return false
+			}
+
+			filter := bson.M{"itemname": update.IdName}
+			update1 := bson.M{"$set": bson.M{update.Field: intValue}}
+			options := options.Update()
+			_, err1 := config.Inventory_Collection.UpdateOne(context.TODO(), filter, update1, options)
+			if err1 != nil {
+
+				return false
+			}
+			return true
+		}
+
+		filter := bson.M{"itemname": update.IdName}
+		update1 := bson.M{"$set": bson.M{update.Field: update.New_Value}}
+		options := options.Update()
+		_, err := config.Inventory_Collection.UpdateOne(context.TODO(), filter, update1, options)
+		if err != nil {
+
+			return false
+		}
+
+		return true
+	}
+
+	return false
+}
+
+// Delete Any data
+func Delete(delete models.Delete) bool {
+	if delete.Collection == "customer" {
+		filter := bson.M{"email": delete.IdValue}
+		_, err := config.Customer_Collection.DeleteOne(context.Background(), filter)
+		if err != nil {
+			log.Println(err)
+			return false
+		}
+		return true
+	}
+	if delete.Collection == "seller" {
+		filter := bson.M{"selleremail": delete.IdValue}
+		_, err := config.Seller_Collection.DeleteOne(context.Background(), filter)
+		if err != nil {
+			log.Println(err)
+			return false
+		}
+		return true
+	}
+	if delete.Collection == "inventory" {
+		filter := bson.M{"itemname": delete.IdValue}
+		_, err := config.Inventory_Collection.DeleteOne(context.Background(), filter)
+		if err != nil {
+			log.Println(err)
+			return false
+		}
+		return true
+	}
+	return true
+}
+
+// Get Dataneed for Admin
+func AdminNeededData() models.AdminPageData {
+	var adminpagedata models.AdminPageData
+	var sales models.Sales
+	adminpagedata.ProductCount, _ = config.Inventory_Collection.CountDocuments(context.Background(), bson.D{})
+
+	adminpagedata.UserCount, _ = config.Customer_Collection.CountDocuments(context.Background(), bson.D{})
+
+	adminpagedata.SellerCount, _ = config.Seller_Collection.CountDocuments(context.Background(), bson.D{})
+
+	config.Sales_Collection.FindOne(context.Background(), bson.M{}).Decode(&sales)
+
+	adminpagedata.SalesCount = int64(sales.TotalNoOfSales)
+
+	adminpagedata.TotalSalesAmount = int32(sales.TotalSalesAmount)
+
+	return adminpagedata
+}
+
+func GetWorkerdata() []models.Workers {
+	var workers []models.Workers
+
+	filter := bson.M{}
+	cursor, err := config.Worker_Collection.Find(context.Background(), filter)
+	if err != nil {
+		log.Println(err)
+	}
+	for cursor.Next(context.Background()) {
+		var worker models.Workers
+		err := cursor.Decode(&worker)
+		if err != nil {
+			log.Println(err)
+		}
+		workers = append(workers, worker)
+	}
+	return workers
+}
+
+
+
+// Create Worker
+func CreateWorker(worker models.Workers) string {
+	filter := bson.M{"email": worker.Email}
+	result := config.Worker_Collection.FindOne(context.Background(), filter)
+	if result.Err() == nil {
+		return "User Already Exists"
+	}
+	if result.Err() != nil && result.Err() != mongo.ErrNoDocuments {
+		return "Error in Query: " + result.Err().Error()
+	}
+	_, err := config.Worker_Collection.InsertOne(context.Background(), worker)
+	if err != nil {
+		return "Error in Creating: " + err.Error()
+	}
+	return "Created Successfully"
+}
+
+// Create Admin
+func CreateAdmin(admin models.AdminSignup) (string, string) {
+	filter := bson.M{"email": admin.Email}
+
+	result := config.Admin_Collection.FindOne(context.Background(), filter)
+	if result.Err() == nil {
+		return "User Already Exists", ""
+	}
+	if result.Err() != nil && result.Err() != mongo.ErrNoDocuments {
+		return "Error in Query: " + result.Err().Error(), ""
+	}
+	key, err := GenerateSecret()
+	if err != nil {
+		return "Error In Generating TOTP", ""
+	}
+	var AdminData models.AdminData
+	AdminData.Email = admin.Email
+	AdminData.Password = admin.Password
+	AdminData.IP_Address = admin.IP
+	AdminData.SecretKey = key
+	AdminData.Token = ""
+	AdminData.WrongInput = 0
+	_, err = config.Admin_Collection.InsertOne(context.Background(), AdminData)
+	if err != nil {
+		return "Error in Creating: " + err.Error(), ""
+	}
+	go SendAdminInvitation(admin.Email, admin.AdminName, admin.Password, "https://anon.up.railway.app/admin/", admin.IP, key)
+	return "Created Successfully", key
+}
+
+// Get Single Data
+func GetData(data models.Getdata) (*models.ReturnData, error) {
+	var returndata models.ReturnData
+
+	if data.Collection == "customer" {
+		log.Println("In customer")
+		var profile models.Customer
+		filter := bson.M{"email": data.Id}
+		err := config.Customer_Collection.FindOne(context.Background(), filter).Decode(&profile)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+		returndata.Name = profile.Name
+		returndata.CustomerId = profile.CustomerId
+		returndata.Address = profile.Address
+		returndata.Email = profile.Email
+		returndata.Phone_No = profile.Phone_No
+		returndata.Password = profile.Password
+		returndata.IsEmailVerified = profile.IsEmailVerified
+		returndata.BlockedUser = profile.BlockedUser
+		returndata.WrongInput = profile.WrongInput
+		return &returndata, nil
+
+	} else if data.Collection == "seller" {
+		log.Println("In seller")
+		var profile models.Seller
+		filter := bson.M{"selleremail": data.Id}
+		log.Println()
+		err := config.Seller_Collection.FindOne(context.Background(), filter).Decode(&profile)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+		returndata.Seller_Name = profile.Seller_Name
+		returndata.Phone_No = profile.Phone_No
+		returndata.Address = profile.Address
+		returndata.Password = profile.Password
+		returndata.SellerId = profile.SellerId
+		returndata.Seller_Email = profile.Seller_Email
+		returndata.Seller_Name = profile.Seller_Name
+		returndata.Image = profile.Image
+		returndata.BlockedUser = profile.BlockedUser
+		returndata.WrongInput = profile.WrongInput
+		return &returndata, nil
+	} else if data.Collection == "inventory" {
+		log.Println("In inventory")
+		var profile models.Inventory
+		filter := bson.M{"itemname": data.Id}
+		err := config.Inventory_Collection.FindOne(context.Background(), filter).Decode(&profile)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+		returndata.ItemCategory = profile.ItemCategory
+		returndata.ItemName = profile.ItemName
+		returndata.Quantity = profile.Quantity
+		returndata.Seller_Name = profile.SellerName
+		returndata.Price = profile.Price
+		returndata.Stock_Available = profile.Stock_Available
+		returndata.Image = profile.Image
+		return &returndata, nil
+	} else if data.Collection == "worker" {
+		log.Println("In worker")
+		var profile models.Workers
+		filter := bson.M{"email": data.Id}
+		err := config.Worker_Collection.FindOne(context.Background(), filter).Decode(&profile)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+		returndata.Email = profile.Email
+		returndata.No = profile.No
+		returndata.Role = profile.Role
+		returndata.Status = profile.Status
+		returndata.UserName = profile.UserName
+		returndata.Salary = profile.Salary
+		returndata.Image = profile.Image
+		return &returndata, nil
+	}
+	return nil, nil
+
+}
