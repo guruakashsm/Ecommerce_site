@@ -13,17 +13,37 @@ type Customer struct {
 	WrongInput         int    `json:"wronginput" bson:"wronginput"`
 	VerificationString string `json:"verification" bson:"verification"`
 	BlockedUser        bool   `json:"blockeduser" bson:"blockeduser"`
+	DeliveryPhoneno    int    `json:"deliveryphoneno" bson:"deliveryphoneno"`
+	DeliveryEmail      string `json:"deliveryemail" bson:"deliveryemail"`
+	FirstName          string `json:"firstname" bson:"firstname"`
+	LastName           string `json:"lastname" bson:"lastname"`
+	House_No           string `json:"houseno" bson:"houseno"`
+	Street_Name        string `json:"streetname" bson:"streetname"`
+	City               string `json:"city" bson:"city"`
+	Pincode            int64  `json:"pincode" bson:"pincode"`
 }
 
-// Address for customer when ordres
+// Get Address for customer when ordres
 type Address struct {
-	FirstName   string `json:"firstname" bson:"firstname"`
-	LastName    string `json:"lastname" bson:"lastname"`
-	Phone_No    int    `json:"phonenumber" bson:"phonenumber"`
-	House_No    string `json:"houseno" bson:"houseno"`
-	Street_Name string `json:"streetname" bson:"streetname"`
-	City        string `json:"city" bson:"city"`
-	Pincode     int64  `json:"pincode" bson:"pincode"`
+	DeliveryPhoneno int    `json:"deliveryphoneno" bson:"deliveryphoneno"`
+	DeliveryEmail   string `json:"deliveryemail" bson:"deliveryemail"`
+	FirstName       string `json:"firstname" bson:"firstname"`
+	LastName        string `json:"lastname" bson:"lastname"`
+	Street_Name     string `json:"streetname" bson:"streetname"`
+	City            string `json:"city" bson:"city"`
+	Pincode         int64  `json:"pincode" bson:"pincode"`
+}
+
+// Add Customer Address
+type AddAddress struct {
+	Token           string `json:"token" bson:"token"`
+	DeliveryPhoneno int    `json:"deliveryphoneno" bson:"deliveryphoneno"`
+	DeliveryEmail   string `json:"deliveryemail" bson:"deliveryemail"`
+	FirstName       string `json:"firstname" bson:"firstname"`
+	LastName        string `json:"lastname" bson:"lastname"`
+	Street_Name     string `json:"streetname" bson:"streetname"`
+	City            string `json:"city" bson:"city"`
+	Pincode         int64  `json:"pincode" bson:"pincode"`
 }
 
 // Customer Login
@@ -52,7 +72,7 @@ type Addcart struct {
 	Image        string  `json:"image" bson:"image"`
 	SellerID     string  `json:"sellerid" bson:"sellerid"`
 	SellerName   string  `json:"sellername" bson:"sellername"`
-	TotalPrice  float64  `json:"totalprice" bson:"totalprice"`
+	TotalPrice   float64 `json:"totalprice" bson:"totalprice"`
 	ItemCategory string  `json:"itemcategory" bson:"itemcategory"`
 }
 

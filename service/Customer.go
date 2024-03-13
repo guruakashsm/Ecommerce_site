@@ -405,11 +405,20 @@ func DeleteProduct(delete models.DeleteProduct) bool {
 }
 
 // Get Customer Address
-func GetUser(id string) models.Address {
+func GetUserAddress(token models.Token) (models.Address,string,error) {
 	var address models.Address
+	id,err := ExtractCustomerID(token.Token,constants.SecretKey)
+	if err !=  nil{
+		log.Println(err)
+		return address,"Login Expired",err
+	}
 	filter1 := bson.M{"customerid": id}
-	config.Customer_Collection.FindOne(context.Background(), filter1).Decode(&address)
-	return address
+	err = config.Customer_Collection.FindOne(context.Background(), filter1).Decode(&address)
+	if err !=  nil{
+		log.Println(err)
+		return address,"Unable to find Address",err
+	}
+	return address,"Success",nil
 }
 
 // Add Ordered Items to Db
@@ -552,4 +561,20 @@ func TotalAmount(id string) float64 {
 		return 0
 	}
 	return Cart
+}
+
+// Add User Address
+func AddUserAddress(address models.AddAddress)(string,error){
+	id,err:=ExtractCustomerID(address.Token,constants.SecretKey)
+	if err != nil{
+		return "Login Expired",err
+	}
+	filter := bson.M{"customerid":id}
+	update := bson.M{"$set": bson.M{"deliveryphoneno": address.DeliveryPhoneno,"deliveryemail":address.DeliveryEmail,"firstname":address.FirstName,"lastname":address.LastName,"streetname":address.Street_Name,"city":address.City,"pincode":address.Pincode}}
+	_,err =config.Customer_Collection.UpdateOne(context.Background(),filter,update)
+	if err != nil{
+		log.Println(err)
+		return "In Updating",err
+	}
+	return "Update SuccessFully",nil
 }
