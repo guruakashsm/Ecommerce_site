@@ -48,18 +48,18 @@ func CheckSeller(check models.Login) (string, bool, error) {
 	filter := bson.M{"selleremail": check.Email}
 	config.Seller_Collection.FindOne(context.Background(), filter).Decode(&seller)
 	if check.Password != seller.Password {
-		return "", false, fmt.Errorf("InvalidPassword")
+		return "InvalidPassword", false, nil
 	}
-	if seller.BlockedUser == true {
-		return "", false, fmt.Errorf("Your ID Has been blocked by admin")
+	if seller.BlockedUser {
+		return "Your ID Has been blocked by admin", false, nil
 	}
 	if seller.WrongInput == 10 {
-		return "", false, fmt.Errorf("To many no of attempts")
+		return "To many no of attempts", false,nil
 	}
 
 	result, err := CreateToken(seller.Seller_Email, seller.SellerId)
 	if err != nil {
-		return "", false, err
+		return "Error In Creating Token ", false, err
 	}
 
 	return result, true, nil

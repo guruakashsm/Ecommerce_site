@@ -90,9 +90,7 @@ func decodeSecret(secret string) ([]byte, error) {
 	return base32.StdEncoding.DecodeString(secret)
 }
 
-func encodeSecret(secret []byte) string {
-	return base32.StdEncoding.EncodeToString(secret)
-}
+
 
 func encodeTime(time int64) []byte {
 	buf := new(bytes.Buffer)

@@ -125,10 +125,12 @@ func CreateSeller(seller models.Seller) bool {
 	}
 	filter := bson.M{"selleremail": seller.Seller_Email}
 	cursor, err := config.Seller_Collection.Find(context.Background(), filter)
-	defer cursor.Close(context.Background())
 	if err != nil {
 		log.Println(err)
+		return false
 	}
+	defer cursor.Close(context.Background())
+
 	if cursor.RemainingBatchLength() == 0 {
 		seller.SellerId = GenerateUniqueCustomerID()
 		seller.BlockedUser = false
@@ -210,23 +212,15 @@ func Update(update models.Update) bool {
 			update1 := bson.M{"$set": bson.M{update.Field: intValue}}
 			options := options.Update()
 			_, err1 := config.Inventory_Collection.UpdateOne(context.TODO(), filter, update1, options)
-			if err1 != nil {
-
-				return false
-			}
-			return true
+		    return err1 == nil
+			
 		}
 
 		filter := bson.M{"itemname": update.IdName}
 		update1 := bson.M{"$set": bson.M{update.Field: update.New_Value}}
 		options := options.Update()
 		_, err := config.Inventory_Collection.UpdateOne(context.TODO(), filter, update1, options)
-		if err != nil {
-
-			return false
-		}
-
-		return true
+		return err != nil
 	}
 
 	return false
@@ -433,4 +427,94 @@ func GetData(data models.Getdata) (*models.ReturnData, error) {
 	}
 	return nil, nil
 
+}
+
+// Block User & Admin
+func Block(data models.Block) (string, error) {
+	if data.Collection == "customer" {
+		var customer models.Customer
+		filter := bson.M{"email": data.Email}
+		err := config.Customer_Collection.FindOne(context.Background(), filter).Decode(&customer)
+		if err != nil {
+			log.Println(err)
+			return "No result Found", err
+		}
+		message := ""
+		if customer.BlockedUser {
+			customer.BlockedUser = false
+			message = "Customer has been Unblocked"
+		} else {
+			customer.BlockedUser = true
+			message = "Customer has been Blocked"
+		}
+		update := bson.M{"$set": bson.M{"blockeduser": customer.BlockedUser}}
+		_, err = config.Customer_Collection.UpdateOne(context.Background(), filter, update)
+		if err != nil {
+			log.Println(err)
+			return "Can't Update Data", err
+		}
+		go SendBlockingNotification(customer.Email, customer.Name, "Due to improper behaviour")
+		return message, nil
+	} else if data.Collection == "seller" {
+		var Seller models.Seller
+		filter := bson.M{"selleremail": data.Email}
+		err := config.Seller_Collection.FindOne(context.Background(), filter).Decode(&Seller)
+		if err != nil {
+			log.Println(err)
+			return "No result Found", err
+		}
+		message := ""
+		if Seller.BlockedUser {
+			Seller.BlockedUser = false
+			message = "Seller has been Unblocked"
+		} else {
+			Seller.BlockedUser = true
+			message = "Seller has been Blocked"
+		}
+		update := bson.M{"$set": bson.M{"blockeduser": Seller.BlockedUser}}
+		_, err = config.Seller_Collection.UpdateOne(context.Background(), filter, update)
+		if err != nil {
+			log.Println(err)
+			return "Can't Update Data", err
+		}
+		go SendBlockingNotification(Seller.Seller_Email, Seller.Seller_Name, "Due to improper behaviour")
+		return message, nil
+
+	}
+	return "Invalid Collection", nil
+}
+
+
+// Add Event To Calender
+func AddEvent(upload models.UploadCalender) error {
+	_, err := config.Calender_Collection.InsertOne(context.Background(), upload)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	return nil
+}
+
+
+
+//Get Event from Calender
+func GetEvent(GetData models.GetCalender) ([]models.UploadCalender, error) {
+	filter := bson.M{"email": GetData.AdminEmail}
+	cursor, err := config.Calender_Collection.Find(context.Background(), filter)
+	var Data []models.UploadCalender
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	for cursor.Next(context.Background()) {
+		var data models.UploadCalender
+		err := cursor.Decode(&data)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+		Data = append(Data, data)
+	}
+	return Data, nil
 }

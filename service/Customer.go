@@ -85,38 +85,62 @@ func CreateCustomer(profile models.Customer) int {
 
 }
 
+// Email Verification for Customer
+func EmailVerification(data models.VerifyEmail) (string, error) {
+	filter := bson.M{"email": data.Email}
+	var customer models.Customer
+	err := config.Customer_Collection.FindOne(context.Background(), filter).Decode(&customer)
+	if err != nil {
+		return "", err
+	}
+	if customer.VerificationString == data.VerificationString {
+		update := bson.M{"$set": bson.M{"isemailverified": true}}
+		filter := bson.M{"email": data.Email}
+
+		_, err := config.Customer_Collection.UpdateOne(context.Background(), filter, update)
+		if err != nil {
+			return "", err
+		}
+		go SendThankYouEmail(customer.Email, customer.Name)
+		return "Signup Successful", nil
+	} else {
+		return "Wrong OTP", nil
+	}
+
+}
+
 // Login Customer
-func Login(details models.Login) (string, error, int) {
+func Login(details models.Login) (string, int,error) {
 	var customer models.Customer
 
 	filter := bson.M{"email": details.Email}
 	err := config.Customer_Collection.FindOne(context.Background(), filter).Decode(&customer)
 	if err != nil {
-		return "User not found", err, 0
+		return "User not found", 0, err
 	}
 	if customer.WrongInput == 10 {
-		return "Too many no of try", nil, 0
+		return "Too many no of try", 0,nil
 	}
 	if !customer.IsEmailVerified {
-		return "Please verify your email", nil, 0
+		return "Please verify your email", 0,nil
 	}
 	if customer.BlockedUser {
-		return "Your ID has been Blocked", nil, 0
+		return "Your ID has been Blocked", 0,nil
 	}
 	if customer.Password != details.Password {
 		customer.WrongInput++
 		update := bson.M{"$set": bson.M{"wronginput": customer.WrongInput}}
 		config.Customer_Collection.UpdateOne(context.Background(), filter, update)
-		return "Wrong Password", nil, 0
+		return "Wrong Password", 0,nil
 	}
 
 	token, err := CreateToken(customer.Email, customer.CustomerId)
 	if err != nil {
-		return "Internal server error", err, 0
+		return "Internal server error", 0,nil
 
 	}
 
-	return token, nil, 1
+	return token, 1,nil
 }
 
 // Add To Cart
@@ -214,11 +238,6 @@ func Search(productName string) []models.Inventory {
 		var inventory models.Inventory
 		err := cursor.Decode(&inventory)
 		if inventory.Stock_Available <= 0 {
-			// filter := bson.M{"itemname":inventory.ItemName}
-			// _,err:=config.Inventory_Collection.DeleteOne(context.Background(),filter)
-			// if err != nil {
-			// 	log.Println(err)
-			// }
 			continue
 		}
 		if err != nil {
@@ -229,6 +248,19 @@ func Search(productName string) []models.Inventory {
 	}
 
 	return Inventory
+}
+
+// Search and Find Single Data
+func FetchInventoryData(search models.Search) (*models.Inventory, error) {
+	var data models.Inventory
+	filter := bson.M{"itemname": search.ProductName}
+	err := config.Inventory_Collection.FindOne(context.Background(), filter).Decode(&data)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return &data, nil
+
 }
 
 // Get All items in Cart
@@ -369,7 +401,7 @@ func DeleteOrder(delete models.DeleteOrder) {
 	fmt.Println(id)
 }
 
-//Display Customer Order
+// Display Customer Order
 func CustomerOrder(token string) []models.Customerorder {
 	id, err := ExtractCustomerID(token, constants.SecretKey)
 	if err != nil {
@@ -396,7 +428,7 @@ func CustomerOrder(token string) []models.Customerorder {
 	return Order
 }
 
-//Delete Items In Cart
+// Delete Items In Cart
 func DeleteItemsInCart(id string) {
 	filter := bson.M{"customerid": id}
 	_, err := config.Cart_Collection.DeleteMany(context.Background(), filter)
@@ -405,7 +437,7 @@ func DeleteItemsInCart(id string) {
 	}
 }
 
-//Fetch itmes from Cart
+// Fetch itmes from Cart
 func Itemstobuy(id string) []models.Item {
 	filter := bson.M{"customerid": id}
 	cursor, err := config.Cart_Collection.Find(context.Background(), filter)
@@ -427,8 +459,7 @@ func Itemstobuy(id string) []models.Item {
 	return Item
 }
 
-
-//Display Total Amount in Cart
+// Display Total Amount in Cart
 func TotalAmount(id string) float64 {
 	filter := bson.M{"customerid": id}
 	cursor, err := config.Cart_Collection.Find(context.Background(), filter)
@@ -471,5 +502,8 @@ func TotalAmount(id string) float64 {
 			},
 		},
 	)
+	if err != nil{
+		return 0
+	}
 	return Cart
 }

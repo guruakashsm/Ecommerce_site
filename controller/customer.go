@@ -47,7 +47,7 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	token, err, no := service.Login(request)
+	token, no,err := service.Login(request)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
@@ -70,7 +70,7 @@ func ValidateToken(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	result := service.Validatetoken(userdata.Token)
+	result := service.Validatetoken(userdata.Token,constants.SecretKey)
 	c.JSON(http.StatusOK, gin.H{"result": result})
 }
 
