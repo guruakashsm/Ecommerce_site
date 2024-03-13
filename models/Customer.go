@@ -26,7 +26,7 @@ type Address struct {
 	Pincode     int64  `json:"pincode" bson:"pincode"`
 }
 
-//Customer Login
+// Customer Login
 type Login struct {
 	Email    string `json:"email" bson:"email"`
 	Password string `json:"password" bson:"password"`
@@ -38,7 +38,7 @@ type Search struct {
 }
 
 // To add Items To Cart Input
-type Addtocart struct { 
+type Addtocart struct {
 	Token       string `json:"token" bson:"token"`
 	ProductName string `json:"productName" bson:"productName"`
 }
@@ -52,17 +52,18 @@ type Addcart struct {
 	Image        string  `json:"image" bson:"image"`
 	SellerID     string  `json:"sellerid" bson:"sellerid"`
 	SellerName   string  `json:"sellername" bson:"sellername"`
+	TotalPrice  float64  `json:"totalprice" bson:"totalprice"`
 	ItemCategory string  `json:"itemcategory" bson:"itemcategory"`
 }
 
-//Delete Items From Cart
+// Delete Items From Cart
 type DeleteProduct struct {
 	Token    string `json:"token" bson:"token"`
 	Name     string `json:"name" bson:"name"`
 	Quantity int    `json:"quantity" bson:"quantity"`
 }
 
-//Send to Buyed Items 
+// Send to Buyed Items
 type BuyNow struct {
 	Token       string  `json:"token"`
 	TotalAmount float64 `json:"totalAmount"`
@@ -78,14 +79,14 @@ type Item struct {
 // To Send Total Amount
 type TotalAmount struct {
 	TotalAmount float64 `json:"totalamount" bson:"totalamount"`
-} 
+}
 
 // Delete Order
 type DeleteOrder struct {
 	Id string `json:"_id" bson:"_id"`
 }
 
-//Email Verification
+// Email Verification
 type VerifyEmail struct {
 	Email              string `json:"email" bson:"email"`
 	VerificationString string `json:"verification" bson:"verification"`

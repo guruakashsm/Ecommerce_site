@@ -125,31 +125,26 @@ func Products(c *gin.Context) {
 func UpdateCart(c *gin.Context) {
 	var cart models.Addcart
 	if err := c.BindJSON(&cart); err != nil {
-
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	t1, err := service.ExtractCustomerID(cart.CustomerId, constants.SecretKey)
-	if err != nil {
-
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Token"})
+	log.Println(cart)
+	result,message := service.UpdateCart(cart)
+	if !result{
+		c.JSON(http.StatusOK, gin.H{"error":message})
 		return
 	}
-	cart.CustomerId = t1
-
-	result := service.UpdateCart(cart)
-	c.JSON(http.StatusOK, result)
+	c.JSON(http.StatusOK,gin.H{"message":message})
 }
 
 // Delete Items In Cart
 func DeleteProduct(c *gin.Context) {
 	var delete models.DeleteProduct
 	if err := c.BindJSON(&delete); err != nil {
-
+		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	fmt.Println(delete)
 	result := service.DeleteProduct(delete)
 	c.JSON(http.StatusOK, result)
 

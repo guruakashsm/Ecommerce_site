@@ -58,7 +58,7 @@ func CreateCustomer(profile models.Customer) int {
 			if updateErr != nil {
 				return 0
 			}
-			go SendEmailforCustomerVerification(profile.Email, profile.VerificationString, "GURU")
+			go SendEmailforCustomerVerification(profile.Email, profile.VerificationString, profile.Name)
 
 			return 1
 		}
@@ -110,7 +110,7 @@ func EmailVerification(data models.VerifyEmail) (string, error) {
 }
 
 // Login Customer
-func Login(details models.Login) (string, int,error) {
+func Login(details models.Login) (string, int, error) {
 	var customer models.Customer
 
 	filter := bson.M{"email": details.Email}
@@ -119,28 +119,28 @@ func Login(details models.Login) (string, int,error) {
 		return "User not found", 0, err
 	}
 	if customer.WrongInput == 10 {
-		return "Too many no of try", 0,nil
+		return "Too many no of try", 0, nil
 	}
 	if !customer.IsEmailVerified {
-		return "Please verify your email", 0,nil
+		return "Please verify your email", 0, nil
 	}
 	if customer.BlockedUser {
-		return "Your ID has been Blocked", 0,nil
+		return "Your ID has been Blocked", 0, nil
 	}
 	if customer.Password != details.Password {
 		customer.WrongInput++
 		update := bson.M{"$set": bson.M{"wronginput": customer.WrongInput}}
 		config.Customer_Collection.UpdateOne(context.Background(), filter, update)
-		return "Wrong Password", 0,nil
+		return "Wrong Password", 0, nil
 	}
 
 	token, err := CreateToken(customer.Email, customer.CustomerId)
 	if err != nil {
-		return "Internal server error", 0,nil
+		return "Internal server error", 0, nil
 
 	}
 
-	return token, 1,nil
+	return token, 1, nil
 }
 
 // Add To Cart
@@ -183,6 +183,7 @@ func Addtocart(addtocart models.Addtocart) (string, error) {
 			SellerID:     inventoryData.SellerId,
 			SellerName:   inventoryData.SellerName,
 			ItemCategory: inventoryData.ItemCategory,
+			TotalPrice:   inventoryData.Price,
 		}
 		_, err := config.Cart_Collection.InsertOne(context.Background(), cart)
 		if err != nil {
@@ -203,10 +204,10 @@ func Addtocart(addtocart models.Addtocart) (string, error) {
 		}
 		// Item already exists, update its quantity
 		cart.Quantity++
-		cart.Price = cart.Price + inventoryData.Price
+		cart.TotalPrice = cart.TotalPrice + inventoryData.Price
 		// Use the UpdateOne method to increment the quantity
 
-		update := bson.M{"$set": bson.M{"quantity": cart.Quantity, "price": cart.Price}}
+		update := bson.M{"$set": bson.M{"quantity": cart.Quantity, "totalprice": cart.TotalPrice}}
 		_, err = config.Cart_Collection.UpdateOne(context.Background(), filter, update)
 		if err != nil {
 			return "Error In Updating", err
@@ -267,6 +268,7 @@ func FetchInventoryData(search models.Search) (*models.Inventory, error) {
 func GetAllItemsinCart(token models.Token) ([]models.Addcart, string, error) {
 	id, err := ExtractCustomerID(token.Token, constants.SecretKey)
 	if err != nil {
+		log.Println("Login Expired")
 		return nil, "Login Expired", err
 	}
 	filter := bson.M{"customerid": id}
@@ -289,40 +291,80 @@ func GetAllItemsinCart(token models.Token) ([]models.Addcart, string, error) {
 }
 
 // Update Cart
-func UpdateCart(cart models.Addcart) *mongo.UpdateResult {
+func UpdateCart(cart models.Addcart) (bool, string) {
+	Id, err := ExtractCustomerID(cart.CustomerId, constants.SecretKey)
+	if err != nil {
+		log.Println(err)
+		return false, "Login Expired"
+	}
+	cart.CustomerId = Id
 	filter := bson.D{
 		{Key: "$and", Value: []interface{}{
 			bson.D{{Key: "customerid", Value: cart.CustomerId}},
-			bson.D{{Key: "name", Value: cart.ProductName}},
+			bson.D{{Key: "productname", Value: cart.ProductName}},
 		}},
 	}
+	if cart.Quantity == 0 {
+		_, err = config.Cart_Collection.DeleteOne(context.Background(), filter)
+		if err != nil {
+			log.Println(err)
+			return false, "Can not find the Product"
+		}
+		return true, "Updated Successfully"
+	}
 	var data models.Addcart
-	config.Cart_Collection.FindOne(context.Background(), filter).Decode(&data)
+	err = config.Cart_Collection.FindOne(context.Background(), filter).Decode(&data)
+	if err != nil {
+		log.Println(err)
+		return false, "No items in your Cart"
+	}
+
 	if data.Quantity > cart.Quantity {
 		var inventory models.Inventory
 		filter := bson.M{"itemname": cart.ProductName}
-		config.Inventory_Collection.FindOne(context.Background(), filter).Decode(&inventory)
+		err := config.Inventory_Collection.FindOne(context.Background(), filter).Decode(&inventory)
+		if err != nil {
+			log.Println(err)
+			return false, "Can not find the Product"
+		}
+
 		quantity := data.Quantity - cart.Quantity
 		inventory.Stock_Available = inventory.Stock_Available + quantity
 		update := bson.M{"$set": bson.M{"sellerquantity": inventory.Stock_Available}}
-		config.Inventory_Collection.UpdateOne(context.Background(), filter, update)
+		_, err = config.Inventory_Collection.UpdateOne(context.Background(), filter, update)
+		if err != nil {
+			log.Println(err)
+			return false, "Problem in Updating"
+		}
 	}
 	if data.Quantity < cart.Quantity {
 		var inventory models.Inventory
 		filter := bson.M{"itemname": cart.ProductName}
-		config.Inventory_Collection.FindOne(context.Background(), filter).Decode(&inventory)
+		err := config.Inventory_Collection.FindOne(context.Background(), filter).Decode(&inventory)
+		if err != nil {
+			log.Println(err)
+			return false, "Can not find the Product"
+		}
+		if inventory.Stock_Available == 0 {
+			return false, "No more Stock Available"
+		}
 		quantity := cart.Quantity - data.Quantity
 		inventory.Stock_Available = inventory.Stock_Available - quantity
 		update := bson.M{"$set": bson.M{"sellerquantity": inventory.Stock_Available}}
-		config.Inventory_Collection.UpdateOne(context.Background(), filter, update)
+		_, err = config.Inventory_Collection.UpdateOne(context.Background(), filter, update)
+		if err != nil {
+			log.Println(err)
+			return false, "Problem in Updating"
+		}
 	}
 
-	update := bson.M{"$set": bson.M{"name": cart.ProductName, "quantity": cart.Quantity, "totalprice": cart.Price, "price": cart.Price / float64(cart.Quantity)}}
-	result, err := config.Cart_Collection.UpdateOne(context.Background(), filter, update)
+	update := bson.M{"$set": bson.M{"name": cart.ProductName, "quantity": cart.Quantity, "totalprice": data.Price * float64(cart.Quantity)}}
+	_, err = config.Cart_Collection.UpdateOne(context.Background(), filter, update)
 	if err != nil {
 		log.Println(err)
+		return false, "Problem in Updating"
 	}
-	return result
+	return true, "Updated Successfully"
 
 }
 
@@ -334,21 +376,25 @@ func DeleteProduct(delete models.DeleteProduct) bool {
 		return false
 	}
 	filter1 := bson.M{"customerid": customerid}
-	filter2 := bson.M{"name": delete.Name}
+	filter2 := bson.M{"productname": delete.Name}
 	combinedFilter := bson.M{
 		"$and": []bson.M{filter1, filter2},
 	}
 	filter3 := bson.M{"itemname": delete.Name}
 	var data models.Inventory
-	config.Inventory_Collection.FindOne(context.Background(), filter3).Decode(&data)
-	fmt.Println(data)
+	err = config.Inventory_Collection.FindOne(context.Background(), filter3).Decode(&data)
+	if err != nil {
+		log.Println(err)
+		return false
+	}
 	delete.Quantity = delete.Quantity + int(data.Stock_Available)
-	fmt.Println(delete.Quantity)
 	update1 := bson.M{"$set": bson.M{"sellerquantity": delete.Quantity}}
 	_, err = config.Inventory_Collection.UpdateOne(context.Background(), filter3, update1)
 	if err != nil {
 		log.Println(err)
+		return false
 	}
+	log.Println("Updated In Seller")
 	_, err = config.Cart_Collection.DeleteOne(context.Background(), combinedFilter)
 	if err != nil {
 		log.Println(err)
@@ -455,7 +501,6 @@ func Itemstobuy(id string) []models.Item {
 		}
 		Item = append(Item, item)
 	}
-	//fmt.Println(Item)
 	return Item
 }
 
@@ -486,6 +531,7 @@ func TotalAmount(id string) float64 {
 	err = config.Sales_Collection.FindOne(context.Background(), bson.M{}).Decode(&currentValues)
 	if err != nil {
 		log.Println(err)
+		return 0
 	}
 	// Update the values
 	updatedTotalSalesAmount := currentValues.TotalSalesAmount + int(Cart)
@@ -502,7 +548,7 @@ func TotalAmount(id string) float64 {
 			},
 		},
 	)
-	if err != nil{
+	if err != nil {
 		return 0
 	}
 	return Cart
