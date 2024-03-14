@@ -424,14 +424,22 @@ func GetUserAddress(token models.Token) (models.Address, string, error) {
 
 // Add Ordered Items to Db
 func CustomerOrders(Buynow models.BuyNow) (string, error) {
-
-	id, err := config.Buynow_Collection.InsertOne(context.Background(), Buynow)
-	if err != nil {
-		log.Println(err)
-		return "Error in inserting", err
+	for _,value := range Buynow.ItemsToBuy{
+		var order models.AddOrder
+		order.Address = Buynow.Address
+		order.ItemsToBuy = value
+		order.TotalAmount = float64(value.TotalPrice)
+		order.CustomerId = Buynow.CustomerId
+		order.NoofItems = value.Quantity
+		order.EstimatedDeliverydate = Buynow.EstimatedDeliverydate 
+		order.SellerId = value.SellerId
+		_, err := config.Buynow_Collection.InsertOne(context.Background(), order)
+		if err != nil {
+			log.Println(err)
+			return "Error in inserting", err
+		}
 	}
-	fmt.Println(id)
-	return convertIDToString(id), nil
+	return "Success", nil
 }
 
 // Convert Id To string
@@ -462,30 +470,29 @@ func DeleteOrder(delete models.DeleteOrder) {
 }
 
 // Display Customer Order
-func CustomerOrder(token string) []models.Customerorder {
-	id, err := ExtractCustomerID(token, constants.SecretKey)
+func CustomerOrder(token models.Token)([]models.AddOrder,string,error) {
+	id, err := ExtractCustomerID(token.Token, constants.SecretKey)
 	if err != nil {
 		log.Println(err)
+		return nil,"Login Expired",err
 	}
-	var customer models.Customer
-	filter_customer := bson.M{"customerid": id}
-	config.Customer_Collection.FindOne(context.Background(), filter_customer).Decode(&customer)
-	var Order []models.Customerorder
-	filter := bson.M{"address.phonenumber": customer.Phone_No}
+	filter := bson.M{"customerid": id}
+	var Order []models.AddOrder
 	cursor, err := config.Buynow_Collection.Find(context.Background(), filter)
 	if err != nil {
 		log.Println(err)
+		return nil,"Error in Fetching Data",err
 	}
 	for cursor.Next(context.Background()) {
-		var order models.Customerorder
+		var order models.AddOrder
 		err := cursor.Decode(&order)
 		if err != nil {
 			log.Println(err)
+			return nil,"Error in Decoding Data",err
 		}
 		Order = append(Order, order)
 	}
-	fmt.Println(Order)
-	return Order
+	return Order,"Success",nil
 }
 
 // Delete Items In Cart
@@ -613,7 +620,6 @@ func AddCustomerOrders(Token models.Token) (string, error) {
 		log.Println(err)
 		return intToString(price), err
 	}
-	BuyNow.NoofItems = count
 	BuyNow.ItemsToBuy = ItemsToBuy
 	if price <= 500 {
 		BuyNow.TotalAmount = float64(price) + 50
@@ -634,8 +640,6 @@ func AddCustomerOrders(Token models.Token) (string, error) {
 		log.Println(err)
 		return message, err
 	}
-
-
 
 	go SendOrderConformation(BuyNow.Address.DeliveryEmail, floatToString(BuyNow.TotalAmount), floatToString(float64(price)), BuyNow.EstimatedDeliverydate, orderid, intToString(BuyNow.NoofItems), BuyNow.Address)
 

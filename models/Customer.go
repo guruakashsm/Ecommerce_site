@@ -89,8 +89,20 @@ type BuyNow struct {
 	TotalAmount           float64 `json:"totalAmount" bson:"totalamount"`
 	ItemsToBuy            []Item  `json:"itemsToBuy" bson:"itemstobuy"`
 	Address               Address `json:"address" bson:"address"`
-	NoofItems             int  `json:"noofitems" bson:"noofitems"`
+	NoofItems             int     `json:"noofitems" bson:"noofitems"`
 	EstimatedDeliverydate string  `json:"deliverydate" bson:"deliverydate"`
+}
+
+// TO set orders in DB
+type AddOrder struct {
+	CustomerId            string  `json:"customerid" bson:"customerid"`
+	TotalAmount           float64 `json:"totalamount" bson:"totalamount"`
+	ItemsToBuy            Item    `json:"itemstobuy" bson:"itemstobuy"`
+	Address               Address `json:"address" bson:"address"`
+	NoofItems             int     `json:"noofitems" bson:"noofitems"`
+	SellerId              string  `json:"sellerid" bson:"sellerid"`
+	EstimatedDeliverydate string  `json:"deliverydate" bson:"deliverydate"`
+	PlacedDate            string  `json:"placeddate" bson:"placeddate"`
 }
 
 // Name of Quantity of previous
@@ -100,9 +112,8 @@ type Item struct {
 	Quantity        int    `json:"quantity" bson:"quantity"`
 	Price           int    `json:"price" bson:"price"`
 	TotalPrice      int    `json:"totalprice" bson:"totalprice"`
-	SellerId        string `json:"sellerid" bson:"sellerid"`
-	CustomerId      string `json:"customerid" bson:"customerid"`
 	Image           string `json:"image" bson:"image"`
+	SellerId        string `json:"sellerid" bson:"sellerid"`
 }
 
 // To Send Total Amount

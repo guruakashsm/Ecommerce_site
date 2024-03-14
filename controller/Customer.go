@@ -184,13 +184,17 @@ func TotalAmount(c *gin.Context) {
 func CustomerOrder(c *gin.Context) {
 	var token models.Token
 	if err := c.BindJSON(&token); err != nil {
-
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
 
-	data := service.CustomerOrder(token.Token)
-	c.JSON(http.StatusOK, data)
+	data,message,err := service.CustomerOrder(token)
+	if err != nil{
+		log.Println(err)
+		c.JSON(http.StatusOK, gin.H{"error":message})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message":data})
 
 }
 
