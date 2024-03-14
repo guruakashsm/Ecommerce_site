@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -405,34 +406,38 @@ func DeleteProduct(delete models.DeleteProduct) bool {
 }
 
 // Get Customer Address
-func GetUserAddress(token models.Token) (models.Address,string,error) {
+func GetUserAddress(token models.Token) (models.Address, string, error) {
 	var address models.Address
-	id,err := ExtractCustomerID(token.Token,constants.SecretKey)
-	if err !=  nil{
+	id, err := ExtractCustomerID(token.Token, constants.SecretKey)
+	if err != nil {
 		log.Println(err)
-		return address,"Login Expired",err
+		return address, "Login Expired", err
 	}
 	filter1 := bson.M{"customerid": id}
 	err = config.Customer_Collection.FindOne(context.Background(), filter1).Decode(&address)
-	if err !=  nil{
+	if err != nil {
 		log.Println(err)
-		return address,"Unable to find Address",err
+		return address, "Unable to find Address", err
 	}
-	return address,"Success",nil
+	return address, "Success", nil
 }
 
 // Add Ordered Items to Db
-func CustomerOrders(ItemsToBuy []models.Item, Data models.Address) {
+func CustomerOrders(Buynow models.BuyNow) (string, error) {
 
-	var order models.Customerorder
-	order.Itemstobuy = ItemsToBuy
-	order.Address = Data
-	id, err := config.Buynow_Collection.InsertOne(context.Background(), order)
+	id, err := config.Buynow_Collection.InsertOne(context.Background(), Buynow)
 	if err != nil {
 		log.Println(err)
+		return "Error in inserting", err
 	}
 	fmt.Println(id)
+	return convertIDToString(id), nil
+}
 
+// Convert Id To string
+func convertIDToString(insertResult *mongo.InsertOneResult) string {
+	insertedID := insertResult.InsertedID.(primitive.ObjectID)
+	return insertedID.Hex()
 }
 
 // Delete Orders
@@ -484,33 +489,40 @@ func CustomerOrder(token string) []models.Customerorder {
 }
 
 // Delete Items In Cart
-func DeleteItemsInCart(id string) {
+func DeleteItemsInCart(id string) (string, error) {
 	filter := bson.M{"customerid": id}
 	_, err := config.Cart_Collection.DeleteMany(context.Background(), filter)
 	if err != nil {
 		log.Println(err)
+		return "Error in Deleting", err
 	}
+	return "Success", nil
 }
 
 // Fetch itmes from Cart
-func Itemstobuy(id string) []models.Item {
+func Itemstobuy(id string) ([]models.Item, int, int, error) {
 	filter := bson.M{"customerid": id}
 	cursor, err := config.Cart_Collection.Find(context.Background(), filter)
 	if err != nil {
 		log.Println(err)
 	}
 	var Item []models.Item
+	var price int
+	var count int
 	defer cursor.Close(context.Background())
 	for cursor.Next(context.Background()) {
 		var item models.Item
 		err := cursor.Decode(&item)
 		if err != nil {
-
 			log.Println(err)
+			return Item, 0, count, err
 		}
+		count++
+		price += item.TotalPrice
 		Item = append(Item, item)
 	}
-	return Item
+	log.Println(Item)
+	return Item, price, count, nil
 }
 
 // Display Total Amount in Cart
@@ -564,17 +576,77 @@ func TotalAmount(id string) float64 {
 }
 
 // Add User Address
-func AddUserAddress(address models.AddAddress)(string,error){
-	id,err:=ExtractCustomerID(address.Token,constants.SecretKey)
-	if err != nil{
-		return "Login Expired",err
+func AddUserAddress(address models.AddAddress) (string, error) {
+	id, err := ExtractCustomerID(address.Token, constants.SecretKey)
+	if err != nil {
+		return "Login Expired", err
 	}
-	filter := bson.M{"customerid":id}
-	update := bson.M{"$set": bson.M{"deliveryphoneno": address.DeliveryPhoneno,"deliveryemail":address.DeliveryEmail,"firstname":address.FirstName,"lastname":address.LastName,"streetname":address.Street_Name,"city":address.City,"pincode":address.Pincode}}
-	_,err =config.Customer_Collection.UpdateOne(context.Background(),filter,update)
-	if err != nil{
+	filter := bson.M{"customerid": id}
+	update := bson.M{"$set": bson.M{"deliveryphoneno": address.DeliveryPhoneno, "deliveryemail": address.DeliveryEmail, "firstname": address.FirstName, "lastname": address.LastName, "streetname": address.Street_Name, "city": address.City, "pincode": address.Pincode}}
+	_, err = config.Customer_Collection.UpdateOne(context.Background(), filter, update)
+	if err != nil {
 		log.Println(err)
-		return "In Updating",err
+		return "In Updating", err
 	}
-	return "Update SuccessFully",nil
+	return "Update SuccessFully", nil
+}
+
+// Add Customer Orders to DB
+func AddCustomerOrders(Token models.Token) (string, error) {
+	var BuyNow models.BuyNow
+	id, err := ExtractCustomerID(Token.Token, constants.SecretKey)
+	if err != nil {
+		log.Println(err)
+		return "Login Expired", err
+	}
+	BuyNow.CustomerId = id
+
+	data, message, err := GetUserAddress(Token)
+	if err != nil {
+		log.Println(err)
+		return message, err
+	}
+	BuyNow.Address = data
+
+	ItemsToBuy, price, count, err := Itemstobuy(id)
+	if err != nil {
+		log.Println(err)
+		return intToString(price), err
+	}
+	BuyNow.NoofItems = count
+	BuyNow.ItemsToBuy = ItemsToBuy
+	if price <= 500 {
+		BuyNow.TotalAmount = float64(price) + 50
+	} else {
+		BuyNow.TotalAmount = float64(price)
+	}
+	BuyNow.EstimatedDeliverydate = DeliveryDate()
+	BuyNow.NoofItems = count
+	orderid, err := CustomerOrders(BuyNow)
+	if err != nil {
+		log.Println(err)
+		return message, err
+	}
+
+
+	message, err = DeleteItemsInCart(id)
+	if err != nil {
+		log.Println(err)
+		return message, err
+	}
+
+
+
+	go SendOrderConformation(BuyNow.Address.DeliveryEmail, floatToString(BuyNow.TotalAmount), floatToString(float64(price)), BuyNow.EstimatedDeliverydate, orderid, intToString(BuyNow.NoofItems), BuyNow.Address)
+
+	return "Success", nil
+
+}
+
+// Get DeliveryDate()
+func DeliveryDate() string {
+	currentTime := time.Now()
+	estimatedDeliveryDate := currentTime.Add(15 * 24 * time.Hour)
+	formattedDeliveryDate := estimatedDeliveryDate.Format("January 2, 2006")
+	return formattedDeliveryDate
 }

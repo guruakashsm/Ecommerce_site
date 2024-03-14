@@ -85,15 +85,24 @@ type DeleteProduct struct {
 
 // Send to Buyed Items
 type BuyNow struct {
-	Token       string  `json:"token"`
-	TotalAmount float64 `json:"totalAmount"`
-	ItemsToBuy  []Item  `json:"itemsToBuy"`
+	CustomerId            string  `json:"customerid" bson:"customerid"`
+	TotalAmount           float64 `json:"totalAmount" bson:"totalamount"`
+	ItemsToBuy            []Item  `json:"itemsToBuy" bson:"itemstobuy"`
+	Address               Address `json:"address" bson:"address"`
+	NoofItems             int  `json:"noofitems" bson:"noofitems"`
+	EstimatedDeliverydate string  `json:"deliverydate" bson:"deliverydate"`
 }
 
 // Name of Quantity of previous
 type Item struct {
-	Name     string `json:"name"`
-	Quantity int    `json:"quantity"`
+	ProductNameName string `json:"productname" bson:"productname"`
+	ItemCategory    string `json:"itemcategory" bson:"itemcategory"`
+	Quantity        int    `json:"quantity" bson:"quantity"`
+	Price           int    `json:"price" bson:"price"`
+	TotalPrice      int    `json:"totalprice" bson:"totalprice"`
+	SellerId        string `json:"sellerid" bson:"sellerid"`
+	CustomerId      string `json:"customerid" bson:"customerid"`
+	Image           string `json:"image" bson:"image"`
 }
 
 // To Send Total Amount
