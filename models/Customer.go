@@ -85,16 +85,28 @@ type DeleteProduct struct {
 
 // Send to Buyed Items
 type BuyNow struct {
+	OrderID               string  `json:"orderid" bson:"orderid"`
 	CustomerId            string  `json:"customerid" bson:"customerid"`
 	TotalAmount           float64 `json:"totalAmount" bson:"totalamount"`
 	ItemsToBuy            []Item  `json:"itemsToBuy" bson:"itemstobuy"`
 	Address               Address `json:"address" bson:"address"`
 	NoofItems             int     `json:"noofitems" bson:"noofitems"`
 	EstimatedDeliverydate string  `json:"deliverydate" bson:"deliverydate"`
+	OrderedDate           string  `json:"orderdate" bson:"orderdate"`
+}
+
+// Status of Order
+type Status struct {
+	Confirmed_Order    string `json:"confirmed" bson:"confirmed"`
+	Processing_Order   string `json:"processing" bson:"processing"`
+	Quality_Check      string `json:"quality" bson:"quality"`
+	Product_Dispatched string `json:"dispatched" bson:"dispatched"`
+	Product_Delivered  string `json:"delivered" bson:"delivered"`
 }
 
 // TO set orders in DB
 type AddOrder struct {
+	OrderID               string  `json:"orderid" bson:"orderid"`
 	CustomerId            string  `json:"customerid" bson:"customerid"`
 	TotalAmount           float64 `json:"totalamount" bson:"totalamount"`
 	ItemsToBuy            Item    `json:"itemstobuy" bson:"itemstobuy"`
@@ -102,7 +114,8 @@ type AddOrder struct {
 	NoofItems             int     `json:"noofitems" bson:"noofitems"`
 	SellerId              string  `json:"sellerid" bson:"sellerid"`
 	EstimatedDeliverydate string  `json:"deliverydate" bson:"deliverydate"`
-	PlacedDate            string  `json:"placeddate" bson:"placeddate"`
+	OrderedDate           string  `json:"orderdate" bson:"orderdate"`
+	Status                Status  `json:"status" bson:"status"`
 }
 
 // Name of Quantity of previous
@@ -123,11 +136,18 @@ type TotalAmount struct {
 
 // Delete Order
 type DeleteOrder struct {
-	Id string `json:"_id" bson:"_id"`
+	Token   string `json:"token" bson:"token"`
+	OrderID string `json:"orderid" bson:"orderid"`
 }
 
 // Email Verification
 type VerifyEmail struct {
 	Email              string `json:"email" bson:"email"`
 	VerificationString string `json:"verification" bson:"verification"`
+}
+
+// To get Customer Order
+type GetOrder struct {
+	Token   string `json:"token" bson:"token"`
+	OrderID string `json:"orderid" bson:"orderid"`
 }

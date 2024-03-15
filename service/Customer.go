@@ -433,6 +433,13 @@ func CustomerOrders(Buynow models.BuyNow) (string, error) {
 		order.NoofItems = value.Quantity
 		order.EstimatedDeliverydate = Buynow.EstimatedDeliverydate 
 		order.SellerId = value.SellerId
+		order.OrderedDate = Buynow.OrderedDate
+		order.OrderID = GenerateUniqueOrderID()
+		order.Status.Confirmed_Order = `completed`
+		order.Status.Processing_Order = "pending"
+		order.Status.Product_Delivered = "pending"
+		order.Status.Product_Dispatched = "pending"
+		order.Status.Quality_Check = "pending"
 		_, err := config.Buynow_Collection.InsertOne(context.Background(), order)
 		if err != nil {
 			log.Println(err)
@@ -449,24 +456,16 @@ func convertIDToString(insertResult *mongo.InsertOneResult) string {
 }
 
 // Delete Orders
-func DeleteOrder(delete models.DeleteOrder) {
-	fmt.Println(delete.Id)
+func DeleteOrder(delete models.DeleteOrder)(string,error) {
+	filter := bson.M{"orderid": delete.OrderID}
 
-	// Parse the ID string to an ObjectId
-	objectID, err := primitive.ObjectIDFromHex(delete.Id)
+	_, err := config.Buynow_Collection.DeleteOne(context.Background(), filter)
 	if err != nil {
 		log.Println(err)
+		return "No result Found",err
 	}
 
-	// Create a filter to match the ObjectId
-	filter := bson.M{"_id": objectID}
-
-	id, err := config.Buynow_Collection.DeleteOne(context.Background(), filter)
-	if err != nil {
-		log.Println(err)
-	}
-
-	fmt.Println(id)
+	return "Cancelled Successfully",nil
 }
 
 // Display Customer Order
@@ -628,6 +627,7 @@ func AddCustomerOrders(Token models.Token) (string, error) {
 	}
 	BuyNow.EstimatedDeliverydate = DeliveryDate()
 	BuyNow.NoofItems = count
+	BuyNow.OrderedDate = CurrentDate()
 	orderid, err := CustomerOrders(BuyNow)
 	if err != nil {
 		log.Println(err)
@@ -654,3 +654,30 @@ func DeliveryDate() string {
 	formattedDeliveryDate := estimatedDeliveryDate.Format("January 2, 2006")
 	return formattedDeliveryDate
 }
+
+
+// To Generate Order ID
+func GenerateUniqueOrderID() string {
+	return fmt.Sprintf("%d%s", time.Now().UnixNano(), GetRandomString(7))
+}
+
+//Give Current Date in Format
+func CurrentDate() string {
+	currentTime := time.Now()
+	formattedCurrentDate := currentTime.Format("January 2, 2006")
+	return formattedCurrentDate
+}
+
+//Get Order Details
+func GetCustromerOrder(details models.GetOrder)(models.AddOrder,string,error){
+	var orderDetails models.AddOrder
+	filter := bson.M{"orderid":details.OrderID}
+	err:= config.Buynow_Collection.FindOne(context.Background(),filter).Decode(&orderDetails)
+	if err != nil{
+		return orderDetails,"No Result found",err
+	}
+	return orderDetails,"Success",nil
+}
+
+
+

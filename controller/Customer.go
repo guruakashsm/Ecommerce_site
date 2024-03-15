@@ -243,6 +243,27 @@ func AddDeliveryAddress(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusOK, gin.H{"error": message})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": message})
+}
+
+
+//Get Customer Order
+func GetCustomerOrder(c *gin.Context){
+	var details models.GetOrder
+	if err := c.BindJSON(&details); err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	data,message,err := service.GetCustromerOrder(details)
+	if err != nil{
+		log.Println(err)
+		c.JSON(http.StatusOK, gin.H{"error": message})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": data})
+
+
 }

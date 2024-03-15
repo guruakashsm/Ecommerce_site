@@ -87,14 +87,13 @@ func DeleteProductBySeller(c *gin.Context) {
 
 }
 
-//Display Customer Order
+// Display Customer Order
 func Orders(c *gin.Context) {
 	data := service.Orders()
 	c.JSON(http.StatusOK, data)
 }
 
-
-//Delete Order
+// Delete Order
 func DeleteOrder(c *gin.Context) {
 	var delete models.DeleteOrder
 	if err := c.BindJSON(&delete); err != nil {
@@ -102,7 +101,12 @@ func DeleteOrder(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	service.DeleteOrder(delete)
-	c.JSON(http.StatusOK, gin.H{"success": true})
+	message, err := service.DeleteOrder(delete)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusOK, gin.H{"error": message})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": message})
 
 }

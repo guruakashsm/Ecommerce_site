@@ -57,7 +57,7 @@ func (sender *GmailSender) SendEmail(
 }
 
 func SendEmailforCustomerVerification(toEmail, id, name string) {
-	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "snuk gatz ohoa agyt")
+	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "aqky ewcr kjfd jjpw")
 	subject := "A test Email"
 	htmlTemplate := `
         <!DOCTYPE html>
@@ -150,7 +150,7 @@ func SendEmailforCustomerVerification(toEmail, id, name string) {
 }
 
 func SendThankYouEmail(toEmail, username string) {
-	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "snuk gatz ohoa agyt")
+	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "aqky ewcr kjfd jjpw")
 	subject := "Thank You for Creating an Account"
 	htmlTemplate := `
         <!DOCTYPE html>
@@ -222,7 +222,7 @@ func SendThankYouEmail(toEmail, username string) {
 }
 
 func SendSellerInvitation(toEmail, name, password, siteURL string) {
-	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "snuk gatz ohoa agyt")
+	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "aqky ewcr kjfd jjpw")
 	subject := "Invitation to Join Our Platform"
 	htmlTemplate := `
         <!DOCTYPE html>
@@ -318,7 +318,7 @@ func SendSellerInvitation(toEmail, name, password, siteURL string) {
 }
 
 func SendAdminInvitation(toEmail, name, password, siteURL, ipAddress, totpSecret string) {
-	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "snuk gatz ohoa agyt")
+	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "aqky ewcr kjfd jjpw")
 	subject := "Invitation to Join Our Platform"
 	htmlTemplate := `
         <!DOCTYPE html>
@@ -428,7 +428,7 @@ func SendAdminInvitation(toEmail, name, password, siteURL, ipAddress, totpSecret
 }
 
 func SendBlockingNotification(toEmail, name, blockingReason string) {
-	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "snuk gatz ohoa agyt")
+	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "aqky ewcr kjfd jjpw")
 	subject := "Account Blocked Notification"
 	htmlTemplate := `
         <!DOCTYPE html>
@@ -521,7 +521,7 @@ func SendBlockingNotification(toEmail, name, blockingReason string) {
 }
 
 func SendEditDataNotification(toEmail, fieldUpdated, newValue string) {
-	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "snuk gatz ohoa agyt")
+	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "aqky ewcr kjfd jjpw")
 	subject := "Data Edit Notification"
 	htmlTemplate := `
         <!DOCTYPE html>
@@ -614,7 +614,7 @@ func SendEditDataNotification(toEmail, fieldUpdated, newValue string) {
 }
 
 func SendOrderConformation(toEmail,price,totalAmount,dateofdelivey,id,noofitems string,address models.Address) {
-	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "snuk gatz ohoa agyt")
+	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "aqky ewcr kjfd jjpw")
 	subject := "Order Conformation"
 	htmlTemplate := `
     <!DOCTYPE html>
