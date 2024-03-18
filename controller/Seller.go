@@ -27,9 +27,16 @@ func CheckSeller(c *gin.Context) {
 	}
 	if success {
 		c.JSON(http.StatusOK, gin.H{"token": token})
-	} else {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		return
+	} 
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"error": token})
+		return
 	}
+	if !success{
+		c.JSON(http.StatusOK, gin.H{"message": token})
+	}
+
 
 }
 
@@ -110,3 +117,56 @@ func DeleteOrder(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": message})
 
 }
+
+// Signup Seller
+func RegisterSeller(c *gin.Context){
+	var register models.Seller
+	if err := c.BindJSON(&register); err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	message, err := service.RegisterSeller(register)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusOK, gin.H{"error": message})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": message})
+}
+
+
+// Verify Seller Email
+func VerifySellerEmail(c *gin.Context){
+	var register models.VerifyEmail
+	if err := c.BindJSON(&register); err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	message, err := service.EmailVerificationforSeller(register)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusOK, gin.H{"error": message})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": message})
+}
+
+
+// Data needed for Seller DrashBoard
+func SellerDrashbordDetails(c *gin.Context){
+	var token models.Token
+	if err := c.BindJSON(&token); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	data,message,err := service.SellerDrashbordDetails(token)
+	if err !=  nil{
+		log.Println(err)
+		c.JSON(http.StatusOK , gin.H{"error":message})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": data})
+}
+

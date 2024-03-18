@@ -56,7 +56,7 @@ func (sender *GmailSender) SendEmail(
 	return e.Send(sntpSeverAddress, sntpAuth)
 }
 
-func SendEmailforCustomerVerification(toEmail, id, name string) {
+func SendEmailforVerification(toEmail, id, name string) {
 	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "aqky ewcr kjfd jjpw")
 	subject := "A test Email"
 	htmlTemplate := `

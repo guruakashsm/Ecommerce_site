@@ -135,10 +135,12 @@ func CreateSeller(seller models.Seller) bool {
 		seller.SellerId = GenerateUniqueCustomerID()
 		seller.BlockedUser = false
 		seller.WrongInput = 0
+		seller.IsApproved = true
+		seller.IsEmailVerified = true
 		_, err := config.Seller_Collection.InsertOne(context.Background(), seller)
 		if err != nil {
-
 			log.Println(err)
+			return false
 
 		}
 		go SendSellerInvitation(seller.Seller_Email, seller.Seller_Name, seller.Password, "https://anon.up.railway.app/seller/")

@@ -71,6 +71,9 @@ func Router() *gin.Engine {
 	router.POST("/getinventorydata",controller.GetInventoryData)
 	router.POST("/adddeliveryaddress",controller.AddDeliveryAddress)
 	router.POST("/getcustomerorder",controller.GetCustomerOrder)
+	router.POST("/registerseller",controller.RegisterSeller)
+	router.POST("/verifyselleremail",controller.VerifySellerEmail)
+	router.POST("/sellerdrashboarddetails",controller.SellerDrashbordDetails)
 
 
 	return router

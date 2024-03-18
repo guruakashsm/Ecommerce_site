@@ -59,7 +59,7 @@ func CreateCustomer(profile models.Customer) int {
 			if updateErr != nil {
 				return 0
 			}
-			go SendEmailforCustomerVerification(profile.Email, profile.VerificationString, profile.Name)
+			go SendEmailforVerification(profile.Email, profile.VerificationString, profile.Name)
 
 			return 1
 		}
@@ -76,7 +76,7 @@ func CreateCustomer(profile models.Customer) int {
 			log.Println(insertErr)
 			return 0
 		}
-		go SendEmailforCustomerVerification(profile.Email, profile.VerificationString, profile.Name)
+		go SendEmailforVerification(profile.Email, profile.VerificationString, profile.Name)
 		fmt.Println("Inserted", inserted.InsertedID)
 		return 1
 	} else {
@@ -488,6 +488,9 @@ func CustomerOrder(token models.Token)([]models.AddOrder,string,error) {
 		if err != nil {
 			log.Println(err)
 			return nil,"Error in Decoding Data",err
+		}
+		if(order.Status.Product_Delivered == "completed"){
+			continue
 		}
 		Order = append(Order, order)
 	}
