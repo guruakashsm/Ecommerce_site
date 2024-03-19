@@ -55,7 +55,7 @@ func Router() *gin.Engine {
 	router.POST("/deletefeedback", controller.Deletefeedback)
 	router.POST("/buynow", controller.BuyNow)
 	router.POST("/totalamount", controller.TotalAmount)
-	router.GET("/orders",controller.Orders)
+	router.POST("/orders",controller.Orders)
 	router.POST("/deleteorder",controller.DeleteOrder)
 	router.POST("/customerorders",controller.CustomerOrder)
 	router.POST("/validatetoken", controller.ValidateToken)
@@ -74,6 +74,11 @@ func Router() *gin.Engine {
 	router.POST("/registerseller",controller.RegisterSeller)
 	router.POST("/verifyselleremail",controller.VerifySellerEmail)
 	router.POST("/sellerdrashboarddetails",controller.SellerDrashbordDetails)
+	router.POST("/getallproducts",controller.GetAllProducts)
+	router.POST("/buyedcustomer",controller.BuyedCustomer)
+	router.POST("/completedorders",controller.CompletedOrders)
+	router.POST("/pendingorders",controller.PendingOrders)
+	router.POST("/yettodeliverorders",controller.YettoDeliverOrders)
 
 
 	return router

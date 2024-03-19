@@ -44,12 +44,7 @@ type UpdateProduct struct {
 	New_Value   int32  `json:"newvalue" bson:"newvalue"`
 }
 
-// Display Customer Order
-type Customerorder struct {
-	Id         string  `json:"_id" bson:"_id"`
-	Itemstobuy []Item  `json:"itemstobuy" bson:"itemstobuy"`
-	Address    Address `json:"address" bson:"address"`
-}
+
 
 
 //Seller DrashBoardNeeded Details
