@@ -44,13 +44,17 @@ type UpdateProduct struct {
 	New_Value   int32  `json:"newvalue" bson:"newvalue"`
 }
 
-
-
-
 //Seller DrashBoardNeeded Details
 type DrashBoard struct{
 	Orders int64 `json:"orders" bson:"orders"`
 	OrdersCompleted int64 `json:"orderscompleted" bson:"orderscompleted"`
 	OrdersPending int64 `json:"ordespending" bson:"orderspending"`
 	TotalAmount int64 `json:"totalamount" bson:"totalamount"`
+}
+
+//Update Tracking Details
+type OrderTracking struct{
+	Feild string `json:"feild" bson:"feild"`
+	Token string `json:"token" bson:"token"`
+	OrderID string `json:"orderid" bson:"orderid"` 
 }

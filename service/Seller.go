@@ -5,7 +5,6 @@ import (
 	"ecommerce/config"
 	"ecommerce/constants"
 	"ecommerce/models"
-	"fmt"
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -17,7 +16,6 @@ func Inventory(inventory models.Inventory) (string, error) {
 
 	sellerid, err := ExtractCustomerID(inventory.SellerName, constants.SecretKey)
 	if err != nil {
-		log.Println(err)
 		return "Login Expired", err
 	}
 	inventory.SellerId = sellerid
@@ -25,7 +23,6 @@ func Inventory(inventory models.Inventory) (string, error) {
 	filter := bson.M{"itemname": inventory.ItemName}
 	cursor, err := config.Inventory_Collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Println(err)
 		return "Error while Finding", err
 	}
 	if cursor.RemainingBatchLength() == 0 {
@@ -113,119 +110,125 @@ func DeleteProductBySeller(delete models.DeleteBySeller) int {
 }
 
 // Display All Orders
-func Orders(token models.Token)([]models.AddOrder,string,error) {
-	id,err := ExtractCustomerID(token.Token,constants.SecretKey)
-	if err != nil{
-		return nil,"Login Expired",err
+func Orders(token models.Token) ([]models.AddOrder, string, error) {
+	id, err := ExtractCustomerID(token.Token, constants.SecretKey)
+	if err != nil {
+		return nil, "Login Expired", err
 	}
 	var Order []models.AddOrder
-	filter := bson.M{"sellerid":id}
+	filter := bson.M{"sellerid": id}
 	cursor, err := config.Buynow_Collection.Find(context.Background(), filter)
 	if err != nil {
-		return nil,"Error in Finding",err
+		return nil, "Error in Finding", err
 	}
 	for cursor.Next(context.Background()) {
 		var order models.AddOrder
 		err := cursor.Decode(&order)
 		if err != nil {
-			return nil,"Error in Extracting",err
+			return nil, "Error in Extracting", err
 		}
 		Order = append(Order, order)
 	}
-	return Order,"Success",nil
+	return Order, "Success", nil
 }
 
 // Display All Completed Orders
-func CompletedOrders(token models.Token)([]models.AddOrder,string,error) {
-	id,err := ExtractCustomerID(token.Token,constants.SecretKey)
-	if err != nil{
-		return nil,"Login Expired",err
+func CompletedOrders(token models.Token) ([]models.AddOrder, string, error) {
+	id, err := ExtractCustomerID(token.Token, constants.SecretKey)
+	if err != nil {
+		return nil, "Login Expired", err
 	}
 	var Order []models.AddOrder
-	filter1 := bson.M{"sellerid":id}
-	filter2 := bson.M{"status.processing":"completed"}
-	filter3 := bson.M{"status.quality":"completed"}
-	filter4 := bson.M{"status.dispatched":"completed"}
-	filter5 := bson.M{"status.delivered":"completed"}
-	combinedFilter := bson.M{
-        "$and": []bson.M{filter1, filter2,filter3,filter4,filter5},
-    }
-	cursor, err := config.Buynow_Collection.Find(context.Background(), combinedFilter)
+	filter := bson.M{
+		"sellerid": id,
+		"$and": []bson.M{
+			{"status.processing": "completed"},
+			{"status.quality": "completed"},
+			{"status.dispatched": "completed"},
+			{"status.delivered": "completed"},
+		},
+	}
+	cursor, err := config.Buynow_Collection.Find(context.Background(), filter)
 	if err != nil {
-		return nil,"Error in Finding",err
+		return nil, "Error in Finding", err
 	}
 	for cursor.Next(context.Background()) {
 		var order models.AddOrder
 		err := cursor.Decode(&order)
 		if err != nil {
-			return nil,"Error in Extracting",err
+			return nil, "Error in Extracting", err
 		}
 		Order = append(Order, order)
 	}
-	return Order,"Success",nil
+	return Order, "Success", nil
 }
 
 // Display All Pending Orders
-func PendingOrders(token models.Token)([]models.AddOrder,string,error) {
-	id,err := ExtractCustomerID(token.Token,constants.SecretKey)
-	if err != nil{
-		return nil,"Login Expired",err
+func PendingOrders(token models.Token) ([]models.AddOrder, string, error) {
+	id, err := ExtractCustomerID(token.Token, constants.SecretKey)
+	if err != nil {
+		return nil, "Login Expired", err
 	}
 	var Order []models.AddOrder
-	filter1 := bson.M{"sellerid":id}
-	filter2 := bson.M{"status.processing":"pending"}
-	filter3 := bson.M{"status.quality":"pending"}
-	filter4 := bson.M{"status.dispatched":"pending"}
-	filter5 := bson.M{"status.delivered":"pending"}
-	combinedFilter := bson.M{
-        "$and": []bson.M{filter1, filter2,filter3,filter4,filter5},
-    }
-	cursor, err := config.Buynow_Collection.Find(context.Background(), combinedFilter)
+	filter := bson.M{
+		"sellerid": id,
+		"$or": []bson.M{
+			{"status.processing": "pending"},
+			{"status.quality": "pending"},
+			{"status.dispatched": "pending"},
+		},
+	}
+	cursor, err := config.Buynow_Collection.Find(context.Background(), filter)
 	if err != nil {
-		return nil,"Error in Finding",err
+		return nil, "Error in Finding", err
+	}
+	defer cursor.Close(context.Background())
+
+	for cursor.Next(context.Background()) {
+		var order models.AddOrder
+		if err := cursor.Decode(&order); err != nil {
+			return nil, "Error in Extracting", err
+		}
+		Order = append(Order, order)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, "Error during cursor iteration", err
+	}
+
+	return Order, "Success", nil
+}
+
+// Yet To Deliver Order
+func YettoDeliverOrders(token models.Token) ([]models.AddOrder, string, error) {
+	id, err := ExtractCustomerID(token.Token, constants.SecretKey)
+	if err != nil {
+		return nil, "Login Expired", err
+	}
+	var Order []models.AddOrder
+	filter := bson.M{
+		"sellerid": id,
+		"$and": []bson.M{
+			{"status.processing": "completed"},
+			{"status.quality": "completed"},
+			{"status.dispatched": "completed"},
+			{"status.delivered": "pending"},
+		},
+	}
+	cursor, err := config.Buynow_Collection.Find(context.Background(), filter)
+	if err != nil {
+		return nil, "Error in Finding", err
 	}
 	for cursor.Next(context.Background()) {
 		var order models.AddOrder
 		err := cursor.Decode(&order)
 		if err != nil {
-			return nil,"Error in Extracting",err
+			return nil, "Error in Extracting", err
 		}
 		Order = append(Order, order)
 	}
-	return Order,"Success",nil
+	return Order, "Success", nil
 }
-
-//Yet To Deliver Order
-func YettoDeliverOrders(token models.Token)([]models.AddOrder,string,error) {
-	id,err := ExtractCustomerID(token.Token,constants.SecretKey)
-	if err != nil{
-		return nil,"Login Expired",err
-	}
-	var Order []models.AddOrder
-	filter1 := bson.M{"sellerid":id}
-	filter2 := bson.M{"status.processing":"completed"}
-	filter3 := bson.M{"status.quality":"completed"}
-	filter4 := bson.M{"status.dispatched":"completed"}
-	filter5 := bson.M{"status.delivered":"pending"}
-	combinedFilter := bson.M{
-        "$and": []bson.M{filter1, filter2,filter3,filter4,filter5},
-    }
-	cursor, err := config.Buynow_Collection.Find(context.Background(), combinedFilter)
-	if err != nil {
-		return nil,"Error in Finding",err
-	}
-	for cursor.Next(context.Background()) {
-		var order models.AddOrder
-		err := cursor.Decode(&order)
-		if err != nil {
-			return nil,"Error in Extracting",err
-		}
-		Order = append(Order, order)
-	}
-	return Order,"Success",nil
-}
-
-
 
 // Create Seller
 func RegisterSeller(seller models.Seller) (string, error) {
@@ -241,7 +244,6 @@ func RegisterSeller(seller models.Seller) (string, error) {
 	filter := bson.M{"selleremail": seller.Seller_Email}
 	cursor, err := config.Seller_Collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Println(err)
 		return "Error in Searching", err
 	}
 	defer cursor.Close(context.Background())
@@ -250,7 +252,6 @@ func RegisterSeller(seller models.Seller) (string, error) {
 		var existingSeller models.Seller
 		err := cursor.Decode(&existingSeller)
 		if err != nil {
-			log.Println(err)
 			return "Server Error", err
 		}
 
@@ -267,7 +268,6 @@ func RegisterSeller(seller models.Seller) (string, error) {
 
 		_, err = config.Seller_Collection.ReplaceOne(context.Background(), filter, seller)
 		if err != nil {
-			log.Println(err)
 			return "Error In Updating", err
 		}
 
@@ -285,7 +285,6 @@ func RegisterSeller(seller models.Seller) (string, error) {
 
 	_, err = config.Seller_Collection.InsertOne(context.Background(), seller)
 	if err != nil {
-		log.Println(err)
 		return "Error In Creating", err
 	}
 
@@ -318,18 +317,14 @@ func SellerDrashbordDetails(token models.Token) (models.DrashBoard, string, erro
 	var drashboard models.DrashBoard
 	id, err := ExtractCustomerID(token.Token, constants.SecretKey)
 	if err != nil {
-		log.Println(err)
 		return drashboard, "Error in Extracting", err
 	}
-	log.Println(id)
-
 	completedCount, err := config.Buynow_Collection.CountDocuments(context.Background(), map[string]interface{}{
 		"status.confirmed": "completed",
 		"status.delivered": "completed",
 		"sellerid":         id,
 	})
 	if err != nil {
-		fmt.Println("Error counting completed documents:", err)
 		return drashboard, "Error in Finding", err
 	}
 
@@ -341,21 +336,19 @@ func SellerDrashbordDetails(token models.Token) (models.DrashBoard, string, erro
 	})
 
 	if err != nil {
-		fmt.Println("Error counting not completed documents:", err)
 		return drashboard, "Error in Finding", err
 	}
 
 	filter := bson.M{"sellerid": id}
 	cursor, err := config.Buynow_Collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Println(err)
 		return drashboard, "Error in Searching", err
 	}
 	for cursor.Next(context.Background()) {
 		var order models.AddOrder
 		err := cursor.Decode(&order)
 		if err != nil {
-			log.Println(err)
+
 			return drashboard, "Server Error", err
 		}
 		drashboard.Orders++
@@ -372,7 +365,6 @@ func SellerDrashbordDetails(token models.Token) (models.DrashBoard, string, erro
 func GetAllProducts(token models.Token) ([]models.Inventory, string, error) {
 	id, err := ExtractCustomerID(token.Token, constants.SecretKey)
 	if err != nil {
-		log.Println(err)
 		return nil, "Login Expired", err
 	}
 	filter := bson.M{"sellerid": id}
@@ -385,7 +377,6 @@ func GetAllProducts(token models.Token) ([]models.Inventory, string, error) {
 		var inventory models.Inventory
 		err := cursor.Decode(&inventory)
 		if err != nil {
-			log.Println(err)
 			return nil, "Server Error", err
 		}
 		Inventory = append(Inventory, inventory)
@@ -397,44 +388,41 @@ func GetAllProducts(token models.Token) ([]models.Inventory, string, error) {
 func GetAllBuyedCustomer(token models.Token) ([]models.Customer, string, error) {
 	id, err := ExtractCustomerID(token.Token, constants.SecretKey)
 	if err != nil {
-		log.Println(err)
 		return nil, "Login Expired", err
 	}
-    var CustomerId []string
+	var CustomerId []string
 	filter := bson.M{"sellerid": id}
 	cursor, err := config.Buynow_Collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Println(err)
 		return nil, "Error in Searching", err
 	}
 	for cursor.Next(context.Background()) {
 		var order models.AddOrder
 		err := cursor.Decode(&order)
 		if err != nil {
-			log.Println(err)
 			return nil, "Server Error", err
 		}
 		CustomerId = append(CustomerId, order.CustomerId)
 	}
 	CustomerId = uniqueStrings(CustomerId)
 	var Customer []models.Customer
-	for _,value := range CustomerId{
+	for _, value := range CustomerId {
 		var customer models.Customer
-		filter = bson.M{"customerid":value}
-		err := config.Customer_Collection.FindOne(context.Background(),filter).Decode(&customer)
-		if err != nil{
-			return nil,"Error in Finding",err
+		filter = bson.M{"customerid": value}
+		err := config.Customer_Collection.FindOne(context.Background(), filter).Decode(&customer)
+		if err != nil {
+			return nil, "Error in Finding", err
 		}
 		customer.BlockedUser = false
 		customer.ConfirmPassword = ""
 		customer.Password = ""
 		customer.WrongInput = 0
-		Customer =  append(Customer,customer)
+		Customer = append(Customer, customer)
 	}
-	return Customer,"Success",nil
+	return Customer, "Success", nil
 }
 
-//Find Unique Customer
+// Find Unique Customer
 func uniqueStrings(input []string) []string {
 	uniqueMap := make(map[string]bool)
 	var uniqueSlice []string
@@ -447,4 +435,87 @@ func uniqueStrings(input []string) []string {
 	}
 
 	return uniqueSlice
+}
+
+// Get Order Details
+func GetCustromerOrderforSeller(details models.GetOrder) (*models.AddOrder, string, error) {
+	var orderDetails models.AddOrder
+
+	id, err := ExtractCustomerID(details.Token, constants.SecretKey)
+	if err != nil {
+		return &orderDetails, "Login Expired", err
+	}
+
+	filter := bson.M{"orderid": details.OrderID}
+	err = config.Buynow_Collection.FindOne(context.Background(), filter).Decode(&orderDetails)
+	if err != nil {
+		return &orderDetails, "No Result found", err
+	}
+	if orderDetails.SellerId != id {
+		return nil, "Order not Found", nil
+	}
+	return &orderDetails, "Success", nil
+}
+
+// Update Order Tracking
+func UpdateOrderTracking(details models.OrderTracking)(string,error){
+	id,err := ExtractCustomerID(details.Token,constants.SecretKey)
+	if err != nil{
+		return "Login Expired",err
+	}
+	log.Println(details)
+	var order models.AddOrder
+	filter := bson.M{"orderid":details.OrderID}
+	err = config.Buynow_Collection.FindOne(context.Background(),filter).Decode(&order)
+	if err != nil{
+		return "Error in Finding",err
+	}
+	if order.SellerId != id{
+		return "Order not Found",nil
+	}
+	if order.Status.Product_Delivered == "completed" {
+		return "Order Already Delivered",nil
+	}
+	if order.Status.Product_Dispatched == "completed" {
+		return "Order Already Dispatched",nil
+	}
+	if(details.Feild == "processing" && order.Status.Processing_Order == "pending"){
+		update := bson.M{"$set": bson.M{"status.processing": "completed"}}
+		_,err = config.Buynow_Collection.UpdateOne(context.Background(),filter,update)	
+		if err != nil{
+			return "Error in Updating",err
+		}
+		return "Updated Successfully",nil
+	}else if(order.Status.Processing_Order == "completed" && details.Feild == "processing"){
+		return "Processing Already Completed",nil
+	}
+
+	if(details.Feild == "quality" && order.Status.Quality_Check == "pending" && order.Status.Processing_Order == "completed"){
+		update := bson.M{"$set": bson.M{"status.quality": "completed"}}
+		_,err = config.Buynow_Collection.UpdateOne(context.Background(),filter,update)	
+		if err != nil{
+			return "Error in Updating",err
+		}
+		return "Updated Successfully",nil
+	}else if(details.Feild == "quality" && order.Status.Processing_Order == "pending" ){
+		return "Please Complete Processing before this",nil
+	}else if(order.Status.Quality_Check == "completed" && details.Feild == "quality"){
+		return "Quality Check Already Completed",nil
+	}
+
+	if(details.Feild == "dispatched" && order.Status.Product_Dispatched == "pending" && order.Status.Quality_Check == "completed"){
+		update := bson.M{"$set": bson.M{"status.dispatched": "completed"}}
+		_,err = config.Buynow_Collection.UpdateOne(context.Background(),filter,update)	
+		if err != nil{
+			return "Error in Updating",err
+		}
+		return "Updated Successfully",nil
+	}else if(details.Feild == "dispatched" && order.Status.Quality_Check == "pending" ){
+		return "Please Complete Quality Check before this",nil
+	}else if(order.Status.Product_Dispatched == "completed" && details.Feild == "dispatched"){
+		return "Product Dispatched Already Completed",nil
+	}
+
+	return "Unable to update data",nil
+
 }

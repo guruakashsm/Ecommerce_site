@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -424,14 +423,14 @@ func GetUserAddress(token models.Token) (models.Address, string, error) {
 
 // Add Ordered Items to Db
 func CustomerOrders(Buynow models.BuyNow) (string, error) {
-	for _,value := range Buynow.ItemsToBuy{
+	for _, value := range Buynow.ItemsToBuy {
 		var order models.AddOrder
 		order.Address = Buynow.Address
 		order.ItemsToBuy = value
 		order.TotalAmount = float64(value.TotalPrice)
 		order.CustomerId = Buynow.CustomerId
 		order.NoofItems = value.Quantity
-		order.EstimatedDeliverydate = Buynow.EstimatedDeliverydate 
+		order.EstimatedDeliverydate = Buynow.EstimatedDeliverydate
 		order.SellerId = value.SellerId
 		order.OrderedDate = Buynow.OrderedDate
 		order.OrderID = GenerateUniqueOrderID()
@@ -450,51 +449,76 @@ func CustomerOrders(Buynow models.BuyNow) (string, error) {
 }
 
 // Convert Id To string
-func convertIDToString(insertResult *mongo.InsertOneResult) string {
-	insertedID := insertResult.InsertedID.(primitive.ObjectID)
-	return insertedID.Hex()
-}
+// func convertIDToString(insertResult *mongo.InsertOneResult) string {
+// 	insertedID := insertResult.InsertedID.(primitive.ObjectID)
+// 	return insertedID.Hex()
+// }
 
 // Delete Orders
-func DeleteOrder(delete models.DeleteOrder)(string,error) {
+func DeleteOrder(delete models.DeleteOrder) (string, error) {
+	var order models.AddOrder
+	var reason string
 	filter := bson.M{"orderid": delete.OrderID}
-
-	_, err := config.Buynow_Collection.DeleteOne(context.Background(), filter)
+	err := config.Buynow_Collection.FindOne(context.Background(), filter).Decode(&order)
 	if err != nil {
-		log.Println(err)
-		return "No result Found",err
+		return "Error in finding", err
 	}
 
-	return "Cancelled Successfully",nil
+	id, err := ExtractCustomerID(delete.Token, constants.SecretKey)
+	if err != nil {
+		return "Login Expired", err
+	}
+	if order.SellerId == id || id == order.CustomerId {
+
+		if id == order.CustomerId {
+			reason = "Order Requested to Cancel by user. If intrested please share us your feedback"
+		} else {
+			reason = "Seller unable to process your order. Please try to order after sometime . We are sorry for the Inconvenience 🙇🏻"
+		}
+
+		if order.Status.Processing_Order == "completed" {
+			return "Can not Cancel Order after Processing", nil
+		}
+
+		_, err = config.Buynow_Collection.DeleteOne(context.Background(), filter)
+		if err != nil {
+			log.Println(err)
+			return "No result Found", err
+		}
+		go OrderCancelMailtoCustomer(order, reason)
+		return "Cancelled Successfully", nil
+	} else {
+		return "Order not found", nil
+	}
 }
 
 // Display Customer Order
-func CustomerOrder(token models.Token)([]models.AddOrder,string,error) {
+func CustomerOrder(token models.Token) ([]models.AddOrder, string, error) {
 	id, err := ExtractCustomerID(token.Token, constants.SecretKey)
 	if err != nil {
 		log.Println(err)
-		return nil,"Login Expired",err
+		return nil, "Login Expired", err
 	}
 	filter := bson.M{"customerid": id}
 	var Order []models.AddOrder
 	cursor, err := config.Buynow_Collection.Find(context.Background(), filter)
 	if err != nil {
 		log.Println(err)
-		return nil,"Error in Fetching Data",err
+		return nil, "Error in Fetching Data", err
 	}
 	for cursor.Next(context.Background()) {
 		var order models.AddOrder
 		err := cursor.Decode(&order)
 		if err != nil {
 			log.Println(err)
-			return nil,"Error in Decoding Data",err
+			return nil, "Error in Decoding Data", err
 		}
-		if(order.Status.Product_Delivered == "completed"){
+		if order.Status.Product_Delivered == "completed" {
 			continue
 		}
 		Order = append(Order, order)
 	}
-	return Order,"Success",nil
+	return Order, "Success", nil
 }
 
 // Delete Items In Cart
@@ -637,7 +661,6 @@ func AddCustomerOrders(Token models.Token) (string, error) {
 		return message, err
 	}
 
-
 	message, err = DeleteItemsInCart(id)
 	if err != nil {
 		log.Println(err)
@@ -658,29 +681,25 @@ func DeliveryDate() string {
 	return formattedDeliveryDate
 }
 
-
 // To Generate Order ID
 func GenerateUniqueOrderID() string {
 	return fmt.Sprintf("%d%s", time.Now().UnixNano(), GetRandomString(7))
 }
 
-//Give Current Date in Format
+// Give Current Date in Format
 func CurrentDate() string {
 	currentTime := time.Now()
 	formattedCurrentDate := currentTime.Format("January 2, 2006")
 	return formattedCurrentDate
 }
 
-//Get Order Details
-func GetCustromerOrder(details models.GetOrder)(models.AddOrder,string,error){
+// Get Order Details
+func GetCustromerOrder(details models.GetOrder) (models.AddOrder, string, error) {
 	var orderDetails models.AddOrder
-	filter := bson.M{"orderid":details.OrderID}
-	err:= config.Buynow_Collection.FindOne(context.Background(),filter).Decode(&orderDetails)
-	if err != nil{
-		return orderDetails,"No Result found",err
+	filter := bson.M{"orderid": details.OrderID}
+	err := config.Buynow_Collection.FindOne(context.Background(), filter).Decode(&orderDetails)
+	if err != nil {
+		return orderDetails, "No Result found", err
 	}
-	return orderDetails,"Success",nil
+	return orderDetails, "Success", nil
 }
-
-
-

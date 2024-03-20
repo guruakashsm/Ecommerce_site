@@ -120,7 +120,7 @@ type AddOrder struct {
 
 // Name of Quantity of previous
 type Item struct {
-	ProductNameName string `json:"productname" bson:"productname"`
+	ProductName string `json:"productname" bson:"productname"`
 	ItemCategory    string `json:"itemcategory" bson:"itemcategory"`
 	Quantity        int    `json:"quantity" bson:"quantity"`
 	Price           int    `json:"price" bson:"price"`

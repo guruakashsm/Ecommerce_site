@@ -32,10 +32,10 @@ func intToString(num int) string {
     return strconv.Itoa(num)
 }
 
-func stringToInt(str string) (int, error) {
-    num, err := strconv.Atoi(str)
-    if err != nil {
-        return 0, err
-    }
-    return num, nil
-}
+// func stringToInt(str string) (int, error) {
+//     num, err := strconv.Atoi(str)
+//     if err != nil {
+//         return 0, err
+//     }
+//     return num, nil
+// }

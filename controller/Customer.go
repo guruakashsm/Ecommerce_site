@@ -257,13 +257,11 @@ func GetCustomerOrder(c *gin.Context){
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	data,message,err := service.GetCustromerOrder(details)
+	data,message,err := service.GetCustromerOrderforSeller(details)
 	if err != nil{
 		log.Println(err)
 		c.JSON(http.StatusOK, gin.H{"error": message})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": data})
-
-
 }

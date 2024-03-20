@@ -1,11 +1,14 @@
 package service
 
 import (
+	"context"
+	"ecommerce/config"
 	"ecommerce/models"
 	"fmt"
 	"net/smtp"
 
 	"github.com/jordan-wright/email"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 const (
@@ -613,7 +616,7 @@ func SendEditDataNotification(toEmail, fieldUpdated, newValue string) {
 	}
 }
 
-func SendOrderConformation(toEmail,price,totalAmount,dateofdelivey,id,noofitems string,address models.Address) {
+func SendOrderConformation(toEmail, price, totalAmount, dateofdelivey, id, noofitems string, address models.Address) {
 	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "aqky ewcr kjfd jjpw")
 	subject := "Order Conformation"
 	htmlTemplate := `
@@ -726,15 +729,15 @@ func SendOrderConformation(toEmail,price,totalAmount,dateofdelivey,id,noofitems 
                                             Order Confirmation #
                                         </td>
                                         <td width="25%" align="left" bgcolor="#eeeeee" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px;">
-                                            `+id+`
+                                            ` + id + `
                                         </td>
                                     </tr>
                                     <tr>
                                         <td width="75%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px;">
-                                            Purchased Item (`+noofitems+`)
+                                            Purchased Item (` + noofitems + `)
                                         </td>
                                         <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px;">
-                                            ₹`+price+`
+                                            ₹` + price + `
                                         </td>
                                     </tr>
                                     <tr>
@@ -756,7 +759,7 @@ func SendOrderConformation(toEmail,price,totalAmount,dateofdelivey,id,noofitems 
                                             TOTAL
                                         </td>
                                         <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;">
-                                            ₹`+totalAmount+`
+                                            ₹` + totalAmount + `
                                         </td>
                                     </tr>
                                 </table>
@@ -777,7 +780,7 @@ func SendOrderConformation(toEmail,price,totalAmount,dateofdelivey,id,noofitems 
                                         <tr>
                                             <td align="left" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px;">
                                                 <p style="font-weight: 800;">Delivery Address</p>
-                                                <p>`+address.FirstName + address.LastName +`<br>`+address.Street_Name+`<br>`+address.City + string(address.Pincode)+`</p>
+                                                <p>` + address.FirstName + address.LastName + `<br>` + address.Street_Name + `<br>` + address.City + string(rune(address.Pincode)) + `</p>
                                             </td>
                                         </tr>
                                     </table>
@@ -787,7 +790,7 @@ func SendOrderConformation(toEmail,price,totalAmount,dateofdelivey,id,noofitems 
                                         <tr>
                                             <td align="left" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px;">
                                                 <p style="font-weight: 800;">Estimated Delivery Date</p>
-                                                <p>`+dateofdelivey+`</p>
+                                                <p>` + dateofdelivey + `</p>
                                             </td>
                                         </tr>
                                     </table>
@@ -859,6 +862,120 @@ func SendOrderConformation(toEmail,price,totalAmount,dateofdelivey,id,noofitems 
 	to := []string{toEmail}
 
 	err := sender.SendEmail(subject, htmlTemplate, to, nil, nil)
+
+	if err != nil {
+		fmt.Println("Error sending email:", err)
+	} else {
+		fmt.Println("Email sent successfully!")
+	}
+}
+
+func OrderCancelMailtoCustomer(order models.AddOrder,reason string) {
+	var customer models.Customer
+	filter := bson.M{"customerid": order.CustomerId}
+	err := config.Buynow_Collection.FindOne(context.Background(), filter).Decode(&customer)
+	if err != nil {
+		return 
+	}
+    toEmail := customer.DeliveryEmail
+	sender := NewGmailSender("GURUAKAKSH SM", "guruakash.ec20@bitsathy.ac.in", "aqky ewcr kjfd jjpw")
+	subject := "Data Edit Notification"
+	htmlTemplate := `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Order Cancellation</title>
+        <style type="text/css">
+            body {
+                background-color: #f4f4f4;
+                color: #333;
+                font-family: Arial, sans-serif;
+                font-size: 16px;
+                line-height: 1.6;
+            }
+            .container {
+                width: 100%;
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #fff;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            h1 {
+                font-size: 24px;
+                margin-bottom: 20px;
+                color: #333;
+                border-bottom: 2px solid #007bff;
+                padding-bottom: 10px;
+            }
+            p {
+                margin-bottom: 20px;
+                color: #555;
+            }
+            table {
+                width: 100%;
+                margin-bottom: 20px;
+                border-collapse: collapse;
+            }
+            th, td {
+                padding: 10px;
+                border-bottom: 1px solid #ddd;
+                text-align: left;
+            }
+            th {
+                background-color: #f2f2f2;
+                color: #555;
+            }
+            .button {
+                display: inline-block;
+                background-color: #007bff;
+                color: #fff;
+                padding: 10px 20px;
+                text-decoration: none;
+                border-radius: 5px;
+            }
+            .button:hover {
+                background-color: #0056b3;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1 style="color: #007bff;">Order Cancellation Notification</h1>
+            <p>Dear [Customer Name],</p>
+            <p>Your order has been canceled for the following reason:</p>
+            <p><strong style="color: #007bff;">Cancelation Reason:</strong>`+reason+`</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="background-color: #007bff; color: #fff;">Item Description</th>
+                        <th style="background-color: #007bff; color: #fff;">Item Price</th>
+                        <th style="background-color: #007bff; color: #fff;">Quantity</th>
+                        <th style="background-color: #007bff; color: #fff;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Iterate over order items here -->
+                    <tr>
+                        <td>` + order.ItemsToBuy.ProductName + `</td>
+                        <td>` + string(rune(order.ItemsToBuy.TotalPrice)) + `</td>
+                        <td>` + string(rune(order.ItemsToBuy.Quantity)) + `</td>
+                        <td>` + floatToString(order.TotalAmount) + `</td>
+                    </tr>
+                    <!-- End iteration -->
+                </tbody>
+            </table>
+            <p>If you have any questions about your order, please contact our customer service representative or call us toll-free at [Phone Number].</p>
+            <p>Please do not reply to this email as it does not accommodate replies.</p>
+        </div>
+    </body>
+    </html>
+    
+    `
+	to := []string{toEmail}
+
+	err = sender.SendEmail(subject, htmlTemplate, to, nil, nil)
 
 	if err != nil {
 		fmt.Println("Error sending email:", err)
