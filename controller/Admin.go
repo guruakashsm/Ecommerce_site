@@ -164,7 +164,7 @@ func GetData(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": result})
 }
 
-//Add Event To Calender
+// Add Event To Calender
 func AddEvent(c *gin.Context) {
 	var upload models.UploadCalender
 	if err := c.BindJSON(&upload); err != nil {
@@ -213,3 +213,20 @@ func Block(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": result})
 }
 
+
+// ShutDown 
+func ShutDown(c *gin.Context){
+	var token models.ShutDown
+	if err := c.BindJSON(&token); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	log.Println(token)
+	result, err := service.ShutDown(token)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Internal Server Error"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": result})
+}

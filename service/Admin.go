@@ -3,13 +3,15 @@ package service
 import (
 	"context"
 	"ecommerce/config"
+	"ecommerce/constants"
 	"ecommerce/models"
 	"fmt"
 	"log"
+	"os"
 	"strconv"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -42,17 +44,14 @@ func AdminLoginCheck(login *models.AdminData) (string, int) {
 		config.Admin_Collection.UpdateOne(context.Background(), filter, update)
 		return "", 4
 	}
-	idString := correctdata.Id.Hex()
-	objectID, err := primitive.ObjectIDFromHex(idString)
-	if err != nil {
-		log.Println(err)
-	}
-	token, err := CreateToken(login.Email, string(objectID.String()))
+
+	token, err := CreateToken(correctdata.Email, correctdata.AdminID)
 	if err != nil {
 		return "", 5
 	}
+
 	log.Println(token)
-	update := bson.M{"$set": bson.M{"token": token, "wronginput": 0}}
+	update := bson.M{"$set": bson.M{"wronginput": 0}}
 	config.Admin_Collection.UpdateOne(context.Background(), filter, update)
 	return token, 5
 
@@ -214,8 +213,8 @@ func Update(update models.Update) bool {
 			update1 := bson.M{"$set": bson.M{update.Field: intValue}}
 			options := options.Update()
 			_, err1 := config.Inventory_Collection.UpdateOne(context.TODO(), filter, update1, options)
-		    return err1 == nil
-			
+			return err1 == nil
+
 		}
 
 		filter := bson.M{"itemname": update.IdName}
@@ -298,8 +297,6 @@ func GetWorkerdata() []models.Workers {
 	return workers
 }
 
-
-
 // Create Worker
 func CreateWorker(worker models.Workers) string {
 	filter := bson.M{"email": worker.Email}
@@ -339,6 +336,7 @@ func CreateAdmin(admin models.AdminSignup) (string, string) {
 	AdminData.SecretKey = key
 	AdminData.Token = ""
 	AdminData.WrongInput = 0
+	AdminData.AdminID = GenerateUniqueAdminID()
 	_, err = config.Admin_Collection.InsertOne(context.Background(), AdminData)
 	if err != nil {
 		return "Error in Creating: " + err.Error(), ""
@@ -486,7 +484,6 @@ func Block(data models.Block) (string, error) {
 	return "Invalid Collection", nil
 }
 
-
 // Add Event To Calender
 func AddEvent(upload models.UploadCalender) error {
 	_, err := config.Calender_Collection.InsertOne(context.Background(), upload)
@@ -497,9 +494,7 @@ func AddEvent(upload models.UploadCalender) error {
 	return nil
 }
 
-
-
-//Get Event from Calender
+// Get Event from Calender
 func GetEvent(GetData models.GetCalender) ([]models.UploadCalender, error) {
 	filter := bson.M{"email": GetData.AdminEmail}
 	cursor, err := config.Calender_Collection.Find(context.Background(), filter)
@@ -519,4 +514,40 @@ func GetEvent(GetData models.GetCalender) ([]models.UploadCalender, error) {
 		Data = append(Data, data)
 	}
 	return Data, nil
+}
+
+// ShutDown
+func ShutDown(token models.ShutDown) (string, error) {
+	if token.Password != constants.ShutDownKey {
+		return "Key Mismatch", nil
+	}
+	id, err := ExtractCustomerID(token.Token, constants.SecretKey)
+	if err != nil {
+		log.Println("Login Exp")
+		return "Login Expired", err
+	}
+	var admin models.AdminData
+	filter := bson.M{"adminid": id}
+	err = config.Admin_Collection.FindOne(context.Background(), filter).Decode(&admin)
+	if err != nil {
+		return "Login as Admin", err
+	}
+
+	if id != admin.AdminID {
+		return "Login as Admin", err
+	}
+
+	shutdownComplete := make(chan bool)
+
+	go func() {
+		ShutDownExe()
+		shutdownComplete <- true
+	}()
+
+	return "Shutdown initiated", nil
+}
+
+func ShutDownExe() {
+	time.Sleep(3 * time.Second)
+	os.Exit(0)
 }

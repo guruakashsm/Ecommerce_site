@@ -1,7 +1,5 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
-
 // To Delete Data
 type Delete struct {
 	Collection string `json:"collection" bson:"collection"`
@@ -18,14 +16,14 @@ type Update struct {
 
 // Admin Signup Data
 type AdminData struct {
-	Id         primitive.ObjectID `json:"_id" bson:"_id"`
-	Email      string             `json:"email" bson:"email"`
-	Password   string             `json:"password" bson:"password"`
-	TOTP       string             `json:"totp" bson:"totp"`
-	IP_Address string             `json:"ip" bson:"ip"`
-	SecretKey  string             `json:"secretkey" bson:"secretkey"`
-	WrongInput int                `json:"wronginput" bson:"wronginput"`
-	Token      string             `json:"token" bson:"token"`
+	AdminID    string `json:"adminid" bson:"adminid"`
+	Email      string `json:"email" bson:"email"`
+	Password   string `json:"password" bson:"password"`
+	TOTP       string `json:"totp" bson:"totp"`
+	IP_Address string `json:"ip" bson:"ip"`
+	SecretKey  string `json:"secretkey" bson:"secretkey"`
+	WrongInput int    `json:"wronginput" bson:"wronginput"`
+	Token      string `json:"token" bson:"token"`
 }
 
 // Admin Sign in data
@@ -37,8 +35,7 @@ type AdminSignup struct {
 	IP              string `bson:"ip" json:"ip"`
 }
 
-
-//Data Needed for Admin Page
+// Data Needed for Admin Page
 type AdminPageData struct {
 	UserCount        int64 `json:"usercount" bson:"usercount"`
 	SellerCount      int64 `json:"sellercount" bson:"sellercount"`
@@ -47,13 +44,13 @@ type AdminPageData struct {
 	TotalSalesAmount int32 `json:"totalsalesamount" bson:"totalsalesamount"`
 }
 
-//Data Needed for Admin Page -- > Need To Combine Both
+// Data Needed for Admin Page -- > Need To Combine Both
 type Sales struct {
 	TotalSalesAmount int `bson:"totalsalesamount"`
 	TotalNoOfSales   int `bson:"totalnoofsales"`
 }
 
-//Create Worker
+// Create Worker
 type Workers struct {
 	UserName string `bson:"username" json:"username"`
 	Email    string `bson:"email" json:"email"`
@@ -64,12 +61,11 @@ type Workers struct {
 	Image    string `bson:"image" json:"image"`
 }
 
-//Get Every Single Data
+// Get Every Single Data
 type Getdata struct {
 	Id         string `json:"id" bson:"id"`
 	Collection string `json:"collection" bson:"collection"`
 }
-
 
 // Single Data Returing Structure
 type ReturnData struct {
@@ -108,8 +104,7 @@ type ReturnData struct {
 	ConfirmPassword string `json:"confirmpassword" bson:"confirmpassword"`
 }
 
-
-//Upload Event to Calender
+// Upload Event to Calender
 type UploadCalender struct {
 	AdminEmail string   `json:"email" bson:"email"`
 	Title      string   `json:"title" bson:"title"`
@@ -118,14 +113,19 @@ type UploadCalender struct {
 	Todos      []string `json:"todos" bson:"todos"`
 }
 
-
-//Input to Get Email
+// Input to Get Email
 type GetCalender struct {
 	AdminEmail string `json:"email" bson:"email"`
 }
 
-//Block User
+// Block User
 type Block struct {
 	Email      string `json:"email" bson:"email"`
 	Collection string `json:"collection" bson:"collection"`
+}
+
+// ShutDown
+type ShutDown struct {
+	Token    string `json:"token" bson:"token"`
+	Password string `json:"password" bson:"password"`
 }

@@ -82,6 +82,7 @@ func Router() *gin.Engine {
 	router.POST("/yettodeliverorders",controller.YettoDeliverOrders)
 	router.POST("/updateordertracking",controller.UpdateOrderTracking)
 	router.POST("/getproductforseller",controller.GetProductData)
+	router.POST("/shutdown",controller.ShutDown)
 
 
 	return router

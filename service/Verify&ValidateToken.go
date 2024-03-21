@@ -58,6 +58,12 @@ func GenerateUniqueCustomerID() string {
 	return fmt.Sprintf("%d%s", time.Now().UnixNano(), GetRandomString(6))
 }
 
+func GenerateUniqueAdminID() string {
+	// Implement your logic to generate a unique customer ID (e.g., UUID, timestamp, etc.)
+	// For example, you can use a combination of timestamp and random characters
+	return fmt.Sprintf("%d%s", time.Now().UnixNano(), GetRandomString(8))
+}
+
 // Custom function to generate random characters (for demonstration purposes)
 func GetRandomString(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
