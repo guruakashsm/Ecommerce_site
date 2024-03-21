@@ -80,6 +80,7 @@ func Router() *gin.Engine {
 	router.POST("/pendingorders",controller.PendingOrders)
 	router.POST("/yettodeliverorders",controller.YettoDeliverOrders)
 	router.POST("/updateordertracking",controller.UpdateOrderTracking)
+	router.POST("/getproductforseller",controller.GetProductData)
 
 
 	return router

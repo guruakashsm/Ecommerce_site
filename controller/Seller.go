@@ -63,8 +63,12 @@ func UpdateProductBySeller(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	result := service.UpdateProductBySeller(update)
-	c.JSON(http.StatusOK, result)
+	result,err := service.UpdateProductBySeller(update)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"error": result})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": result})
 }
 
 // Delete Items in Inventory
@@ -75,8 +79,14 @@ func DeleteProductBySeller(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	result := service.DeleteProductBySeller(delete)
-	c.JSON(http.StatusOK, result)
+	log.Println(delete)
+	result,err := service.DeleteProductBySeller(delete)
+	if err != nil{
+		log.Println(err)
+		c.JSON(http.StatusOK, gin.H{"error": result})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": result})
 
 }
 
@@ -278,6 +288,23 @@ func UpdateOrderTracking(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"error": message})
 	}
 	c.JSON(http.StatusOK, gin.H{"message": message})
+}
+
+//Get Single Product Data
+func GetProductData(c *gin.Context){
+	var details models.DeleteBySeller
+	if err := c.BindJSON(&details); err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	log.Println(details.ProductID)
+	data,message, err := service.GetProductData(details)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusOK, gin.H{"error": message})
+	}
+	c.JSON(http.StatusOK, gin.H{"message": data})
 }
 
 

@@ -5,7 +5,9 @@ import (
 	"ecommerce/config"
 	"ecommerce/constants"
 	"ecommerce/models"
+	"fmt"
 	"log"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -33,6 +35,7 @@ func Inventory(inventory models.Inventory) (string, error) {
 			return "Seller not found", err
 		}
 		inventory.SellerName = seller.Seller_Name
+		inventory.ProductId = GenerateUniqueProductID()
 		_, err = config.Inventory_Collection.InsertOne(context.Background(), inventory)
 		if err != nil {
 			return "Error while Adding Product", err
@@ -43,6 +46,13 @@ func Inventory(inventory models.Inventory) (string, error) {
 		return "Item Name Already exists", nil
 	}
 
+}
+
+// Generate Product ID
+func GenerateUniqueProductID() string {
+	// Implement your logic to generate a unique customer ID (e.g., UUID, timestamp, etc.)
+	// For example, you can use a combination of timestamp and random characters
+	return fmt.Sprintf("%d%s", time.Now().UnixNano(), GetRandomString(8))
 }
 
 // Check Seller for Login
@@ -86,27 +96,64 @@ func CheckSeller(check models.Login) (string, bool, error) {
 }
 
 // Update Product
-func UpdateProductBySeller(update models.UpdateProduct) int {
-	filter := bson.M{"itemname": update.ProductName}
-	update1 := bson.M{"$set": bson.M{update.Attribute: update.New_Value}}
-	options := options.Update()
-	_, err := config.Inventory_Collection.UpdateOne(context.TODO(), filter, update1, options)
-	if err != nil {
-
-		return 0
+func UpdateProductBySeller(update models.UpdateProduct) (string,error) {
+	id,err := ExtractCustomerID(update.Token,constants.SecretKey)
+	if err != nil{
+		return "Login Expired",err
 	}
-	return 1
+
+	var inventory models.Inventory
+
+	filter := bson.M{"productid": update.ProductID}
+	err = config.Inventory_Collection.FindOne(context.Background(),filter).Decode(&inventory)
+	if err != nil{
+		return "Product Not Found",err
+	}
+
+	if inventory.SellerId != id{
+		return "Product Not Found",nil
+	}
+
+	updatefilter := bson.M{"$set": bson.M{update.Attribute: update.New_Value}}
+
+	if(update.Attribute == "price" || update.Attribute == "sellerquantity"){
+		value,err := stringToInt(update.New_Value)
+		if err != nil{
+			return "Error in converting",err
+		}
+		updatefilter = bson.M{"$set": bson.M{update.Attribute: value}}
+	}else{
+		updatefilter = bson.M{"$set": bson.M{update.Attribute: update.New_Value}}
+	}
+	
+	options := options.Update()
+	_, err = config.Inventory_Collection.UpdateOne(context.TODO(), filter, updatefilter, options)
+	if err != nil {
+		return "Error in Updating",nil
+	}
+	return "Updated Successfully",nil
 }
 
 // Delete Product
-func DeleteProductBySeller(delete models.DeleteBySeller) int {
-	filter := bson.M{"itemname": delete.ProductName}
-	_, err := config.Inventory_Collection.DeleteOne(context.Background(), filter)
+func DeleteProductBySeller(delete models.DeleteBySeller) (string, error) {
+	id, err := ExtractCustomerID(delete.Token, constants.SecretKey)
 	if err != nil {
-
-		return 0
+		return "Login Expired", err
 	}
-	return 1
+	var inventory models.Inventory
+	filter := bson.M{"productid": delete.ProductID}
+	err = config.Inventory_Collection.FindOne(context.Background(),filter).Decode(&inventory)
+	if err != nil{
+		return "Product Not Found",err
+	}
+	if inventory.SellerId != id{
+		return "Product Not Found",nil
+	}
+	_, err = config.Inventory_Collection.DeleteOne(context.Background(), filter)
+	if err != nil {
+		return "Error in Deleting",err
+	}
+	return "Deleted Successfully",nil
 }
 
 // Display All Orders
@@ -458,64 +505,84 @@ func GetCustromerOrderforSeller(details models.GetOrder) (*models.AddOrder, stri
 }
 
 // Update Order Tracking
-func UpdateOrderTracking(details models.OrderTracking)(string,error){
-	id,err := ExtractCustomerID(details.Token,constants.SecretKey)
-	if err != nil{
-		return "Login Expired",err
+func UpdateOrderTracking(details models.OrderTracking) (string, error) {
+	id, err := ExtractCustomerID(details.Token, constants.SecretKey)
+	if err != nil {
+		return "Login Expired", err
 	}
 	log.Println(details)
 	var order models.AddOrder
-	filter := bson.M{"orderid":details.OrderID}
-	err = config.Buynow_Collection.FindOne(context.Background(),filter).Decode(&order)
-	if err != nil{
-		return "Error in Finding",err
+	filter := bson.M{"orderid": details.OrderID}
+	err = config.Buynow_Collection.FindOne(context.Background(), filter).Decode(&order)
+	if err != nil {
+		return "Error in Finding", err
 	}
-	if order.SellerId != id{
-		return "Order not Found",nil
+	if order.SellerId != id {
+		return "Order not Found", nil
 	}
 	if order.Status.Product_Delivered == "completed" {
-		return "Order Already Delivered",nil
+		return "Order Already Delivered", nil
 	}
 	if order.Status.Product_Dispatched == "completed" {
-		return "Order Already Dispatched",nil
+		return "Order Already Dispatched", nil
 	}
-	if(details.Feild == "processing" && order.Status.Processing_Order == "pending"){
+	if details.Feild == "processing" && order.Status.Processing_Order == "pending" {
 		update := bson.M{"$set": bson.M{"status.processing": "completed"}}
-		_,err = config.Buynow_Collection.UpdateOne(context.Background(),filter,update)	
-		if err != nil{
-			return "Error in Updating",err
+		_, err = config.Buynow_Collection.UpdateOne(context.Background(), filter, update)
+		if err != nil {
+			return "Error in Updating", err
 		}
-		return "Updated Successfully",nil
-	}else if(order.Status.Processing_Order == "completed" && details.Feild == "processing"){
-		return "Processing Already Completed",nil
+		return "Updated Successfully", nil
+	} else if order.Status.Processing_Order == "completed" && details.Feild == "processing" {
+		return "Processing Already Completed", nil
 	}
 
-	if(details.Feild == "quality" && order.Status.Quality_Check == "pending" && order.Status.Processing_Order == "completed"){
+	if details.Feild == "quality" && order.Status.Quality_Check == "pending" && order.Status.Processing_Order == "completed" {
 		update := bson.M{"$set": bson.M{"status.quality": "completed"}}
-		_,err = config.Buynow_Collection.UpdateOne(context.Background(),filter,update)	
-		if err != nil{
-			return "Error in Updating",err
+		_, err = config.Buynow_Collection.UpdateOne(context.Background(), filter, update)
+		if err != nil {
+			return "Error in Updating", err
 		}
-		return "Updated Successfully",nil
-	}else if(details.Feild == "quality" && order.Status.Processing_Order == "pending" ){
-		return "Please Complete Processing before this",nil
-	}else if(order.Status.Quality_Check == "completed" && details.Feild == "quality"){
-		return "Quality Check Already Completed",nil
+		return "Updated Successfully", nil
+	} else if details.Feild == "quality" && order.Status.Processing_Order == "pending" {
+		return "Please Complete Processing before this", nil
+	} else if order.Status.Quality_Check == "completed" && details.Feild == "quality" {
+		return "Quality Check Already Completed", nil
 	}
 
-	if(details.Feild == "dispatched" && order.Status.Product_Dispatched == "pending" && order.Status.Quality_Check == "completed"){
+	if details.Feild == "dispatched" && order.Status.Product_Dispatched == "pending" && order.Status.Quality_Check == "completed" {
 		update := bson.M{"$set": bson.M{"status.dispatched": "completed"}}
-		_,err = config.Buynow_Collection.UpdateOne(context.Background(),filter,update)	
-		if err != nil{
-			return "Error in Updating",err
+		_, err = config.Buynow_Collection.UpdateOne(context.Background(), filter, update)
+		if err != nil {
+			return "Error in Updating", err
 		}
-		return "Updated Successfully",nil
-	}else if(details.Feild == "dispatched" && order.Status.Quality_Check == "pending" ){
-		return "Please Complete Quality Check before this",nil
-	}else if(order.Status.Product_Dispatched == "completed" && details.Feild == "dispatched"){
-		return "Product Dispatched Already Completed",nil
+		return "Updated Successfully", nil
+	} else if details.Feild == "dispatched" && order.Status.Quality_Check == "pending" {
+		return "Please Complete Quality Check before this", nil
+	} else if order.Status.Product_Dispatched == "completed" && details.Feild == "dispatched" {
+		return "Product Dispatched Already Completed", nil
 	}
 
-	return "Unable to update data",nil
+	return "Unable to update data", nil
 
+}
+
+//Get Product Data
+func GetProductData(details models.DeleteBySeller)(*models.Inventory,string,error){
+	id,err := ExtractCustomerID(details.Token,constants.SecretKey)
+	if err != nil{
+		return nil,"Login Expired",err
+	}
+	var inventory models.Inventory
+	filter  := bson.M{"productid":details.ProductID}
+	err = config.Inventory_Collection.FindOne(context.Background(),filter).Decode(&inventory)
+	if err != nil{
+		return nil,"Error in Finding",err
+	}
+
+	if inventory.SellerId != id{
+		return nil,"Product not Found",nil
+	}
+
+	return &inventory,"Success",nil
 }

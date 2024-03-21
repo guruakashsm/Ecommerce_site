@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Feedback(c *gin.Context) {
+func InsertSellerFeedback(c *gin.Context) {
 	var feedback models.Feedback
 
 	if err := c.BindJSON(&feedback); err != nil {
@@ -16,8 +16,28 @@ func Feedback(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
-	result := service.Feedback(feedback)
-	c.JSON(http.StatusOK, result)
+	result,err := service.InstertSellerFeedback(feedback)
+	if err != nil{
+		c.JSON(http.StatusOK, gin.H{"error":result})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message":result})
+}
+
+func InsertCustomerFeedback(c *gin.Context) {
+	var feedback models.Feedback
+
+	if err := c.BindJSON(&feedback); err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	result,err := service.InsertCustomerFeedback(feedback)
+	if err != nil{
+		c.JSON(http.StatusOK, gin.H{"error":result})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message":result})
 }
 
 func SellerFeedback(c *gin.Context) {

@@ -135,7 +135,7 @@ func Delete(c *gin.Context) {
 
 // Delete FeedBack
 func Deletefeedback(c *gin.Context) {
-	var feedback models.Feedback
+	var feedback models.FeedbackDB
 
 	if err := c.BindJSON(&feedback); err != nil {
 
