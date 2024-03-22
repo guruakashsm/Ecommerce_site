@@ -129,3 +129,9 @@ type ShutDown struct {
 	Token    string `json:"token" bson:"token"`
 	Password string `json:"password" bson:"password"`
 }
+
+// ApproveSeller
+type ApproveSeller struct {
+	Token    string `json:"token" bson:"token"`
+	Sellerid string `json:"sellerid" bson:"sellerid"`
+}

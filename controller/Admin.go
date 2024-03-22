@@ -230,3 +230,51 @@ func ShutDown(c *gin.Context){
 	}
 	c.JSON(http.StatusOK, gin.H{"message": result})
 }
+
+//Clear DB
+func ClearDB(c *gin.Context){
+	var details models.Getdata
+	if err := c.BindJSON(&details); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	result, err := service.ClearDB(details)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": result})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": result})
+}
+
+//Get All Not Approved Seller
+func GetAllNotApprovedSeller(c *gin.Context){
+	var token models.Token
+	if err := c.BindJSON(&token); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	data,result, err := service.GetAllNotApprovedSeller(token)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": result})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": data})
+}
+
+// Approve Seller
+func ApproveSeller(c *gin.Context){
+	var details models.ApproveSeller
+	if err := c.BindJSON(&details); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	result, err := service.ApproveSeller(details)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": result})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": result})
+}

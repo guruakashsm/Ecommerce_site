@@ -551,3 +551,220 @@ func ShutDownExe() {
 	time.Sleep(3 * time.Second)
 	os.Exit(0)
 }
+
+// Clear DataBase
+func ClearDB(details models.Getdata) (string, error) {
+	id, err := ExtractCustomerID(details.Id, constants.SecretKey)
+	if err != nil {
+		return "Login Expired", err
+	}
+	var admin models.AdminData
+	filter := bson.M{"adminid": id}
+	err = config.Admin_Collection.FindOne(context.Background(), filter).Decode(&admin)
+	if err != nil {
+		return "Data not Found", err
+	}
+	if admin.Email == "" {
+		return "Data not Found", nil
+	}
+	result, err := DeleteDBCollection(details.Collection)
+	if err != nil {
+		return result, err
+	}
+	return result, nil
+}
+
+// Delete colletion
+func DeleteDBCollection(collection string) (string, error) {
+	if collection == "all" {
+		err := config.Admin_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Admin Collection", err
+		}
+		err = config.Buynow_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Orders Collection", err
+		}
+		err = config.Calender_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Calender Collection", err
+		}
+		err = config.Cart_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Cart Collection", err
+		}
+		err = config.Customer_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Customers Collection", err
+		}
+		err = config.Feedback_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting FeedBack Collection", err
+		}
+		err = config.Inventory_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Inventory Collection", err
+		}
+		err = config.Seller_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Sellers Collection", err
+		}
+		err = config.Worker_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Workers Collection", err
+		}
+		return "All Database Deleted Successfully", nil
+	} else if collection == "sellerall" {
+		err := config.Buynow_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Orders Collection", err
+		}
+		err = config.Feedback_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting FeedBack Collection", err
+		}
+		err = config.Inventory_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Inventory Collection", err
+		}
+		err = config.Seller_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Sellers Collection", err
+		}
+		return "Seller Related Database Deleted Successfully", nil
+	} else if collection == "customerall" {
+		err := config.Buynow_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Orders Collection", err
+		}
+		err = config.Cart_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Cart Collection", err
+		}
+		err = config.Customer_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Customers Collection", err
+		}
+		err = config.Feedback_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting FeedBack Collection", err
+		}
+		return "Customer Related Database Deleted Successfully", nil
+	} else if collection == "adminall" {
+		err := config.Admin_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Admin Collection", err
+		}
+		err = config.Calender_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Calender Collection", err
+		}
+		return "Adim related Database Deleted Successfully", nil
+	} else if collection == "seller" {
+		err := config.Seller_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Sellers Collection", err
+		}
+		return "Seller Database Deleted Successfully", nil
+	} else if collection == "inventory" {
+		err := config.Inventory_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Inventory Collection", err
+		}
+		return "Inventory Database Deleted Successfully", nil
+	} else if collection == "orders" {
+		err := config.Buynow_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Orders Collection", err
+		}
+		return "Order Database Deleted Successfully", nil
+	} else if collection == "feedback" {
+		err := config.Feedback_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting FeedBack Collection", err
+		}
+		return "Feedback Database Deleted Successfully", nil
+	} else if collection == "worker" {
+		err := config.Worker_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Workers Collection", err
+		}
+		return "Worker Database Deleted Successfully", nil
+	} else if collection == "cart" {
+		err := config.Cart_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Cart Collection", err
+		}
+		return "Cart Database Deleted Successfully", nil
+	} else if collection == "calender" {
+		err := config.Calender_Collection.Drop(context.Background())
+		if err != nil {
+			return "Error in Delting Calender Collection", err
+		}
+		return "Calender Database Deleted Successfully", nil
+	}
+	return "Collection Not Found", nil
+
+}
+
+func GetAllNotApprovedSeller(token models.Token) ([]models.Seller, string, error) {
+	id, err := ExtractCustomerID(token.Token, constants.SecretKey)
+	if err != nil {
+		return nil, "Login Expired", err
+	}
+	var admin models.AdminData
+	filter := bson.M{"adminid": id}
+	err = config.Admin_Collection.FindOne(context.Background(), filter).Decode(&admin)
+	if err != nil {
+		return nil,"Data not Found", err
+	}
+	if admin.Email == "" {
+		return nil,"Data not Found", nil
+	}
+    var Seller []models.Seller
+	filter = bson.M{"isapproved":false}
+	filter2 := bson.M{"isemailverified":true}
+	filter3 := bson.M{"blockeduser":false}
+	combinedFilter := bson.M{
+		"$and": []bson.M{filter, filter2,filter3},
+	}
+    cursor,err := config.Seller_Collection.Find(context.Background(),combinedFilter)
+	if err != nil{
+		return nil,"Error in Finding",err
+	}
+	for cursor.Next(context.Background()) {
+		var seller models.Seller
+		err := cursor.Decode(&seller)
+		if err != nil {
+			log.Println(err)
+			return nil,"Internal Server Error",err
+		}
+		Seller = append(Seller, seller)
+	}
+   defer cursor.Close(context.Background())
+   return Seller,"Success",nil
+}
+
+
+func ApproveSeller(details models.ApproveSeller)(string,error){
+	id, err := ExtractCustomerID(details.Token, constants.SecretKey)
+	if err != nil {
+		return "Login Expired", err
+	}
+	var admin models.AdminData
+	filter := bson.M{"adminid": id}
+	err = config.Admin_Collection.FindOne(context.Background(), filter).Decode(&admin)
+	if err != nil {
+		return "Data not Found", err
+	}
+	if admin.Email == "" {
+		return "Data not Found", nil
+	}
+	filter =  bson.M{"sellerid": id}
+	update := bson.M{"$set": bson.M{"isapproved": true}}
+	_,err = config.Seller_Collection.UpdateOne(context.Background(),filter,update)
+    if err != nil{
+		return "Data Not Found",err
+	}
+	return "Success",nil
+}
