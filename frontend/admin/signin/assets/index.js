@@ -48,7 +48,7 @@ document.querySelector('.login100-form-btn').addEventListener('click', () => {
                     const jsonString = JSON.stringify(userData);
                     localStorage.setItem('admindata', jsonString);
     
-                    window.location.href = `/anon/admin/`;
+                    window.location.href = `/anon/dash/`;
                 }, 1000);
     
                 document.querySelector(".email").value = '';
