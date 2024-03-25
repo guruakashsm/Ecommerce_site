@@ -35,7 +35,7 @@ document.getElementById("searchBtn").addEventListener("click", function () {
   const productName = document.getElementById("searchField").value;
   const productNameInUpperCase = productName.toUpperCase();
 
-  fetch("https://localhost:8080/search", {
+  fetch("http://localhost:8080/search", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -127,7 +127,7 @@ function CheckNil() {
 function AddtoCart(productName) {
   const storedData = localStorage.getItem("userdata");
   const retrievedUserData = JSON.parse(storedData);
-  fetch("https://localhost:8080/addtocart", {
+  fetch("http://localhost:8080/addtocart", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -200,7 +200,7 @@ function showToast(str, war, no) {
 }
 
 function DisplayData(productName) {
-  fetch("https://localhost:8080/getinventorydata", {
+  fetch("http://localhost:8080/getinventorydata", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -214,7 +214,7 @@ function DisplayData(productName) {
       if (data.message) {
         html += `
                 <div class="container">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Back_Arrow.svg/2048px-Back_Arrow.svg.png" height="35px" onclick="BackButton()" style="margin-left:-50px;cursor:pointer">
+                <img src="http://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Back_Arrow.svg/2048px-Back_Arrow.svg.png" height="35px" onclick="BackButton()" style="margin-left:-50px;cursor:pointer">
                   <!-- Left Column / Headphones Image -->
                   <div class="left-column">
                     <img data-image="red" class="active" src="data:image/jpeg;base64,${data.message.image}" alt="" height="400px" style="margin-right:100px">
@@ -287,7 +287,7 @@ function BackButton() {
 function DisplayCart() {
   const storedData = localStorage.getItem("userdata");
   const retrievedUserData = JSON.parse(storedData);
-  fetch("https://localhost:8080/products", {
+  fetch("http://localhost:8080/products", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -524,7 +524,7 @@ async function DeleteProduct(productName, productQuantity) {
     };
 
 
-    const response = await fetch('https://localhost:8080/deleteproduct', {
+    const response = await fetch('http://localhost:8080/deleteproduct', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -555,7 +555,7 @@ async function IncrementButton(productName, productQuantity) {
     };
 
 
-    const response = await fetch('https://localhost:8080/updatecart', {
+    const response = await fetch('http://localhost:8080/updatecart', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -588,7 +588,7 @@ async function DecrementButton(productName, productQuantity) {
     };
 
 
-    const response = await fetch('https://localhost:8080/updatecart', {
+    const response = await fetch('http://localhost:8080/updatecart', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -621,7 +621,7 @@ async function Checkout() {
     };
 
 
-    const response = await fetch('https://localhost:8080/products', {
+    const response = await fetch('http://localhost:8080/products', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -687,7 +687,7 @@ async function GetUserAddress() {
     const data = {
       token: retrievedUserData.token,
     };
-    const output = await fetch('https://localhost:8080/getuseraddress', {
+    const output = await fetch('http://localhost:8080/getuseraddress', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -729,7 +729,7 @@ async function SaveAddress() {
       pincode: Number(document.getElementById('address-pincode').value),
     }
     console.log(data)
-    const output = await fetch('https://localhost:8080/adddeliveryaddress', {
+    const output = await fetch('http://localhost:8080/adddeliveryaddress', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -756,7 +756,7 @@ async function PayNow() {
     const data = {
       token: retrievedUserData.token,
     }
-    const output = await fetch('https://localhost:8080/buynow', {
+    const output = await fetch('http://localhost:8080/buynow', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -810,7 +810,7 @@ async function DisplayOrders() {
       token: retrievedUserData.token,
     }
     console.log(data)
-    const output = await fetch('https://localhost:8080/customerorders', {
+    const output = await fetch('http://localhost:8080/customerorders', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -897,7 +897,7 @@ async function GetOrder(id) {
       orderid: id,
     }
     console.log(data)
-    const output = await fetch('https://localhost:8080/getcustomerorder', {
+    const output = await fetch('http://localhost:8080/getcustomerorder', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -1081,7 +1081,7 @@ async function DeleteOrder(orderid){
       orderid: orderid,
     }
     console.log(data)
-    const output = await fetch('https://localhost:8080/deleteorder', {
+    const output = await fetch('http://localhost:8080/deleteorder', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -1120,7 +1120,7 @@ async function DeleteOrder(orderid){
 //         price: price,
 //     };
 
-//     fetch('https://localhost:8080/addtocart', {
+//     fetch('http://localhost:8080/addtocart', {
 //         method: 'POST',
 //         headers: {
 //             'Content-Type': 'application/json',

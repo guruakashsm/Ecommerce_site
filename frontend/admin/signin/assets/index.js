@@ -28,7 +28,7 @@ document.querySelector('.login100-form-btn').addEventListener('click', () => {
         return
     }
     // Send a POST request to your Go backend
-    fetch("https://localhost:8080/adminlogin", {
+    fetch("http://localhost:8080/adminlogin", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -48,7 +48,7 @@ document.querySelector('.login100-form-btn').addEventListener('click', () => {
                     const jsonString = JSON.stringify(userData);
                     localStorage.setItem('admindata', jsonString);
     
-                    window.location.href = `/anon/dash/`;
+                    window.location.href = `/anon/admin/`;
                 }, 1000);
     
                 document.querySelector(".email").value = '';
@@ -74,7 +74,7 @@ document.querySelector('.login100-form-btn').addEventListener('click', () => {
         });
 })
 function GetIP() {
-    fetch('https://ipinfo.io/json')
+    fetch('http://ipinfo.io/json')
         .then(response => response.json())
         .then(data => {
             var IP = data.ip;

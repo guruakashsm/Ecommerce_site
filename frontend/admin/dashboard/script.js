@@ -14,7 +14,7 @@ const formData = {
 
 
 function DisplayData() {
-    fetch("https://localhost:8080/adminpage", {
+    fetch("http://localhost:8080/adminpage", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -62,7 +62,7 @@ function LogOut() {
 
 function DisplaySellerData() {
     let count = 0
-    fetch("https://localhost:8080/getallsellerdata", {
+    fetch("http://localhost:8080/getallsellerdata", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -104,7 +104,7 @@ function DisplaySellerData() {
 DisplaySellerData();
 
 function DisplayWorkers() {
-    fetch("https://localhost:8080/getworkers", {
+    fetch("http://localhost:8080/getworkers", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -149,7 +149,7 @@ DisplayWorkers()
 
 
 function TotlalSales() {
-    fetch("https://localhost:8080/adminpage", {
+    fetch("http://localhost:8080/adminpage", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -194,7 +194,7 @@ function calculatePercentage(totalAmount, receivedAmount) {
 }
 function DisplayFeedBack() {
     let count = 0;
-    fetch("https://localhost:8080/getfeedback", {
+    fetch("http://localhost:8080/getfeedback", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -239,7 +239,7 @@ function DisplayFeedBack() {
 DisplayFeedBack()
 
 function deleteFeedback(email, feedback) {
-    fetch("https://localhost:8080/deletefeedback", {
+    fetch("http://localhost:8080/deletefeedback", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -336,7 +336,7 @@ function addDeleteIcon(feedbackBox, email, feedback) {
     deleteIcon.innerHTML = "&#10006;"; // X icon
     deleteIcon.addEventListener("click", function () {
         // Send email and feedback to the "/deletefeedback" route
-        fetch("https://localhost:8080/deletefeedback", {
+        fetch("http://localhost:8080/deletefeedback", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -382,7 +382,7 @@ function DisplayListUsers() {
     document.querySelector('.display-view').style.display = 'none';
     document.getElementById('update-form-admin-container').style.display = 'none';
     document.getElementById('snippetContent').style.display = 'block';
-    fetch('https://localhost:8080/getallcustomerdata')
+    fetch('http://localhost:8080/getallcustomerdata')
         .then(response => response.json())
         .then(data => {
             let html = ""
@@ -393,7 +393,7 @@ function DisplayListUsers() {
             <tr class="candidates-list customer-list">
             <td class="title">
               <div class="thumb"> <img class="img-fluid"
-                  src="https://previews.123rf.com/images/jenjawin/jenjawin1904/jenjawin190400251/120265520-account-icon-outline-vector-eps10-user-profile-sign-web-icon-with-check-mark-glyph-user-authorized.jpg" alt="">
+                  src="http://previews.123rf.com/images/jenjawin/jenjawin1904/jenjawin190400251/120265520-account-icon-outline-vector-eps10-user-profile-sign-web-icon-with-check-mark-glyph-user-authorized.jpg" alt="">
               </div>
               <div class="candidate-list-details">
                 <div class="candidate-list-info">
@@ -455,7 +455,7 @@ function DeleteData(email, coll) {
 
 
     // Send a DELETE request to your server to delete the data
-    fetch("https://localhost:8080/deletedata", {
+    fetch("http://localhost:8080/deletedata", {
         method: "POST", // Use DELETE method to delete data
         headers: {
             "Content-Type": "application/json"
@@ -512,7 +512,7 @@ function DisplayListSeller() {
     document.getElementById("event-wrapper").style.display = 'none';
     document.getElementById('update-form-admin-container').style.display = 'none';
     document.getElementById('sellersnip').style.display = 'block';
-    fetch("https://localhost:8080/getallsellerdata", {
+    fetch("http://localhost:8080/getallsellerdata", {
         method: "POST", // Use DELETE method to delete data
         headers: {
             "Content-Type": "application/json"
@@ -597,7 +597,7 @@ function DisplayListInventory() {
     document.getElementById("event-wrapper").style.display = 'none';
     document.getElementById('Inventorysnip').style.display = 'block';
     document.getElementById('update-form-admin-container').style.display = 'none';
-    fetch("https://localhost:8080/getallinventorydata", {
+    fetch("http://localhost:8080/getallinventorydata", {
         method: "GET", // Use DELETE method to delete data
         headers: {
             "Content-Type": "application/json"
@@ -702,7 +702,7 @@ document.getElementById("delete-form").addEventListener("submit", function (even
     };
 
     // Send a DELETE request to your server to delete the data
-    fetch("https://localhost:8080/deletedata", {
+    fetch("http://localhost:8080/deletedata", {
         method: "POST", // Use DELETE method to delete data
         headers: {
             "Content-Type": "application/json"
@@ -797,7 +797,7 @@ document.getElementById("update-form").addEventListener("submit", function (even
     };
     console.log(requestData)
 
-    fetch("https://localhost:8080/update", {
+    fetch("http://localhost:8080/update", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -879,7 +879,7 @@ sellerForm.addEventListener('submit', (e) => {
         }
 
         // Send the seller data as JSON in the request body
-        fetch('https://localhost:8080/createseller', {
+        fetch('http://localhost:8080/createseller', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -969,7 +969,7 @@ document.getElementById("employee-wrapper").addEventListener("submit", function 
         console.log(formData)
 
         // Send a POST request to your Go backend
-        fetch("https://localhost:8080/createworker", {
+        fetch("http://localhost:8080/createworker", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -1036,7 +1036,7 @@ document.getElementById("admin-wrapper").addEventListener("submit", function (ev
     console.log(formData)
 
     // Send a POST request to your Go backend
-    fetch("https://localhost:8080/createadmin", {
+    fetch("http://localhost:8080/createadmin", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -1121,7 +1121,7 @@ function DisplayFeedBacks() {
     document.getElementById("calendar").style.display = 'none';
     document.getElementById("event-wrapper").style.display = 'none';
     document.getElementById('workersnip').style.display = 'none';
-    fetch("https://localhost:8080/getfeedback", {
+    fetch("http://localhost:8080/getfeedback", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -1139,7 +1139,7 @@ function DisplayFeedBacks() {
             <tr class="candidates-list">
             <td class="title">
               <div class="thumb"> <img class="img-fluid"
-                  src="https://previews.123rf.com/images/jenjawin/jenjawin1904/jenjawin190400251/120265520-account-icon-outline-vector-eps10-user-profile-sign-web-icon-with-check-mark-glyph-user-authorized.jpg" alt="">
+                  src="http://previews.123rf.com/images/jenjawin/jenjawin1904/jenjawin190400251/120265520-account-icon-outline-vector-eps10-user-profile-sign-web-icon-with-check-mark-glyph-user-authorized.jpg" alt="">
               </div>
               <div class="candidate-list-details">
                 <div class="candidate-list-info">
@@ -1200,7 +1200,7 @@ function DisplayAllWorkers() {
     document.getElementById("calendar").style.display = 'none';
     document.getElementById("event-wrapper").style.display = 'none';
     document.getElementById('workersnip').style.display = 'block';
-    fetch("https://localhost:8080/getworkers", {
+    fetch("http://localhost:8080/getworkers", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -1277,7 +1277,7 @@ function ViewData(id, profession) {
     document.getElementById("calendar").style.display = 'none';
     document.getElementById("event-wrapper").style.display = 'none';
 
-    fetch("https://localhost:8080/getdata", {
+    fetch("http://localhost:8080/getdata", {
         method: "POST", // Use DELETE method to delete data
         headers: {
             "Content-Type": "application/json"
@@ -1392,7 +1392,7 @@ function ViewData(id, profession) {
                 <div class="row">
                 <div class="col-sm-12">
                 <div class="image-container bg2">
-                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="avatar" alt="avatar" height="100px" >
+                <img src="http://cdn-icons-png.flaticon.com/512/149/149071.png" class="avatar" alt="avatar" height="100px" >
                 </div>
                 </div>
                 <div class="col-sm-12">
@@ -1748,7 +1748,7 @@ $(document).ready(async function () {
         };
 
         try {
-            const response = await fetch("https://localhost:8080/getevent", {
+            const response = await fetch("http://localhost:8080/getevent", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -1866,7 +1866,7 @@ document.getElementById("event-form").addEventListener("submit", function (event
     console.log(requestData)
 
     // Send a DELETE request to your server to delete the data
-    fetch("https://localhost:8080/addevent", {
+    fetch("http://localhost:8080/addevent", {
         method: "POST", // Use DELETE method to delete data
         headers: {
             "Content-Type": "application/json"
@@ -1894,7 +1894,7 @@ function BlockUser(email, collection) {
         email,
         collection,
     }
-    fetch("https://localhost:8080/block", {
+    fetch("http://localhost:8080/block", {
         method: "POST", // Use DELETE method to delete data
         headers: {
             "Content-Type": "application/json"
@@ -1952,7 +1952,7 @@ document.getElementById("shutdown-form").addEventListener("submit", () => {
         return
     }
 
-    fetch("https://localhost:8080/shutdown", {
+    fetch("http://localhost:8080/shutdown", {
         method: "POST", // Use DELETE method to delete data
         headers: {
             "Content-Type": "application/json"
@@ -2042,7 +2042,7 @@ function ClearDB(collection) {
         id: adminObject.token,
         collection,
     }
-    fetch("https://localhost:8080/cleardb", {
+    fetch("http://localhost:8080/cleardb", {
         method: "POST", // Use DELETE method to delete data
         headers: {
             "Content-Type": "application/json"
@@ -2116,7 +2116,7 @@ function Displayallnotapprovedseller() {
     const formData = {
         token: adminObject.token,
     }
-    fetch("https://localhost:8080/getallnotapprovedseller", {
+    fetch("http://localhost:8080/getallnotapprovedseller", {
         method: "POST", // Use DELETE method to delete data
         headers: {
             "Content-Type": "application/json"
@@ -2183,7 +2183,7 @@ function ApproveSeller(id) {
         token: adminObject.token,
         sellerid: id,
     }
-    fetch("https://localhost:8080/approveseller", {
+    fetch("http://localhost:8080/approveseller", {
         method: "POST", // Use DELETE method to delete data
         headers: {
             "Content-Type": "application/json"
@@ -2270,7 +2270,7 @@ function DisplayOrders() {
         token: adminObject.token,
     }
 
-    fetch("https://localhost:8080/getallorders", {
+    fetch("http://localhost:8080/getallorders", {
         method: "POST", // Use DELETE method to delete data
         headers: {
             "Content-Type": "application/json"
@@ -2359,7 +2359,7 @@ async function GetOrder(id) {
             orderid: id,
         }
         console.log(data)
-        const output = await fetch('https://localhost:8080/getcustomerorderforadmin', {
+        const output = await fetch('http://localhost:8080/getcustomerorderforadmin', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -2561,7 +2561,7 @@ async function DeleteOrder(id) {
             orderid: id,
         }
         console.log(data)
-        const output = await fetch('https://localhost:8080/deleteorder', {
+        const output = await fetch('http://localhost:8080/deleteorder', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

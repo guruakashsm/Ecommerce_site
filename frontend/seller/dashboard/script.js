@@ -179,7 +179,7 @@ const formData = {
 
 
 function DisplayData() {
-    fetch("https://localhost:8080/sellerdrashboarddetails", {
+    fetch("http://localhost:8080/sellerdrashboarddetails", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -230,7 +230,7 @@ function LogOut() {
 
 
 function DisplayProducts() {
-    fetch("https://localhost:8080/getallproducts", {
+    fetch("http://localhost:8080/getallproducts", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -348,7 +348,7 @@ function showToast(str, war, no) {
 function DisplayListUsers() {
     DisplayUsers()
 
-    fetch("https://localhost:8080/buyedcustomer", {
+    fetch("http://localhost:8080/buyedcustomer", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -365,7 +365,7 @@ function DisplayListUsers() {
             <tr class="candidates-list customer-list">
             <td class="title">
               <div class="thumb"> <img class="img-fluid"
-                  src="https://previews.123rf.com/images/jenjawin/jenjawin1904/jenjawin190400251/120265520-account-icon-outline-vector-eps10-user-profile-sign-web-icon-with-check-mark-glyph-user-authorized.jpg" alt="">
+                  src="http://previews.123rf.com/images/jenjawin/jenjawin1904/jenjawin190400251/120265520-account-icon-outline-vector-eps10-user-profile-sign-web-icon-with-check-mark-glyph-user-authorized.jpg" alt="">
               </div>
               <div class="candidate-list-details">
                 <div class="candidate-list-info">
@@ -413,7 +413,7 @@ function DeleteData(email, coll) {
 
 
         // Send a DELETE request to your server to delete the data
-        fetch("https://localhost:8080/deletedata", {
+        fetch("http://localhost:8080/deletedata", {
             method: "POST", // Use DELETE method to delete data
             headers: {
                 "Content-Type": "application/json"
@@ -451,7 +451,7 @@ function DisplayListInventory() {
     console.log("Displaylist")
 
     document.getElementById('Inventorysnip').style.display = 'block';
-    fetch("https://localhost:8080/getallproducts", {
+    fetch("http://localhost:8080/getallproducts", {
         method: "POST", // Use DELETE method to delete data
         headers: {
             "Content-Type": "application/json"
@@ -535,7 +535,7 @@ document.getElementById("delete-form").addEventListener("submit", function (even
     };
 
     // Send a DELETE request to your server to delete the data
-    fetch("https://localhost:8080/deleteproductbyseller", {
+    fetch("http://localhost:8080/deleteproductbyseller", {
         method: "POST", // Use DELETE method to delete data
         headers: {
             "Content-Type": "application/json"
@@ -602,7 +602,7 @@ document.getElementById("update-form").addEventListener("submit", function (even
         newvalue: newvalue
     };
     console.log(requestData)
-    fetch("https://localhost:8080/updateproductbyseller", {
+    fetch("http://localhost:8080/updateproductbyseller", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -636,7 +636,7 @@ document.getElementById("feedback-form").addEventListener("submit", function (ev
         feedback,
     };
     console.log(requestData)
-    fetch("https://localhost:8080/insertsellerfeedback", {
+    fetch("http://localhost:8080/insertsellerfeedback", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -671,7 +671,7 @@ async function GetOrder(id) {
             orderid: id,
         }
         console.log(data)
-        const output = await fetch('https://localhost:8080/getcustomerorder', {
+        const output = await fetch('http://localhost:8080/getcustomerorder', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -871,7 +871,7 @@ async function GetOrder(id) {
 function DisplayCompletedOrders() {
     DisplayOrders()
     document.getElementById('workersnip').style.display = 'block';
-    fetch("https://localhost:8080/completedorders", {
+    fetch("http://localhost:8080/completedorders", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -948,7 +948,7 @@ function DisplayPendingOrders() {
     DisplayOrders()
     document.getElementById('workersnip').style.display = 'block';
     document.querySelector('.container-p-y').style.display = 'none';
-    fetch("https://localhost:8080/pendingorders", {
+    fetch("http://localhost:8080/pendingorders", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -1019,7 +1019,7 @@ function DisplayallOrders() {
     DisplayOrders()
     document.getElementById('workersnip').style.display = 'block';
     document.querySelector('.container-p-y').style.display = 'none';
-    fetch("https://localhost:8080/orders", {
+    fetch("http://localhost:8080/orders", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -1089,7 +1089,7 @@ function DisplayYettoGiveOrders() {
     DisplayOrders()
     document.getElementById('workersnip').style.display = 'block';
     document.querySelector('.container-p-y').style.display = 'none';
-    fetch("https://localhost:8080/yettodeliverorders", {
+    fetch("http://localhost:8080/yettodeliverorders", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -1158,7 +1158,7 @@ function DisplayYettoGiveOrders() {
 function ViewData(id, profession) {
 
 
-    fetch("https://localhost:8080/getdata", {
+    fetch("http://localhost:8080/getdata", {
         method: "POST", // Use DELETE method to delete data
         headers: {
             "Content-Type": "application/json"
@@ -1178,7 +1178,7 @@ function ViewData(id, profession) {
                 <div class="row">
                 <div class="col-sm-12">
                 <div class="image-container bg2">
-                <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" class="avatar" alt="avatar" height="100px" >
+                <img src="http://cdn-icons-png.flaticon.com/512/149/149071.png" class="avatar" alt="avatar" height="100px" >
                 </div>
                 </div>
                 <div class="col-sm-12">
@@ -1263,7 +1263,7 @@ function ViewInventoryData(id) {
     console.log("Called View Product")
     const storedData = localStorage.getItem("sellerdata");
     const retrievedUserData = JSON.parse(storedData);
-    fetch("https://localhost:8080/getproductforseller", {
+    fetch("http://localhost:8080/getproductforseller", {
         method: "POST", // Use DELETE method to delete data
         headers: {
             "Content-Type": "application/json"
@@ -1446,7 +1446,7 @@ function AddProducts(event) {
         console.log(data)
 
         // Send the seller data as JSON in the request body
-        fetch('https://localhost:8080/inventory', {
+        fetch('http://localhost:8080/inventory', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -1501,7 +1501,7 @@ function UpdateOrderTracking(orderid, feild) {
         orderid: orderid,
         feild,
     }
-    fetch('https://localhost:8080/updateordertracking', {
+    fetch('http://localhost:8080/updateordertracking', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -1556,7 +1556,7 @@ async function DeleteOrder(id) {
             orderid: id,
         }
         console.log(data)
-        const output = await fetch('https://localhost:8080/deleteorder', {
+        const output = await fetch('http://localhost:8080/deleteorder', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -1585,7 +1585,7 @@ async function DeleteInventory(id) {
             productid: id,
         }
         console.log(data)
-        const output = await fetch('https://localhost:8080/deleteproductbyseller', {
+        const output = await fetch('http://localhost:8080/deleteproductbyseller', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -18,7 +18,7 @@ sellerForm.addEventListener('click', (e) => {
   }
 
   // Send the seller data as JSON in the request body
-  fetch('https://localhost:8080/sellercheck', {
+  fetch('http://localhost:8080/sellercheck', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

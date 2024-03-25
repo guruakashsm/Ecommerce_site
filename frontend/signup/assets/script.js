@@ -36,7 +36,7 @@ document.getElementById("customerForm").addEventListener("click", function (even
         return
     }
     // Send a POST request to your Go backend
-    fetch("https://localhost:8080/create", {
+    fetch("http://localhost:8080/create", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -158,7 +158,7 @@ document.getElementById("otp-verify").addEventListener("click",(event)=>{
         email: document.getElementById("email").value,
         verification: otp,
     };
-    fetch("https://localhost:8080/verifyemail", {
+    fetch("http://localhost:8080/verifyemail", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -182,7 +182,7 @@ document.getElementById("otp-verify").addEventListener("click",(event)=>{
                     document.getElementById("otp").value = '';
                     localStorage.removeItem('signupdata');
                     document.getElementById("register-form").style.display = 'block';
-                    window.location.href = "/signin";
+                    window.location.href = "anon/signin";
                 }, 2000);
             }
         })

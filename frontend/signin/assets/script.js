@@ -4,7 +4,7 @@ function checkforLocal() {
   if (storedData !== null) {
 
     const retrievedUserData = JSON.parse(storedData);
-    fetch("https://localhost:8080/validatetoken", {
+    fetch("http://localhost:8080/validatetoken", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -55,7 +55,7 @@ document.getElementById("signin-button").addEventListener("click", function (eve
     return
   }
   // Send a POST request to your Go backend
-  fetch("https://localhost:8080/login", {
+  fetch("http://localhost:8080/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -64,7 +64,7 @@ document.getElementById("signin-button").addEventListener("click", function (eve
   })
     .then(response => response.json())
     .then(data => {
-      if (data.message) {
+      if(data.message){
         showToast(data.message, "Warning", 2);
       }
       else if (data.token) {
@@ -72,17 +72,21 @@ document.getElementById("signin-button").addEventListener("click", function (eve
 
         setTimeout(() => {
           const rememberMeCheckbox = document.getElementById('remember-me');
-
-          const userData = {
-            'token': data.token,
-            'username': formData.email
+          if (rememberMeCheckbox.checked) {
+            const userData = {
+              'token': data.token,
+              'username': formData.email
+            }
+            const jsonString = JSON.stringify(userData);
+            localStorage.setItem('userdata', `${jsonString}`);
+           
+            window.location.href = `/anon/home`;
+          } else {
+            window.location.href = `/anon/home/?token=${data.token}`;
           }
-          const jsonString = JSON.stringify(userData);
-          localStorage.setItem('userdata', `${jsonString}`);
           document.getElementById("email").value = '';
           document.getElementById("password").value = "";
           localStorage.removeItem('signindata');
-          window.location.href = `/home`;
 
         }, 1000);
       } else {
@@ -177,7 +181,7 @@ function showToast(str, war, no) {
 //         email: infosLparse.mailL,
 //         password: "tamil",
 //     };
-//     fetch("https://localhost:8080/login", {
+//     fetch("http://localhost:8080/login", {
 //         method: "POST",
 //         headers: {
 //             "Content-Type": "application/json",
