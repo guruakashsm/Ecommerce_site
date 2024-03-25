@@ -64,7 +64,7 @@ document.getElementById("signin-button").addEventListener("click", function (eve
   })
     .then(response => response.json())
     .then(data => {
-      if(data.message){
+      if (data.message) {
         showToast(data.message, "Warning", 2);
       }
       else if (data.token) {
@@ -72,18 +72,15 @@ document.getElementById("signin-button").addEventListener("click", function (eve
 
         setTimeout(() => {
           const rememberMeCheckbox = document.getElementById('remember-me');
-          if (rememberMeCheckbox.checked) {
-            const userData = {
-              'token': data.token,
-              'username': formData.email
-            }
-            const jsonString = JSON.stringify(userData);
-            localStorage.setItem('userdata', `${jsonString}`);
-           
-            window.location.href = `/anon/home`;
-          } else {
-            window.location.href = `/anon/home/?token=${data.token}`;
+
+          const userData = {
+            'token': data.token,
+            'username': formData.email
           }
+          const jsonString = JSON.stringify(userData);
+          localStorage.setItem('userdata', `${jsonString}`);
+
+          window.location.href = `/home`;
           document.getElementById("email").value = '';
           document.getElementById("password").value = "";
           localStorage.removeItem('signindata');

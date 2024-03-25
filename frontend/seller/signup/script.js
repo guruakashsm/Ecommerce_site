@@ -46,7 +46,7 @@ sellerForm.addEventListener('submit', (e) => {
                 if(data.message == "Verify Your Email"){
                   DisplayVerifyEmail()
                 }else if(data.message == "Email already Exists and Verified"){
-                      window.location.href = "/anon/seller/signin"
+                      window.location.href = "/seller/signin"
                 }
 
               }else if(data.error){

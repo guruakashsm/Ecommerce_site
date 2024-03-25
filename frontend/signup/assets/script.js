@@ -182,7 +182,7 @@ document.getElementById("otp-verify").addEventListener("click",(event)=>{
                     document.getElementById("otp").value = '';
                     localStorage.removeItem('signupdata');
                     document.getElementById("register-form").style.display = 'block';
-                    window.location.href = "anon/signin";
+                    window.location.href = "/signin";
                 }, 2000);
             }
         })
