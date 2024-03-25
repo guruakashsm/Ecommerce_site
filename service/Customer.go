@@ -468,7 +468,10 @@ func DeleteOrder(delete models.DeleteOrder) (string, error) {
 	if err != nil {
 		return "Login Expired", err
 	}
-	if order.SellerId == id || id == order.CustomerId {
+	var admin models.AdminData
+	filter1 := bson.M{"adminid": id}
+	err = config.Admin_Collection.FindOne(context.Background(), filter1).Decode(&admin)
+	if order.SellerId == id || id == order.CustomerId || err == nil {
 
 		if id == order.CustomerId {
 			reason = "Order Requested to Cancel by user. If intrested please share us your feedback"

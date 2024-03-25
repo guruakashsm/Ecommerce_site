@@ -278,3 +278,39 @@ func ApproveSeller(c *gin.Context){
 	}
 	c.JSON(http.StatusOK, gin.H{"message": result})
 }
+
+// Get all Orders
+func GetAllOrders(c *gin.Context){
+	var token models.Token
+	if err := c.BindJSON(&token); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	data,result, err := service.GetAllOrders(token)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": result})
+		return
+	}
+	log.Println(data)
+	c.JSON(http.StatusOK, gin.H{"message": data})
+}
+
+
+//Get Customer Order
+func GetCustromerOrderforAdmin(c *gin.Context){
+	var details models.GetOrder
+	if err := c.BindJSON(&details); err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+	data,message,err := service.GetCustromerOrderforAdmin(details)
+	if err != nil{
+		log.Println(err)
+		c.JSON(http.StatusOK, gin.H{"error": message})
+		return
+	}
+	log.Println(data,message)
+	c.JSON(http.StatusOK, gin.H{"message": data})
+}

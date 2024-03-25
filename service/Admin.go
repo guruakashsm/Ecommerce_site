@@ -760,11 +760,70 @@ func ApproveSeller(details models.ApproveSeller)(string,error){
 	if admin.Email == "" {
 		return "Data not Found", nil
 	}
-	filter =  bson.M{"sellerid": id}
+	filter =  bson.M{"sellerid": details.Sellerid}
 	update := bson.M{"$set": bson.M{"isapproved": true}}
 	_,err = config.Seller_Collection.UpdateOne(context.Background(),filter,update)
     if err != nil{
 		return "Data Not Found",err
 	}
-	return "Success",nil
+	return "Seller Verified",nil
+}
+
+func GetAllOrders(token models.Token)([]models.AddOrder,string,error){
+	id, err := ExtractCustomerID(token.Token, constants.SecretKey)
+	if err != nil {
+		return nil,"Login Expired", err
+	}
+	var admin models.AdminData
+	filter := bson.M{"adminid": id}
+	err = config.Admin_Collection.FindOne(context.Background(), filter).Decode(&admin)
+	if err != nil {
+		return nil,"Data not Found", err
+	}
+	if admin.Email == "" {
+		return nil,"Data not Found", nil
+	}
+	cursor,err := config.Buynow_Collection.Find(context.Background(),bson.M{})
+	if err != nil{
+		return nil,"Error in Finding",err
+	}
+	var Order []models.AddOrder
+	for cursor.Next(context.Background()) {
+		var order models.AddOrder
+		err := cursor.Decode(&order)
+		if err != nil {
+			log.Println(err)
+			return nil,"Internal Server Error",err
+		}
+		Order = append(Order, order)
+	}
+   defer cursor.Close(context.Background())
+   return Order,"Success",nil
+
+}
+
+
+func GetCustromerOrderforAdmin(details models.GetOrder) (*models.AddOrder, string, error) {
+	var orderDetails models.AddOrder
+
+	id, err := ExtractCustomerID(details.Token, constants.SecretKey)
+	if err != nil {
+		return nil,"Login Expired", err
+	}
+	var admin models.AdminData
+	filter := bson.M{"adminid": id}
+	err = config.Admin_Collection.FindOne(context.Background(), filter).Decode(&admin)
+	if err != nil {
+		return nil,"Data not Found", err
+	}
+	if admin.Email == "" {
+		return nil,"Data not Found", nil
+	}
+	filter = bson.M{"orderid": details.OrderID}
+	err = config.Buynow_Collection.FindOne(context.Background(), filter).Decode(&orderDetails)
+	if err != nil {
+		return &orderDetails, "No Result found", err
+	}
+	
+	return &orderDetails, "Success", nil
 }

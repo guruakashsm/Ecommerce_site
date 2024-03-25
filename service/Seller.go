@@ -498,7 +498,7 @@ func GetCustromerOrderforSeller(details models.GetOrder) (*models.AddOrder, stri
 	if err != nil {
 		return &orderDetails, "No Result found", err
 	}
-	if orderDetails.SellerId != id {
+	if orderDetails.SellerId != id  {
 		return nil, "Order not Found", nil
 	}
 	return &orderDetails, "Success", nil

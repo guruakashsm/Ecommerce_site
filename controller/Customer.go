@@ -263,5 +263,6 @@ func GetCustomerOrder(c *gin.Context){
 		c.JSON(http.StatusOK, gin.H{"error": message})
 		return
 	}
+	log.Println(data,message)
 	c.JSON(http.StatusOK, gin.H{"message": data})
 }

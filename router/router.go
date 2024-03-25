@@ -72,6 +72,7 @@ func Router() *gin.Engine {
 	router.POST("/getinventorydata",controller.GetInventoryData)
 	router.POST("/adddeliveryaddress",controller.AddDeliveryAddress)
 	router.POST("/getcustomerorder",controller.GetCustomerOrder)
+	router.POST("/getcustomerorderforadmin",controller.GetCustromerOrderforAdmin)
 	router.POST("/registerseller",controller.RegisterSeller)
 	router.POST("/verifyselleremail",controller.VerifySellerEmail)
 	router.POST("/sellerdrashboarddetails",controller.SellerDrashbordDetails)
@@ -86,6 +87,7 @@ func Router() *gin.Engine {
 	router.POST("/cleardb",controller.ClearDB)
 	router.POST("/getallnotapprovedseller",controller.GetAllNotApprovedSeller)
 	router.POST("/approveseller",controller.ApproveSeller)
+	router.POST("/getallorders",controller.GetAllOrders)
 
 
 	return router
