@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Seller Signin</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<!-- LINEARICONS -->
+		<link rel="stylesheet" href="fonts/linearicons/style.css">
+		
+		<!-- STYLE CSS -->
+		<link rel="stylesheet" href="css/style.css">
+
+	</head>
+
+	<body>
+
+		<div class="wrapper">
+			<div class="inner">
+				<img src="images/image-1.png" alt="" class="image-1">
+				<form action="" id="seller-form">
+					<h3>New Seller?</h3>
+					<div class="form-holder">
+						<span class="lnr lnr-user"></span>
+						<input type="text" class="form-control" id="seller-name" placeholder="Username"
+						  style="border-top: none;border-left: none;border-right: none; margin-left: 10px;outline: none;">
+					  </div>
+					  <div class="form-holder">
+						<span class="lnr lnr-phone-handset"></span>
+						<input type="text" class="form-control" id="seller-phone" placeholder="Phone Number"
+						  style="border-top: none;border-left: none;border-right: none;margin-left: 10px;outline:none;">
+					  </div>
+					  <div class="form-holder">
+						<span class="lnr lnr-envelope"></span>
+						<input type="text" class="form-control" id="seller-email" placeholder="Mail"
+						  style="border-top: none;border-left: none;border-right: none;margin-left: 10px;outline:none;">
+					  </div>
+					  <div class="form-holder">
+						<span class="lnr lnr-lock"></span>
+						<input type="password" class="form-control" id="seller-password" placeholder="Password"
+						  style="border-top: none;border-left: none;border-right: none;margin-left: 10px;outline:none;">
+					  </div>
+					  <div class="form-holder">
+						<span class="lnr lnr-lock"></span>
+						<input type="password" class="form-control" id="seller-confirm-password"
+						  placeholder="Confirm Password"
+						  style="border-top: none;border-left: none;border-right: none;margin-left: 10px;outline:none;">
+					  </div>
+					  <div class="form-holder">
+						<span class="lnr lnr-home"></span>
+						<input type="address" class="form-control" id="seller-address" placeholder="Address"
+						  style="border-top: none;border-left: none;border-right: none;margin-left: 10px;outline:none;">
+					  </div>
+					  <div class="form-holder">
+						<span class="lnr lnr-user"></span>
+						<input type="file" class="form-control" id="seller-image" placeholder="Address"
+						  style="border-top: none;border-left: none;border-right: none; outline: none;">
+					  </div>
+					<button>
+						<span>Register</span>
+					</button>
+				</form>
+				<form method="POST" class="register-form" id="otp-form" style="display: none;">
+					<div class="form-holder">
+						<span class="lnr lnr-home"></span>
+						<input type="number" class="form-control" id="otp" placeholder="Please Enter the OTP Sent to your mail"
+						  style="border-top: none;border-left: none;border-right: none;margin-left: 10px;outline:none;">
+					  </div>
+
+					<div class="form-group form-button">
+						<button type="click" class="form-submit" value="Register"
+						id="otp-verify">Verify</button>
+					</div>
+				</form>
+				<form method="POST" class="message-form" id="message-form" style="display: none;">
+				<div class="form-holder">
+					<h8>Dear Seller your part of work is done. We will Contact you through email after completing the verification process. <br><br> Stay Updated ...</h8>
+				  </div>
+				</form>
+				<img src="images/image-2.png" alt="" class="image-2">
+			</div>
+
+			
+		</div>
+		<div class="toast-container" style="display: none;">
+			<img class="js-toast-img" src="./assets/dontsee.webp" height="10px" width="10px">
+			<span class="js-toast-title"></span>
+			<span class="js-toast-content"></span>
+		</div>
+
+
+	
+		
+		<script src="js/jquery-3.3.1.min.js"></script>
+		<script src="js/main.js"></script>
+		<script src="./script.js"></script>
+	</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+</html>

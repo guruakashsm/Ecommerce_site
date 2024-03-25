@@ -1,0 +1,2372 @@
+<!DOCTYPE html>
+
+<html lang="en" class="light-style layout-menu-fixed layout-compact" dir="ltr" data-theme="theme-default"
+  data-assets-path="./assets/" data-template="vertical-menu-template-free">
+
+<head>
+  <meta charset="utf-8" />
+  <!-- LINEARICONS -->
+  <title>Seller Dashboard</title>
+  <link rel="stylesheet" href="./fonts/linearicons/style.css">
+  <link rel="icon" type="image/png" href="./images/icons/favicon.ico" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/pixeden-stroke-7-icon@1.2.3/pe-icon-7-stroke/dist/pe-icon-7-stroke.min.css">
+
+  <!--===============================================================================================-->
+  <!-- <link rel="icon" type="image/png" href="/images/icons/favicon.ico" /> -->
+  <!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="./vendor/bootstrap/css/bootstrap.min.css">
+  <!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="./fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+  <!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="./fonts/Linearicons-Free-v1.0.0/icon-font.min.css">
+  <!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="./vendor/animate/animate.css">
+  <!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="./vendor/css-hamburgers/hamburgers.min.css">
+  <!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="./vendor/animsition/css/animsition.min.css">
+  <!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="./vendor/select2/select2.min.css">
+  <!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="./vendor/daterangepicker/daterangepicker.css">
+  <!--===============================================================================================-->
+  <link rel="stylesheet" type="text/css" href="./css/util.css">
+  <link rel="stylesheet" type="text/css" href="./css/main.css">
+  <!--===============================================================================================-->
+
+  <!-- STYLE CSS -->
+  <link rel="stylesheet" href="./css/style.css">
+  <style>
+    /* Injected by five-server */
+    /*[data-highlight="true"] {
+    border: 1px rgb(90,170,255) solid !important;
+    background-color: rgba(155,215,255,0.5);
+    animation: fadeOutHighlight 1s forwards 0.5s;
+  }
+  img[data-highlight="true"] {
+    filter: sepia(100%) hue-rotate(180deg) saturate(200%);
+    animation: fadeOutHighlightIMG 0.5s forwards 0.5s;
+  }*/
+    @keyframes fadeOutHighlight {
+      from {
+        background-color: rgba(155, 215, 255, 0.5);
+      }
+
+      to {
+        background-color: rgba(155, 215, 255, 0);
+      }
+    }
+
+    @keyframes fadeOutHighlightIMG {
+      0% {
+        filter: sepia(100%) hue-rotate(180deg) saturate(200%);
+      }
+
+      33% {
+        filter: sepia(66%) hue-rotate(180deg) saturate(100%);
+      }
+
+      50% {
+        filter: sepia(50%) hue-rotate(90deg) saturate(50%);
+      }
+
+      66% {
+        filter: sepia(33%) hue-rotate(0deg) saturate(100%);
+      }
+
+      100% {
+        filter: sepia(0%) hue-rotate(0deg) saturate(100%);
+      }
+    }
+
+    @keyframes fiveserverInfoPopup {
+      0% {
+        top: -40px;
+      }
+
+      15% {
+        top: 4px;
+      }
+
+      85% {
+        top: 4px;
+      }
+
+      100% {
+        top: -40px;
+      }
+    }
+
+    /*smaller*/
+    @media (max-width: 640px) {
+      #fiveserver-info-wrapper {
+        max-width: 98%;
+      }
+
+      #fiveserver-info {
+        border-radius: 0px;
+      }
+    }
+
+    .conformationoverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .confirmation-dialog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      width: 400px;
+      text-align: center;
+    }
+
+    .conformationbuttons {
+      display: flex;
+      align-items: center;
+      align-self: center;
+      justify-content: center;
+    }
+
+    .conformationactive {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+
+    .confirmation-button {
+      background-color: #4CAF50;
+      color: #ffffff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 0 10px;
+      display: flex;
+      width: 100px;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+
+    .confirmation-button:hover {
+      background-color: #45a049;
+    }
+
+    #confirmationfalse {
+      background-color: #f44336;
+    }
+
+    #calendar {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .steps .step {
+      display: block;
+      width: 100%;
+      margin-bottom: 35px;
+      text-align: center
+    }
+
+    .steps .step .step-icon-wrap {
+      display: block;
+      position: relative;
+      width: 100%;
+      height: 80px;
+      text-align: center
+    }
+
+    .steps .step .step-icon-wrap::before,
+    .steps .step .step-icon-wrap::after {
+      display: block;
+      position: absolute;
+      top: 50%;
+      width: 50%;
+      height: 3px;
+      margin-top: -1px;
+      background-color: #e1e7ec;
+      content: '';
+      z-index: 1
+    }
+
+    .steps .step .step-icon-wrap::before {
+      left: 0
+    }
+
+    .steps .step .step-icon-wrap::after {
+      right: 0
+    }
+
+    .steps .step .step-icon {
+      display: inline-block;
+      position: relative;
+      width: 80px;
+      height: 80px;
+      border: 1px solid #e1e7ec;
+      border-radius: 50%;
+      background-color: #f5f5f5;
+      color: #374250;
+      font-size: 38px;
+      line-height: 81px;
+      z-index: 5
+    }
+
+    .steps .step .step-title {
+      margin-top: 16px;
+      margin-bottom: 0;
+      color: #606975;
+      font-size: 14px;
+      font-weight: 500
+    }
+
+    .steps .step:first-child .step-icon-wrap::before {
+      display: none
+    }
+
+    .steps .step:last-child .step-icon-wrap::after {
+      display: none
+    }
+
+    .steps .step.completed .step-icon-wrap::before,
+    .steps .step.completed .step-icon-wrap::after {
+      background-color: #0da9ef
+    }
+
+    .steps .step.completed .step-icon {
+      border-color: #0da9ef;
+      background-color: #0da9ef;
+      color: #fff
+    }
+
+    @media (max-width: 576px) {
+
+      .flex-sm-nowrap .step .step-icon-wrap::before,
+      .flex-sm-nowrap .step .step-icon-wrap::after {
+        display: none
+      }
+    }
+
+    @media (max-width: 768px) {
+
+      .flex-md-nowrap .step .step-icon-wrap::before,
+      .flex-md-nowrap .step .step-icon-wrap::after {
+        display: none
+      }
+    }
+
+    @media (max-width: 991px) {
+
+      .flex-lg-nowrap .step .step-icon-wrap::before,
+      .flex-lg-nowrap .step .step-icon-wrap::after {
+        display: none
+      }
+    }
+
+    @media (max-width: 1200px) {
+
+      .flex-xl-nowrap .step .step-icon-wrap::before,
+      .flex-xl-nowrap .step .step-icon-wrap::after {
+        display: none
+      }
+    }
+
+    .bg-faded,
+    .bg-secondary {
+      background-color: #f5f5f5 !important;
+    }
+
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      word-wrap: break-word;
+      background-color: #fff;
+      background-clip: border-box;
+      border: 0 solid rgba(0, 0, 0, .125);
+      border-radius: 1rem;
+    }
+
+    .text-reset {
+      --bs-text-opacity: 1;
+      color: inherit !important;
+    }
+
+    a {
+      color: #5465ff;
+      text-decoration: none;
+    }
+
+    .pending-button {
+      margin-top: 10px;
+      margin-bottom: 0px;
+      color: white;
+      background-color: rgb(46, 201, 46);
+      border: none;
+      padding: 5px;
+      border-radius: 50px;
+      font-weight: bold;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 13px;
+      width: 100px;
+      height: 40px;
+      margin-left: 20px;
+    }
+
+    .completed-button {
+      display: none;
+    }
+
+    .pending-cancelbutton {
+      margin-top: 10px;
+      margin-bottom: 0px;
+      color: white;
+      background-color: #ef0d0d;
+      border: none;
+      border-radius: 5px;
+      height: 30px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+      width: 130px;
+      margin-left: 550px;
+      margin-top: -30px;
+
+    }
+
+    .completed-cancelbutton {
+      display: none !important;
+    }
+
+
+    .fc-prev-button,
+    .fc-next-button,
+    .fc-today-button {
+      background-color: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      margin: 5px;
+    }
+
+    .fc-prev-button:hover,
+    .fc-next-button:hover,
+    .fc-today-button:hover {
+      background-color: #45a049;
+    }
+
+    .fc-button-group {
+      float: none;
+      text-align: center;
+    }
+
+    .addfeatures {
+      color: white;
+      background-color: rgb(31, 196, 31);
+      font-size: larger;
+      font-weight: bolder;
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      border-radius: 10px;
+      padding-left: 3px;
+      margin-top: 8px;
+    }
+
+    .fc-day-header {
+      background-color: #4CAF50;
+      color: #fff;
+      border: 1px solid #4CAF50;
+      border-radius: 5px;
+    }
+
+    .fc-day {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin: 2px;
+      background-color: #fff;
+    }
+
+    .fc-event {
+      background-color: #337ab7;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .fc-event:hover {
+      background-color: #286090;
+    }
+  </style>
+  <style type="text/css">
+    body {
+      margin-top: 20px;
+      background: #eee;
+    }
+
+    .profile-widget {
+      position: relative;
+    }
+
+    .profile-widget .image-container {
+      background-size: cover;
+      background-position: center;
+      padding: 190px 0 10px;
+    }
+
+    .profile-widget .image-container .profile-background {
+      width: 100%;
+      height: auto;
+    }
+
+    .profile-widget .image-container .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      margin: 0 auto -60px;
+      display: block;
+    }
+
+    .profile-widget .details {
+      padding: 50px 15px 15px;
+      text-align: center;
+    }
+
+    /* Component: Mini Profile Widget */
+    .mini-profile-widget .image-container .avatar {
+      width: 180px;
+      height: 180px;
+      display: block;
+      margin: 0 auto;
+      border-radius: 50%;
+      background: white;
+      padding: 4px;
+      border: 1px solid #dddddd;
+    }
+
+    .mini-profile-widget .details {
+      text-align: center;
+    }
+
+    /* Component: Panel */
+    .panel {
+      border-radius: 0;
+      margin-bottom: 30px;
+    }
+
+    .panel.solid-color {
+      color: white;
+    }
+
+    .panel .panel-heading {
+      border-radius: 0;
+      position: relative;
+    }
+
+    .panel .panel-heading>.controls {
+      position: absolute;
+      right: 10px;
+      top: 12px;
+    }
+
+    .panel .panel-heading>.controls .nav.nav-pills {
+      margin: -8px 0 0 0;
+    }
+
+    .panel .panel-heading>.controls .nav.nav-pills li a {
+      padding: 5px 8px;
+    }
+
+    .panel .panel-heading .clickable {
+      margin-top: 0px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .panel .panel-heading.no-heading-border {
+      border-bottom-color: transparent;
+    }
+
+    .panel .panel-heading .left {
+      float: left;
+    }
+
+    .panel .panel-heading .right {
+      float: right;
+    }
+
+    .panel .panel-title {
+      font-size: 16px;
+      line-height: 20px;
+    }
+
+    .panel .panel-title.panel-title-sm {
+      font-size: 18px;
+      line-height: 28px;
+    }
+
+    .panel .panel-title.panel-title-lg {
+      font-size: 24px;
+      line-height: 34px;
+    }
+
+    .panel .panel-body {
+      font-size: 13px;
+    }
+
+    .panel .panel-body>.body-section {
+      margin: 0px 0px 20px;
+    }
+
+    .panel .panel-body>.body-section>.section-heading {
+      margin: 0px 0px 5px;
+      font-weight: bold;
+    }
+
+    .panel .panel-body>.body-section>.section-content {
+      margin: 0px 0px 10px;
+    }
+
+    .panel-white {
+      border: 1px solid #dddddd;
+    }
+
+    .panel-white>.panel-heading {
+      color: #333;
+      background-color: #fff;
+      border-color: #ddd;
+    }
+
+    .panel-white>.panel-footer {
+      background-color: #fff;
+      border-color: #ddd;
+    }
+
+    .panel-primary {
+      border: 1px solid #dddddd;
+    }
+
+    .panel-purple {
+      border: 1px solid #dddddd;
+    }
+
+    .panel-purple>.panel-heading {
+      color: #fff;
+      background-color: #8e44ad;
+      border: none;
+    }
+
+    .panel-purple>.panel-heading .panel-title a:hover {
+      color: #f0f0f0;
+    }
+
+    .panel-light-purple {
+      border: 1px solid #dddddd;
+    }
+
+    .panel-light-purple>.panel-heading {
+      color: #fff;
+      background-color: #9b59b6;
+      border: none;
+    }
+
+    .panel-light-purple>.panel-heading .panel-title a:hover {
+      color: #f0f0f0;
+    }
+
+    .panel-blue,
+    .panel-info {
+      border: 1px solid #dddddd;
+    }
+
+    .panel-blue>.panel-heading,
+    .panel-info>.panel-heading {
+      color: #fff;
+      background-color: #2980b9;
+      border: none;
+    }
+
+    .panel-blue>.panel-heading .panel-title a:hover,
+    .panel-info>.panel-heading .panel-title a:hover {
+      color: #f0f0f0;
+    }
+
+    .panel-light-blue {
+      border: 1px solid #dddddd;
+    }
+
+    .panel-light-blue>.panel-heading {
+      color: #fff;
+      background-color: #3498db;
+      border: none;
+    }
+
+    .panel-light-blue>.panel-heading .panel-title a:hover {
+      color: #f0f0f0;
+    }
+
+    .panel-green,
+    .panel-success {
+      border: 1px solid #dddddd;
+    }
+
+    .panel-green>.panel-heading,
+    .panel-success>.panel-heading {
+      color: #fff;
+      background-color: #27ae60;
+      border: none;
+    }
+
+    .panel-green>.panel-heading .panel-title a:hover,
+    .panel-success>.panel-heading .panel-title a:hover {
+      color: #f0f0f0;
+    }
+
+    .panel-light-green {
+      border: 1px solid #dddddd;
+    }
+
+    .panel-light-green>.panel-heading {
+      color: #fff;
+      background-color: #2ecc71;
+      border: none;
+    }
+
+    .panel-light-green>.panel-heading .panel-title a:hover {
+      color: #f0f0f0;
+    }
+
+    .panel-orange,
+    .panel-warning {
+      border: 1px solid #dddddd;
+    }
+
+    .panel-orange>.panel-heading,
+    .panel-warning>.panel-heading {
+      color: #fff;
+      background-color: #e82c0c;
+      border: none;
+    }
+
+    .panel-orange>.panel-heading .panel-title a:hover,
+    .panel-warning>.panel-heading .panel-title a:hover {
+      color: #f0f0f0;
+    }
+
+    .panel-light-orange {
+      border: 1px solid #dddddd;
+    }
+
+    .panel-light-orange>.panel-heading {
+      color: #fff;
+      background-color: #ff530d;
+      border: none;
+    }
+
+    .panel-light-orange>.panel-heading .panel-title a:hover {
+      color: #f0f0f0;
+    }
+
+    .panel-red,
+    .panel-danger {
+      border: 1px solid #dddddd;
+    }
+
+    .panel-red>.panel-heading,
+    .panel-danger>.panel-heading {
+      color: #fff;
+      background-color: #d40d12;
+      border: none;
+    }
+
+    .panel-red>.panel-heading .panel-title a:hover,
+    .panel-danger>.panel-heading .panel-title a:hover {
+      color: #f0f0f0;
+    }
+
+    .panel-light-red {
+      border: 1px solid #dddddd;
+    }
+
+    .panel-light-red>.panel-heading {
+      color: #fff;
+      background-color: #ff1d23;
+      border: none;
+    }
+
+    .panel-light-red>.panel-heading .panel-title a:hover {
+      color: #f0f0f0;
+    }
+
+    .panel-pink {
+      border: 1px solid #dddddd;
+    }
+
+    .panel-pink>.panel-heading {
+      color: #fff;
+      background-color: #fe31ab;
+      border: none;
+    }
+
+    .panel-pink>.panel-heading .panel-title a:hover {
+      color: #f0f0f0;
+    }
+
+    .panel-light-pink {
+      border: 1px solid #dddddd;
+    }
+
+    .panel-light-pink>.panel-heading {
+      color: #fff;
+      background-color: #fd32c0;
+      border: none;
+    }
+
+    .panel-light-pink>.panel-heading .panel-title a:hover {
+      color: #f0f0f0;
+    }
+
+    .panel-group .panel {
+      border-radius: 0;
+    }
+
+    .panel-group .panel+.panel {
+      margin-top: 0;
+      border-top: 0;
+    }
+
+    .bg-blue,
+    .bg-info {
+      background-color: #2980b9 !important;
+    }
+
+    .bg-light-blue {
+      background-color: #3498db !important;
+    }
+
+    .bg-red,
+    .bg-danger {
+      background-color: #d40d12 !important;
+    }
+
+    .bg-light-red {
+      background-color: #ff1d23 !important;
+    }
+
+    .bg-purple {
+      background-color: #8e44ad !important;
+    }
+
+    .bg-light-purple {
+      background-color: #9b59b6 !important;
+    }
+
+    .bg-green,
+    bg-success {
+      background-color: #27ae60 !important;
+    }
+
+    .bg-light-green {
+      background-color: #2ecc71 !important;
+    }
+
+    .bg-orange,
+    .bg-warning {
+      background-color: #e82c0c !important;
+    }
+
+    .bg-light-orange {
+      background-color: #ff530d !important;
+    }
+
+    .bg-pink {
+      background-color: #fe31ab !important;
+    }
+
+    .bg-light-pink {
+      background-color: #fd32c0 !important;
+    }
+
+    .color-white {
+      color: white !important;
+    }
+
+    .color-green,
+    .text-success {
+      color: #27ae60 !important;
+    }
+
+    .color-light-green {
+      color: #2ecc71 !important;
+    }
+
+    .color-blue,
+    .text-info {
+      color: #2980b9 !important;
+    }
+
+    .color-light-blue {
+      color: #3498db !important;
+    }
+
+    .color-orange,
+    .text-warning {
+      color: #e82c0c !important;
+    }
+
+    .color-light-orange {
+      color: #ff530d !important;
+    }
+
+    .color-red,
+    .text-danger {
+      color: #d40d12 !important;
+    }
+
+    .color-light-red {
+      color: #ff1d23 !important;
+    }
+
+    .color-purple {
+      color: #8e44ad !important;
+    }
+
+    .color-light-purple {
+      color: #9b59b6 !important;
+    }
+
+    .color-pink {
+      color: #fe31ab !important;
+    }
+
+    .color-light-pink {
+      color: #fd32c0 !important;
+    }
+
+    .border-green {
+      border: 4px solid #27ae60 !important;
+    }
+
+    .border-light-green {
+      border: 4px solid #2ecc71 !important;
+    }
+
+    .border-blue {
+      border: 4px solid #2980b9 !important;
+    }
+
+    .border-light-blue {
+      border: 4px solid #3498db !important;
+    }
+
+    .border-orange {
+      border: 4px solid #e82c0c !important;
+    }
+
+    .border-light-orange {
+      border: 4px solid #ff530d !important;
+    }
+
+    .border-red {
+      border: 4px solid #d40d12 !important;
+    }
+
+    .border-light-red {
+      border: 4px solid #ff1d23 !important;
+    }
+
+    .border-purple {
+      border: 4px solid #8e44ad !important;
+    }
+
+    .border-light-purple {
+      border: 4px solid #9b59b6 !important;
+    }
+
+    .border-pink {
+      border: 4px solid #fe31ab !important;
+    }
+
+    .border-light-pink {
+      border: 4px solid #fd32c0 !important;
+    }
+
+    .border-top-green {
+      border-top: 4px solid #27ae60 !important;
+    }
+
+    .border-top-light-green {
+      border-top: 4px solid #2ecc71 !important;
+    }
+
+    .border-top-blue {
+      border-top: 4px solid #2980b9 !important;
+    }
+
+    .border-top-light-blue {
+      border-top: 4px solid #3498db !important;
+    }
+
+    .border-top-orange {
+      border-top: 4px solid #e82c0c !important;
+    }
+
+    .border-top-light-orange {
+      border-top: 4px solid #ff530d !important;
+    }
+
+    .border-top-red {
+      border-top: 4px solid #d40d12 !important;
+    }
+
+    .border-top-light-red {
+      border-top: 4px solid #ff1d23 !important;
+    }
+
+    .border-top-purple {
+      border-top: 4px solid #8e44ad !important;
+    }
+
+    .border-top-light-purple {
+      border-top: 4px solid #9b59b6 !important;
+    }
+
+    .border-top-pink {
+      border-top: 4px solid #fe31ab !important;
+    }
+
+    .border-top-light-pink {
+      border-top: 4px solid #fd32c0 !important;
+    }
+
+    .border-right-green {
+      border-right: 4px solid #27ae60 !important;
+    }
+
+    .border-right-light-green {
+      border-right: 4px solid #2ecc71 !important;
+    }
+
+    .border-right-blue {
+      border-right: 4px solid #2980b9 !important;
+    }
+
+    .border-right-light-blue {
+      border-right: 4px solid #3498db !important;
+    }
+
+    .border-right-orange {
+      border-right: 4px solid #e82c0c !important;
+    }
+
+    .border-right-light-orange {
+      border-right: 4px solid #ff530d !important;
+    }
+
+    .border-right-red {
+      border-right: 4px solid #d40d12 !important;
+    }
+
+    .border-right-light-red {
+      border-right: 4px solid #ff1d23 !important;
+    }
+
+    .border-right-purple {
+      border-right: 4px solid #8e44ad !important;
+    }
+
+    .border-right-light-purple {
+      border-right: 4px solid #9b59b6 !important;
+    }
+
+    .border-right-pink {
+      border-right: 4px solid #fe31ab !important;
+    }
+
+    .border-right-light-pink {
+      border-right: 4px solid #fd32c0 !important;
+    }
+
+    .border-bottom-green {
+      border-bottom: 4px solid #27ae60 !important;
+    }
+
+    .border-bottom-light-green {
+      border-bottom: 4px solid #2ecc71 !important;
+    }
+
+    .border-bottom-blue {
+      border-bottom: 4px solid #2980b9 !important;
+    }
+
+    .border-bottom-light-blue {
+      border-bottom: 4px solid #3498db !important;
+    }
+
+    .border-bottom-orange {
+      border-bottom: 4px solid #e82c0c !important;
+    }
+
+    .border-bottom-light-orange {
+      border-bottom: 4px solid #ff530d !important;
+    }
+
+    .border-bottom-red {
+      border-bottom: 4px solid #d40d12 !important;
+    }
+
+    .border-bottom-light-red {
+      border-bottom: 4px solid #ff1d23 !important;
+    }
+
+    .border-bottom-purple {
+      border-bottom: 4px solid #8e44ad !important;
+    }
+
+    .border-bottom-light-purple {
+      border-bottom: 4px solid #9b59b6 !important;
+    }
+
+    .border-bottom-pink {
+      border-bottom: 4px solid #fe31ab !important;
+    }
+
+    .border-bottom-light-pink {
+      border-bottom: 4px solid #fd32c0 !important;
+    }
+
+    .border-left-green {
+      border-left: 4px solid #27ae60 !important;
+    }
+
+    .border-left-light-green {
+      border-left: 4px solid #2ecc71 !important;
+    }
+
+    .border-left-blue {
+      border-left: 4px solid #2980b9 !important;
+    }
+
+    .border-left-light-blue {
+      border-left: 4px solid #3498db !important;
+    }
+
+    .border-left-orange {
+      border-left: 4px solid #e82c0c !important;
+    }
+
+    .border-left-light-orange {
+      border-left: 4px solid #ff530d !important;
+    }
+
+    .border-left-red {
+      border-left: 4px solid #d40d12 !important;
+    }
+
+    .border-left-light-red {
+      border-left: 4px solid #ff1d23 !important;
+    }
+
+    .border-left-purple {
+      border-left: 4px solid #8e44ad !important;
+    }
+
+    .border-left-light-purple {
+      border-left: 4px solid #9b59b6 !important;
+    }
+
+    .border-left-pink {
+      border-left: 4px solid #fe31ab !important;
+    }
+
+    .border-left-light-pink {
+      border-left: 4px solid #fd32c0 !important;
+    }
+
+    .bg2 {
+      background-image: url('https://img.freepik.com/premium-photo/multiple-shopping-cards-icons-light-blue-background-with-blank-space-right-internet-shop-purchase-concept-3d-rendering-mock-up_670147-75054.jpg');
+    }
+
+
+
+
+    .btn-blue {
+      background-color: #3498db;
+      border-color: #3498db;
+      color: white;
+    }
+
+    .btn-blue:hover,
+    .btn-blue:visited {
+      background-color: #2980b9;
+      color: white;
+    }
+
+    .btn-green {
+      background-color: #2ecc71;
+      border-color: #27ae60;
+      color: white;
+    }
+
+    .btn-green:hover,
+    .btn-green:visited {
+      background-color: #27ae60;
+      color: white;
+    }
+
+    .btn-orange {
+      background-color: #ff530d;
+      border-color: #e82c0c;
+      color: white;
+    }
+
+    .btn-orange:hover,
+    .btn-orange:visited {
+      background-color: #e82c0c;
+      color: white;
+    }
+
+    .btn-red {
+      background-color: #ff1d23;
+      border-color: #d40d12;
+      color: white;
+    }
+
+    .btn-red:hover,
+    .btn-red:visited {
+      background-color: #d40d12;
+      color: white;
+    }
+
+    .btn-purple {
+      background-color: #9b59b6;
+      border-color: #8e44ad;
+      color: white;
+    }
+
+    .btn-purple:hover,
+    .btn-purple:visited {
+      background-color: #8e44ad;
+      color: white;
+    }
+
+    .btn-pink {
+      background-color: #fd32c0;
+      border-color: #fe31ab;
+      color: white;
+    }
+
+    .btn-pink:hover,
+    .btn-pink:visited {
+      background-color: #fe31ab;
+      color: white;
+    }
+
+    .progress.progress-xs {
+      height: 12px;
+    }
+
+    .admin-wrapper {
+      margin-left: 35%;
+      margin-top: 10%;
+    }
+
+
+    body {
+      background-color: #f8f9fa !important
+    }
+
+    .p-4 {
+      padding: 1.5rem !important;
+    }
+
+    .mb-0,
+    .my-0 {
+      margin-bottom: 0 !important;
+    }
+
+    .shadow-sm {
+      box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important;
+    }
+
+    /* user-dashboard-info-box */
+    .user-dashboard-info-box .candidates-list .thumb {
+      margin-right: 20px;
+
+    }
+
+    .user-dashboard-info-box .candidates-list .thumb img {
+      width: 80px;
+      height: 80px;
+      -o-object-fit: cover;
+      object-fit: cover;
+      overflow: hidden;
+      border-radius: 50%;
+    }
+
+    .user-dashboard-info-box .title {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      padding: 30px 0;
+    }
+
+    .user-dashboard-info-box .candidates-list td {
+      vertical-align: middle;
+    }
+
+    .user-dashboard-info-box td li {
+      margin: 0 4px;
+    }
+
+    .user-dashboard-info-box .table thead th {
+      border-bottom: none;
+    }
+
+    .table.manage-candidates-top th {
+      border: 0;
+    }
+
+    .user-dashboard-info-box .candidate-list-favourite-time .candidate-list-favourite {
+      margin-bottom: 10px;
+    }
+
+    .table.manage-candidates-top {
+      min-width: 650px;
+    }
+
+    .user-dashboard-info-box .candidate-list-details ul {
+      color: #969696;
+    }
+
+    /* Candidate List */
+    .candidate-list {
+      background: #ffffff;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      border-bottom: 1px solid #eeeeee;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      padding: 20px;
+      -webkit-transition: all 0.3s ease-in-out;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .candidate-list:hover {
+      -webkit-box-shadow: 0px 0px 34px 4px rgba(33, 37, 41, 0.06);
+      box-shadow: 0px 0px 34px 4px rgba(33, 37, 41, 0.06);
+      position: relative;
+      z-index: 99;
+    }
+
+    .candidate-list:hover a.candidate-list-favourite {
+      color: #e74c3c;
+      -webkit-box-shadow: -1px 4px 10px 1px rgba(24, 111, 201, 0.1);
+      box-shadow: -1px 4px 10px 1px rgba(24, 111, 201, 0.1);
+    }
+
+    .candidate-list .candidate-list-image {
+      margin-right: 25px;
+      -webkit-box-flex: 0;
+      -ms-flex: 0 0 80px;
+      flex: 0 0 80px;
+      border: none;
+    }
+
+    .candidate-list .candidate-list-image img {
+      width: 80px;
+      height: 80px;
+      -o-object-fit: cover;
+      object-fit: cover;
+    }
+
+    .candidate-list-title {
+      margin-bottom: 5px;
+    }
+
+    .candidate-list-details ul {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+      margin-bottom: 0px;
+    }
+
+    .candidate-list-details ul li {
+      margin: 5px 10px 5px 0px;
+      font-size: 13px;
+    }
+
+    .candidate-list .candidate-list-favourite-time {
+      margin-left: auto;
+      text-align: center;
+      font-size: 13px;
+      -webkit-box-flex: 0;
+      -ms-flex: 0 0 90px;
+      flex: 0 0 90px;
+    }
+
+    .candidate-list .candidate-list-favourite-time span {
+      display: block;
+      margin: 0 auto;
+    }
+
+    .candidate-list .candidate-list-favourite-time .candidate-list-favourite {
+      display: inline-block;
+      position: relative;
+      height: 40px;
+      width: 40px;
+      line-height: 40px;
+      border: 1px solid #eeeeee;
+      border-radius: 100%;
+      text-align: center;
+      -webkit-transition: all 0.3s ease-in-out;
+      transition: all 0.3s ease-in-out;
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #646f79;
+    }
+
+    .candidate-list .candidate-list-favourite-time .candidate-list-favourite:hover {
+      background: #ffffff;
+      color: #e74c3c;
+    }
+
+    .candidate-banner .candidate-list:hover {
+      position: inherit;
+      -webkit-box-shadow: inherit;
+      box-shadow: inherit;
+      z-index: inherit;
+    }
+
+    .bg-white {
+      background-color: #ffffff !important;
+    }
+
+    .p-4 {
+      padding: 1.5rem !important;
+    }
+
+    .mb-0,
+    .my-0 {
+      margin-bottom: 0 !important;
+    }
+
+    .shadow-sm {
+      box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075) !important;
+    }
+
+    .user-dashboard-info-box .candidates-list .thumb {
+      margin-right: 20px;
+    }
+
+    .outer-container {
+
+      display: flex;
+      flex-direction: column;
+
+      padding: 10px;
+      transition: all 0.3s ease-in-out;
+      width: 60%;
+      align-self: center;
+      height: 80%;
+      border-radius: 30px;
+    }
+
+
+
+    .inner-container {
+      width: 90%;
+      /* Full width inside the outer container */
+      border: 1px solid #ced4da;
+      border-radius: 8px;
+      padding: 20px;
+      box-sizing: border-box;
+      margin-top: 20px;
+      height: 80%;
+      align-self: center;
+      margin-left: 50px;
+      max-height: 1000px;
+      /* Adjust this value to provide spacing between outer and inner containers */
+    }
+
+    .outer-container {
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      transition: all 0.3s ease-in-out;
+      width: 70%;
+      /* Adjust the width as needed */
+      align-self: center;
+      max-width: 600px;
+      height: 1000px;
+      /* Adjust the max-width as needed */
+      border-radius: 15px;
+    }
+
+    #calendar {
+      max-width: 1000px;
+      /* Adjust the max-width as needed */
+      margin: 0 auto;
+      background-color: #87CEEB;
+      /* Sky Blue color */
+      box-shadow: 0 0 15px rgba(33, 37, 41, 0.1);
+      border-radius: 15px;
+      padding: 10px;
+      margin-left: 500px;
+      height: 900px;
+      width: 1000;
+      max-height: 1000px;
+    }
+
+    /* Add these styles to the existing styles */
+
+    .fc-prev-button,
+    .fc-next-button,
+    .fc-today-button {
+      background-color: #4CAF50;
+      color: #2980b9;
+      border: none;
+      border-radius: 5px;
+      margin: 5px;
+      display: inline-block;
+      /* Add this line */
+    }
+
+    .fc-prev-button:hover,
+    .fc-next-button:hover,
+    .fc-today-button:hover {
+      background-color: #45a049;
+    }
+
+    .fc-button-group {
+      float: none;
+      text-align: center;
+      display: inline-block;
+      /* Add this line */
+    }
+
+
+    .fc-prev-button:hover,
+    .fc-next-button:hover,
+    .fc-today-button:hover {
+      background-color: #2980b9;
+    }
+
+    .fc-button-group {
+      float: none;
+      text-align: center;
+    }
+
+    .fc-day-header {
+      background-color: #87CEEB;
+      /* Sky Blue color */
+      color: #fff;
+      border: 1px solid #87CEEB;
+      /* Sky Blue color */
+      border-radius: 5px;
+    }
+
+    .fc-day {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin: 2px;
+      background-color: #fff;
+    }
+
+    .fc-event {
+      background-color: #87CEEB;
+      /* Sky Blue color */
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .fc-event:hover {
+      background-color: #5F9EA0;
+      /* Darker shade of Sky Blue color */
+    }
+
+    #eventForm {
+      position: absolute;
+      top: 50px;
+      right: 10px;
+      height: 300px;
+      width: 300px;
+    }
+
+    /* Add other calendar-specific styles as needed */
+  </style>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    integrity="sha256-dzR8Ds+XW5B0REZLS6BLnQzhfK8IZf5uz5FfGgB10Ks=" crossorigin="anonymous" />
+
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+  <title>Seller Dashboard</title>
+
+  <meta name="description" content="" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="./assets/img/favicon/favicon.ico" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&ampdisplay=swap"
+    rel="stylesheet" />
+
+  <link rel="stylesheet" href="./assets/vendor/fonts/materialdesignicons.css" />
+
+  <!-- Menu waves for no-customizer fix -->
+  <link rel="stylesheet" href="./assets/vendor/libs/node-waves/node-waves.css" />
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="./assets/vendor/css/core.css" class="template-customizer-core-css" />
+  <link rel="stylesheet" href="./assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+  <link rel="stylesheet" href="./assets/css/demo.css" />
+
+  <!-- Vendors CSS -->
+  <link rel="stylesheet" href="./assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+  <link rel="stylesheet" href="./assets/vendor/libs/apex-charts/apex-charts.css" />
+
+  <!-- Page CSS -->
+
+  <!-- Helpers -->
+  <script src="./assets/vendor/js/helpers.js"></script>
+  <!--! Templatecustomizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+  <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+  <script src="./assets/js/config.js"></script>
+</head>
+
+<body>
+  <!-- Layout wrapper -->
+  <div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+      <!-- Menu -->
+
+      <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+        <div class="app-brand demo">
+          <a href="index.html" class="app-brand-link">
+            <span class="app-brand-logo demo me-1">
+              <span style="color: var(--bs-primary)">
+                <svg width="30" height="24" viewBox="0 0 250 196" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M12.3002 1.25469L56.655 28.6432C59.0349 30.1128 60.4839 32.711 60.4839 35.5089V160.63C60.4839 163.468 58.9941 166.097 56.5603 167.553L12.2055 194.107C8.3836 196.395 3.43136 195.15 1.14435 191.327C0.395485 190.075 0 188.643 0 187.184V8.12039C0 3.66447 3.61061 0.0522461 8.06452 0.0522461C9.56056 0.0522461 11.0271 0.468577 12.3002 1.25469Z"
+                    fill="currentColor" />
+                  <path opacity="0.077704" fill-rule="evenodd" clip-rule="evenodd"
+                    d="M0 65.2656L60.4839 99.9629V133.979L0 65.2656Z" fill="black" />
+                  <path opacity="0.077704" fill-rule="evenodd" clip-rule="evenodd"
+                    d="M0 65.2656L60.4839 99.0795V119.859L0 65.2656Z" fill="black" />
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M237.71 1.22393L193.355 28.5207C190.97 29.9889 189.516 32.5905 189.516 35.3927V160.631C189.516 163.469 191.006 166.098 193.44 167.555L237.794 194.108C241.616 196.396 246.569 195.151 248.856 191.328C249.605 190.076 250 188.644 250 187.185V8.09597C250 3.64006 246.389 0.027832 241.935 0.027832C240.444 0.027832 238.981 0.441882 237.71 1.22393Z"
+                    fill="currentColor" />
+                  <path opacity="0.077704" fill-rule="evenodd" clip-rule="evenodd"
+                    d="M250 65.2656L189.516 99.8897V135.006L250 65.2656Z" fill="black" />
+                  <path opacity="0.077704" fill-rule="evenodd" clip-rule="evenodd"
+                    d="M250 65.2656L189.516 99.0497V120.886L250 65.2656Z" fill="black" />
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M12.2787 1.18923L125 70.3075V136.87L0 65.2465V8.06814C0 3.61223 3.61061 0 8.06452 0C9.552 0 11.0105 0.411583 12.2787 1.18923Z"
+                    fill="currentColor" />
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M12.2787 1.18923L125 70.3075V136.87L0 65.2465V8.06814C0 3.61223 3.61061 0 8.06452 0C9.552 0 11.0105 0.411583 12.2787 1.18923Z"
+                    fill="white" fill-opacity="0.15" />
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M237.721 1.18923L125 70.3075V136.87L250 65.2465V8.06814C250 3.61223 246.389 0 241.935 0C240.448 0 238.99 0.411583 237.721 1.18923Z"
+                    fill="currentColor" />
+                  <path fill-rule="evenodd" clip-rule="evenodd"
+                    d="M237.721 1.18923L125 70.3075V136.87L250 65.2465V8.06814C250 3.61223 246.389 0 241.935 0C240.448 0 238.99 0.411583 237.721 1.18923Z"
+                    fill="white" fill-opacity="0.3" />
+                </svg>
+              </span>
+            </span>
+            <span class="app-brand-text demo menu-text fw-semibold ms-2">Anon</span>
+          </a>
+
+          <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto">
+            <i class="mdi menu-toggle-icon d-xl-block align-middle mdi-20px"></i>
+          </a>
+        </div>
+
+        <div class="menu-inner-shadow"></div>
+
+        <ul class="menu-inner py-1" style="max-height: 50px;">
+          <!-- Dashboards -->
+          <li class="menu-item active open" onclick="DisplayDrashBord();">
+            <a class="menu-link menu">
+              <i class="menu-icon tf-icons mdi mdi-home-outline"></i>
+              <div data-i18n="menu-link" style="color: aliceblue;">Dashboard</div>
+
+        </ul>
+        </li>
+
+
+
+
+        <li class="menu-header fw-medium mt-4" style="margin-top: -1000px;">
+          <span class="menu-header-text">Pages</span>
+        </li>
+
+
+
+        <!--Ordered Customer-->
+        <li class="menu-item">
+          <a onclick="DisplayListUsers()" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-account-multiple-outline"></i>
+            <div data-i18n="Account Settings" style="cursor: pointer;">Customers</div>
+          </a>
+
+        </li>
+
+        <li class="menu-header fw-medium mt-4">
+          <span class="menu-header-text">Products</span>
+        </li>
+
+        <li class="menu-item">
+          <a onclick="DisplayListInventory()" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-format-list-bulleted"></i>
+            <div data-i18n="Misc" style="cursor: pointer;">List</div>
+          </a>
+
+        </li>
+
+        <li class="menu-item" onclick="DisplayAddProduct()">
+          <a class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-plus-circle-outline"></i>
+            <div data-i18n="Tables" style="cursor: pointer;">Add</div>
+          </a>
+        </li>
+
+
+
+
+
+        <!-- Extended components -->
+        <li class="menu-item">
+          <a onclick="DisplayEdit()" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-pencil-outline"></i>
+            <div data-i18n="Extended UI" style="cursor: pointer;">Edit</div>
+          </a>
+
+        </li>
+
+
+        <!-- Form Validation -->
+        <li class="menu-item">
+          <a onclick="Deletedata()" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-delete-outline"></i>
+            <div data-i18n="Form Validation" style="cursor: pointer;">Delete</div>
+
+          </a>
+        </li>
+
+        <li class="menu-header fw-medium mt-4" style="margin-top: -1000px;">
+          <span class="menu-header-text">Orders</span>
+        </li>
+
+        <!-- Completed Orders -->
+        <li class="menu-item">
+          <a onclick="DisplayPendingOrders()" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-timer-sand"></i>
+            <div data-i18n="Misc" style="cursor: pointer;">Pending</div>
+          </a>
+        </li>
+
+        <!--Yet To Deliver Orders -->
+        <li class="menu-item">
+          <a onclick="DisplayYettoGiveOrders()" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-truck-check-outline"></i>
+            <div data-i18n="Misc" style="cursor: pointer;">Yet to Deliver</div>
+          </a>
+        </li>
+
+        <!-- Completed Orders -->
+        <li class="menu-item">
+          <a onclick="DisplayCompletedOrders()" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-check-circle-outline"></i>
+            <div data-i18n="Misc" style="cursor: pointer;">Completed</div>
+          </a>
+        </li>
+
+        <!-- All Orders -->
+        <li class="menu-item">
+          <a onclick="DisplayallOrders()" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-package-variant-closed"></i>
+            <div data-i18n="Misc" style="cursor: pointer;">Orders</div>
+          </a>
+        </li>
+
+        <li class="menu-header fw-medium mt-4" style="margin-top: -1000px;">
+          <span class="menu-header-text">FeedBack</span>
+        </li>
+
+        <li class="menu-item">
+          <a onclick="DisplayFeedBack()" class="menu-link">
+            <i class="menu-icon tf-icons mdi mdi-package-variant-closed"></i>
+            <div data-i18n="Misc" style="cursor: pointer;">FeedBack</div>
+          </a>
+        </li>
+        </ul>
+      </aside>
+      <!-- / Menu -->
+
+      <!-- Layout container -->
+      <div class="layout-page">
+        <!-- Navbar -->
+
+        <nav
+          class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+          id="layout-navbar">
+          <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+            <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+              <i class="mdi mdi-menu mdi-24px"></i>
+            </a>
+          </div>
+
+          <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+            <!-- Search -->
+            <div class="navbar-nav align-items-center">
+              <div class="nav-item d-flex align-items-center">
+                <i class="mdi mdi-magnify mdi-24px lh-0"></i>
+                <input type="text" onkeyup="search()" id="Search" class="form-control border-0 shadow-none bg-body"
+                  placeholder="Search..." aria-label="Search..." />
+              </div>
+            </div>
+            <!-- /Search -->
+
+            <ul class="navbar-nav flex-row align-items-center ms-auto">
+              <!-- Place this tag where you want the button to render. -->
+
+
+              <!-- User -->
+              <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
+                  <div class="avatar avatar-online">
+                    <img src="./assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                  </div>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end mt-3 py-2">
+                  <li>
+                    <a class="dropdown-item pb-2 mb-1" href="#">
+                      <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 me-2 pe-1">
+                          <div class="avatar avatar-online">
+                            <img src="./assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                          </div>
+                        </div>
+                        <div class="flex-grow-1">
+                          <h6 class="mb-0 seller-name"></h6>
+                          <small class="text-muted">Admin</small>
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                  <li>
+                    <div class="dropdown-divider my-1"></div>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">
+                      <i class="mdi mdi-account-outline me-1 mdi-20px"></i>
+                      <span class="align-middle">My Profile</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="#">
+                      <i class="mdi mdi-cog-outline me-1 mdi-20px"></i>
+                      <span class="align-middle">Settings</span>
+                    </a>
+                  </li>
+                  <li>
+                    <div class="dropdown-divider my-1"></div>
+                  </li>
+                  <li>
+                    <a class="dropdown-item" href="javascript:void(0);">
+                      <i class="mdi mdi-power me-1 mdi-20px"></i>
+                      <span class="align-middle" onclick="LogOut()">Log Out</span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <!--/ User -->
+            </ul>
+          </div>
+        </nav>
+
+        <!-- / Navbar -->
+
+        <!-- Content wrapper -->
+        <div class="content-wrapper">
+          <!-- Content -->
+
+          <div class="container-xxl flex-grow-1 container-p-y" style="display: block;">
+            <div class="row gy-4">
+              <!-- Congratulations card -->
+              <div class="col-md-12 col-lg-4">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title mb-1 seller-target"></h4>
+                    <p class="pb-0">Target of the month</p>
+                    <h4 class="text-primary mb-1">&#8377; 10,000</h4>
+                    <p class="mb-2 pb-1 target-persentage">0% of target 🚀</p>
+                  </div>
+                  <img src="./assets/img/icons/misc/triangle-light.png"
+                    class="scaleX-n1-rtl position-absolute bottom-0 end-0" width="166" alt="triangle background"
+                    data-app-light-img="icons/misc/triangle-light.png"
+                    data-app-dark-img="icons/misc/triangle-dark.png" />
+                  <img src="./assets/img/illustrations/trophy.png"
+                    class="scaleX-n1-rtl position-absolute bottom-0 end-0 me-4 mb-4 pb-2" width="83" alt="view sales" />
+                </div>
+              </div>
+              <!--/ Congratulations card -->
+
+              <!-- Transactions -->
+              <div class="col-lg-8">
+                <div class="card">
+                  <div class="card-header">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <h5 class="card-title m-0 me-2">Transactions</h5>
+                      <div class="dropdown">
+                        <button class="btn p-0" type="button" id="transactionID" data-bs-toggle="dropdown"
+                          aria-haspopup="true" aria-expanded="false">
+                          <i class="mdi mdi-dots-vertical mdi-24px"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="transactionID">
+                          <a class="dropdown-item" href="javascript:void(0);" onclick="DisplayData()">Refresh</a>
+                          <a class="dropdown-item" href="javascript:void(0);" onclick="PrintContent()">Share</a>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="mt-3"><span class="fw-medium total-growth">Add More Products to get more Sales &
+                        Profit</span> 😎 </p>
+                  </div>
+                  <div class="card-body" id="printableContent">
+                    <div class="row g-3">
+                      <div class="col-md-3 col-6">
+                        <div class="d-flex align-items-center">
+                          <div class="avatar">
+                            <div class="avatar-initial bg-success rounded shadow">
+                              <i class="mdi mdi-account-outline mdi-24px"></i>
+                            </div>
+                          </div>
+                          <div class="ms-3">
+                            <div class="small mb-1">Orders</div>
+                            <h5 class="mb-0 orders-count">0k</h5>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-3 col-6">
+                        <div class="d-flex align-items-center">
+                          <div class="avatar">
+                            <div class="avatar-initial bg-warning rounded shadow">
+                              <i class="mdi mdi-cellphone-link mdi-24px"></i>
+                            </div>
+                          </div>
+                          <div class="ms-3">
+                            <div class="small mb-1">Orders Completed</div>
+                            <h5 class="mb-0 completed-count">0k</h5>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-3 col-6">
+                        <div class="d-flex align-items-center">
+                          <div class="avatar">
+                            <div class="avatar-initial bg-success rounded shadow">
+                              <i class="mdi mdi-account-outline mdi-24px"></i>
+                            </div>
+                          </div>
+                          <div class="ms-3">
+                            <div class="small mb-1">Order Inprogress</div>
+                            <h5 class="mb-0 inprogress-count">0k</h5>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-3 col-6">
+                        <div class="d-flex align-items-center">
+                          <div class="avatar">
+                            <div class="avatar-initial bg-success rounded shadow">
+                              <i class="mdi mdi-account-outline mdi-24px"></i>
+                            </div>
+                          </div>
+                          <div class="ms-3">
+                            <div class="small mb-1">Total Amount</div>
+                            <h5 class="mb-0 sales-count">0k</h5>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--/ Transactions -->
+
+
+
+              <!-- Deposit / Withdraw -->
+
+              <!-- Data Tables -->
+              <div class="col-12">
+                <div class="card">
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead class="table-light">
+                        <tr>
+                          <th class="text-truncate">Name</th>
+                          <th class="text-truncate">Category</th>
+                          <th class="text-truncate">Price</th>
+                          <th class="text-truncate">Qunatity</th>
+                          <th class="text-truncate">Stock Available</th>
+                          <th class="text-truncate">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody class="js-workers">
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <!--/ Data Tables -->
+            </div>
+          </div>
+
+          <!-- / Content -->
+          <div id="snippetContent" style="display: none;">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css"
+              integrity="sha256-2XFplPlrFClt0bIdPgpz8H7ojnk10H69xRqd9+uTShA=" crossorigin="anonymous">
+            <div class="container mt-3 mb-4">
+              <div class="col-lg-9 mt-4 mt-lg-0">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="user-dashboard-info-box table-responsive mb-0 bg-white p-4 shadow-sm">
+                      <table class="table manage-candidates-top mb-0">
+                        <thead>
+                          <tr>
+                            <th>Customer Name</th>
+                            <th class="text-center">Mobile No</th>
+                            <th class="action text-right">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody class="user-list-body">
+                        </tbody>
+                      </table>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+          <!--Inventory-->
+
+          <div id="Inventorysnip" style="display: none;">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css"
+              integrity="sha256-2XFplPlrFClt0bIdPgpz8H7ojnk10H69xRqd9+uTShA=" crossorigin="anonymous">
+            <div class="container mt-3 mb-4">
+              <div class="col-lg-9 mt-4 mt-lg-0">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="user-dashboard-info-box table-responsive mb-0 bg-white p-4 shadow-sm">
+                      <table class="table manage-candidates-top mb-0">
+                        <thead>
+                          <tr>
+                            <th>Product Name</th>
+                            <th class="text-center">Price</th>
+                            <th class="action text-right">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody class="inventory-list-body">
+
+                        </tbody>
+                      </table>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--Worker-->
+          <div id="workersnip" style="display: none;">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css">
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css"
+              integrity="sha256-2XFplPlrFClt0bIdPgpz8H7ojnk10H69xRqd9+uTShA=" crossorigin="anonymous">
+            <div class="container mt-3 mb-4">
+              <div class="col-lg-9 mt-4 mt-lg-0">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="user-dashboard-info-box table-responsive mb-0 bg-white p-4 shadow-sm">
+                      <table class="table manage-candidates-top mb-0">
+                        <thead>
+                          <tr>
+                            <th>Product Name</th>
+                            <th class="text-right">END Date</th>
+                            <th class="text-right">Quantity</th>
+                            <th class="text-right">Total Amount</th>
+                            <th class="action text-right">Action</th>
+                            <th class="action text-right">Status</th>
+                          </tr>
+                        </thead>
+                        <tbody class="worker-list-body">
+
+                        </tbody>
+                      </table>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--Delete-->
+
+          <div id="delete-form-container" class="outer-container" style="display: none;">
+
+            <div class="limiter">
+              <div class="container-login100"
+                style="background-image: url('images/bg-01.jpg'); background-size: 80% 80%; margin-top: -110px; width: 1000px;margin-left: -110px;">
+
+                <form class="login100-form validate-form flex-sb flex-w" style="width: 500px; height: 400px;"
+                  id="delete-form">
+                  <span class="login100-form-title p-b-53" style="margin-top: -50px;margin-bottom: 0px;padding-bottom: 0px;">
+                    Delete
+                  </span>
+
+
+                  <div class="p-t-13 p-b-9">
+                    <span class="txt1">
+                    Product ID:
+                    </span>
+                  </div>
+                  <div class="wrap-input100 validate-input" data-validate="Password is required">
+                    <input class="input100" type="test" id="id" name="id">
+                    <span class="focus-input100"></span>
+                  </div>
+
+                  <div class="container-login100-form-btn m-t-17">
+                    <button class="login100-form-btn">
+                      Delete
+                    </button>
+                  </div>
+
+                  <div class="w-full text-center p-t-55">
+
+
+
+                  </div>
+                </form>
+              </div>
+
+            </div>
+
+
+            <div id="dropDownSelect1"></div>
+
+          </div>
+
+          <!--Edit Data-->
+          <div id="update-form-admin-container" class="outer-container" style="display: none;">
+            <div class="limiter">
+              <div class="container-login100"
+                style="background-image: url('images/bg-01.jpg'); background-size: 90% 82%; margin-top: -110px;width: 1000px; margin-left: -90px">
+
+                <form class="login100-form validate-form flex-sb flex-w" style="width: 500px; height: 600px;"
+                  id="update-form">
+                  <span class="login100-form-title p-b-53" style="margin-top: -50px;">
+                    EDIT
+                  </span>
+
+                  <div class="wrap-input100" style="display: none;">
+                    <select id="updatecollection" name="updatecollection" onchange="populateFieldOptions()"
+                      class="input100">
+                      <option value="inventory">Inventory</option>
+                    </select>
+                    <span class="focus-input100"></span>
+                  </div>
+
+                  <div class="p-t-31 p-b-9" style="margin-top: -30px;">
+                    <span class="txt1">
+                      Field To Update:
+                    </span>
+                  </div>
+                  <div class="wrap-input100">
+                    <select id="field" name="field" class="input100">
+                      <!-- Options will be dynamically updated based on the selected collection -->
+                    </select>
+
+                    <span class="focus-input100"></span>
+                  </div>
+
+                  <div class="p-t-13 p-b-9">
+                    <span class="txt1">
+                      Product ID:
+                    </span>
+                  </div>
+                  <div class="wrap-input100">
+                    <input class="input100" type="text" id="idname" name="idname" required>
+                    <span class="focus-input100"></span>
+                  </div>
+                  <div class="p-t-13 p-b-9">
+                    <span class="txt1">
+                      New Value:
+                    </span>
+                  </div>
+                  <div class="wrap-input100">
+                    <input class="input100" id="newvalue" name="newvalue" required>
+                    <span class="focus-input100"></span>
+                  </div>
+
+                  <div class="container-login100-form-btn m-t-17">
+                    <button class="login100-form-btn" type="submit">
+                      Edit
+                    </button>
+                  </div>
+
+                  <div class="w-full text-center p-t-55">
+
+
+
+                  </div>
+                </form>
+              </div>
+
+            </div>
+          </div>
+          <!--FeedBAck Data-->
+          <div id="feedback" class="outer-container" style="display: none;">
+            <div class="limiter">
+              <div class="container-login100"
+                style="background-image: url('images/bg-01.jpg'); background-size: 80% 82%; margin-top: -50px;width: 1000px; margin-left: -150px">
+
+                <form class="login100-form validate-form flex-sb flex-w" style="width: 500px; height: 400px;"
+                  id="feedback-form">
+                  <span class="login100-form-title p-b-53" style="margin-top: -50px;">
+                    FEEDBACK
+                  </span>
+                  <div class="wrap-input100">
+                    <input class="input100" id="feedbackinput" name="feedback" placeholder="Your FeedBacks" required>
+                    <span class="focus-input100"></span>
+                  </div>
+
+                  <div class="container-login100-form-btn m-t-17">
+                    <button class="login100-form-btn" type="submit">
+                      SUBMIT
+                    </button>
+                  </div>
+
+                  <div class="w-full text-center p-t-55">
+
+
+
+                  </div>
+                </form>
+              </div>
+
+            </div>
+          </div>
+
+
+            <div id="dropDownSelect1"></div>
+
+          </div>
+          <!-- Display Customer-->
+          <div class="display-view">
+
+          </div>
+          <!--Register User-->
+
+          <div class="wrapper" style="display: none; margin-top: -5px;">
+            <div class="inner">
+              <img src="images/seller-1.png" alt="" class="image-1" style="margin-left: -130px;">
+              <form action="" id="product-form">
+                <h3>Add Products</h3>
+                <div class="form-holder">
+                  <span class="lnr lnr-tag"></span>
+                  <input type="text" class="form-control product" id="product-name" placeholder="Product Name"
+                    style="border-top: none;border-left: none;border-right: none;margin-left: 10px;outline:none;">
+                </div>
+                <div class="form-holder">
+                  <span class="lnr lnr-magnifier"></span>
+                  <input type="text" class="form-control product" id="product-category" placeholder="Product Category"
+                    style="border-top: none;border-left: none;border-right: none;margin-left: 10px;outline:none;">
+                </div>
+                <div class="form-holder">
+                  <span class="lnr lnr-cart"></span>
+                  <input type="number" class="form-control product" id="price" placeholder="Amount"
+                    style="border-top: none;border-left: none;border-right: none;margin-left: 10px;outline:none;">
+                </div>
+                <div class="form-holder">
+                  <span class="lnr lnr-inbox"></span>
+                  <input type="number" class="form-control product" id="quantity" placeholder="Quantity"
+                    style="border-top: none;border-left: none;border-right: none;margin-left: 10px;outline:none;">
+                </div>
+                <div class="form-holder">
+                  <span class="lnr lnr-inbox"></span>
+                  <input type="number" class="form-control product" id="stock-available" placeholder="Stock Available"
+                    style="border-top: none;border-left: none;border-right: none;margin-left: 10px;outline:none;">
+                </div>
+                <div class="form-holder">
+                  <span class="lnr lnr-rocket"></span>
+                  <input type="text" class="form-control product" id="short-description" placeholder="Short Description"
+                    style="border-top: none;border-left: none;border-right: none;margin-left: 10px;outline:none;">
+                </div>
+                <div class="form-holder">
+                  <span class="lnr lnr-rocket"></span>
+                  <input type="text" class="form-control product" id="long-description" placeholder="Long Description"
+                    style="border-top: none;border-left: none;border-right: none;margin-left: 10px;outline:none;">
+                </div>
+                <div class="form-holder">
+                  <span class="lnr lnr-picture"></span>
+                  <input type="file" class="form-control product" id="product-image" placeholder="Product Image"
+                    style="border-top: none;border-left: none;border-right: none;margin-left: 10px;outline:none;">
+                </div>
+                <div id="features-holder">
+                  <div class="form-holder" style="display: flex;">
+                    <span class="lnr lnr-pushpin"></span>
+                    <input type="text" class="form-control product features" id="features" placeholder="Features"
+                      style="border-top: none;border-left: none;border-right: none;margin-left: 10px;outline:none; width: 300px;">
+                    <button type="button" class="addfeatures" onclick="AddFeatures()">+</button>
+                  </div>
+                </div>
+
+                <button type="click" onclick="AddProducts(event)">
+                  <span>Create</span>
+                </button>
+              </form>
+              <img src="images/seller-2.png" alt="" class="image-2" style="padding: 10px;">
+            </div>
+          </div>
+
+          <div class="container-fluid" id="single-order-container" style="display: none;">
+
+          </div>
+
+
+          <div id="conformationoverlay" class="conformationoverlay"></div>
+          <div id="confirmationDialog" class="confirmation-dialog">
+            <p class="conformation-question">Are you sure you want to proceed?</p>
+            <div class="conformationbuttons">
+              <button id="conformationtrue" class="confirmation-button">Yes</button>
+              <button id="confirmationfalse" class="confirmation-button">No</button>
+            </div>
+          </div>
+
+          <!-- / Footer -->
+
+          <div class="content-backdrop fade"></div>
+        </div>
+        <!-- Content wrapper -->
+      </div>
+      <!-- / Layout page -->
+    </div>
+
+    <!-- Overlay -->
+    <div class="layout-overlay layout-menu-toggle"></div>
+  </div>
+
+  <div class="toast-container" style="display: none;">
+    <img class="js-toast-img" src="./assets/dontsee.webp" height="10px" width="10px">
+    <span class="js-toast-title"></span>
+    <span class="js-toast-content"></span>
+  </div>
+  <!-- / Layout wrapper -->
+
+
+
+  <!-- Core JS -->
+  <!-- build:js assets/vendor/js/core.js -->
+  <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+
+  <script src="./assets/vendor/libs/jquery/jquery.js"></script>
+  <script src="./assets/vendor/libs/popper/popper.js"></script>
+  <script src="./assets/vendor/js/bootstrap.js"></script>
+  <script src="./assets/vendor/libs/node-waves/node-waves.js"></script>
+  <script src="./assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+  <script src="./assets/vendor/js/menu.js"></script>
+  <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- endbuild -->
+
+  <!-- Vendors JS -->
+  <script src="./assets/vendor/libs/apex-charts/apexcharts.js"></script>
+
+  <!-- Main JS -->
+  <script src="./assets/js/main.js"></script>
+
+  <!-- Page JS -->
+  <script src="./assets/js/dashboards-analytics.js"></script>
+
+  <!-- Place this tag in your head or just before your close body tag. -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <script src="./script.js"></script>
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/main.js"></script>
+  <!--===============================================================================================-->
+  <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+  <!--===============================================================================================-->
+  <script src="vendor/animsition/js/animsition.min.js"></script>
+  <!--===============================================================================================-->
+  <script src="vendor/bootstrap/js/popper.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+  <!--===============================================================================================-->
+  <script src="vendor/select2/select2.min.js"></script>
+  <!--===============================================================================================-->
+  <script src="vendor/daterangepicker/moment.min.js"></script>
+  <script src="vendor/daterangepicker/daterangepicker.js"></script>
+  <!--===============================================================================================-->
+  <script src="vendor/countdowntime/countdowntime.js"></script>
+  <!--===============================================================================================-->
+  <script src="js/main.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+
+</body>
+
+</html>

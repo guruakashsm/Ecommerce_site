@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Admin Login</title>
+    <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="./assets/style.css">
+</head>
+
+
+<body>
+    <header>
+        <h1>Admin</h1>
+    </header>
+
+    <main>
+        <form id="login-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Login</button>
+        </form>
+        <center>
+
+
+
+
+
+
+            <div class="options">
+                <button id="get-all-data">Get All Customer Data</button>
+                <button id="get-inventory">Get Inventory Data</button>
+                <button id="get-seller">Get Seller Data</button>
+                <button id="create-seller-button">Create Seller</button>
+                <button id="feedback-button">Feedbacks</a></button>
+                <br>
+                <br>
+                <br>
+                <button id="edit-button">Edit</a></button>
+                <button id="delete-button">Delete</button>
+                <br>
+                <br>
+
+
+            </div>
+        </center>
+        <div id="result-container">
+            <h2>Result:</h2>
+            <div id="data-list"></div>
+        </div>
+
+        <div id="feedback-form-container" style="display: none;" <div class="feedback-form" ">
+            <h1>Feedback</h1>
+            <br>
+            <div class=" role-options">
+            <button id="sellerButton">Seller</button>
+            <button id="customerButton">Customer</button>
+        </div>
+        <center>
+            <div id="feedbackContainer">
+                <!-- Feedback data will be displayed here -->
+            </div>
+        </center>
+        </div>
+        </div>
+
+        <div id="delete-form-container" style="display: none;">
+            <h1>Delete Data</h1>
+            <form id="delete-form">
+                <label for="collection">Select Collection:</label>
+                <select id="collection" name="collection">
+                    <option value="customer">Customer</option>
+                    <option value="inventory">Inventory</option>
+                    <option value="seller">Seller</option>
+                </select>
+                <label id="delete-by-label" for="id">Delete by:</label>
+                <input type="text" id="id" name="id" required>
+                <button type="submit">Delete User</button>
+            </form>
+        </div>
+
+        <!-- Create Seller Form (Initially hidden) -->
+        <div id="create-seller-form" style="display: none;">
+            <h2>Create Seller</h2>
+            <form id="seller-form">
+                <label for="seller-name">Seller Name:</label>
+                <input type="text" id="seller-name" name="seller-name" required>
+
+                <label for="seller-email">Seller Email:</label>
+                <input type="text" id="seller-email" name="seller-email" required>
+
+                <label for="seller-password">Password:</label>
+                <input type="text" id="seller-password" name="seller-password" required>
+
+                <label for="seller-confirm-password">Confirm Password:</label>
+                <input type="text" id="seller-confirm-password" name="seller-confirm-password" required>
+
+                <label for="seller-phone">Phone No:</label>
+                <input type="text" id="seller-phone" name="seller-phone" required>
+
+                <label for="seller-address">Address:</label>
+                <textarea id="seller-address" name="seller-address" rows="4" required></textarea>
+                <br>
+                <br>
+                <button type="submit">Create Seller</button>
+            </form>
+        </div>
+
+
+        <div id="update-form-admin" style="display: none;">
+            <h2>Update Data:</h2>
+            <br>
+            <form id="update-form">
+                <label for="updatecollection">Select Collection:</label>
+                <select id="updatecollection" name="updatecollection">
+                    <option value="customer">Customer</option>
+                    <option value="inventory">Inventory</option>
+                    <option value="seller">Seller</option>
+                </select>
+                <br>
+                <br>
+                <label for="idname">IdName:</label>
+                <input type="text" id="idname" name="idname" required><br>
+                <br>
+                <label for="field">Field:</label>
+                <select id="field" name="field">
+                    <!-- Options will be dynamically updated based on the selected collection -->
+                </select>
+                <br>
+                <br>
+                <label for="newvalue">New Value:</label>
+                <input type="text" id="newvalue" name="newvalue" required><br>
+                <br>
+
+                <button type="submit">Update</button>
+            </form>
+            <div id="result">
+                <!-- Result will be displayed here -->
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <center>
+            <p>&copy; 2023 Admin Panel</p>
+        </center>
+    </footer>
+    <script src="./assets/script.js">    </script>
