@@ -116,16 +116,16 @@ func Deletefeedback(delete models.FeedbackDB) int32 {
 }
 
 // Get all Feedbacks
-func GetFeedBacks() []models.Feedback {
+func GetFeedBacks() []models.FeedbackDB {
 	filter := bson.M{}
 	cursor, err := config.Feedback_Collection.Find(context.Background(), filter)
-	var Feedback []models.Feedback
+	var Feedback []models.FeedbackDB
 	if err != nil {
 		log.Println(err)
 	}
 
 	for cursor.Next(context.Background()) {
-		var feedback models.Feedback
+		var feedback models.FeedbackDB
 		err := cursor.Decode(&feedback)
 		if err != nil {
 			log.Println(err)

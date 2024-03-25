@@ -18,6 +18,7 @@ func Router() *gin.Engine {
 	router.Static("/signin", "./frontend/signin")
 	router.Static("/seller/signin","./frontend/seller/signin")
 	router.Static("/seller/signup", "./frontend/seller/signup")
+	router.Static("/seller/dashboard", "./frontend/seller/dashboard")
 
 	// Define your routes
 	router.GET("/getallcustomerdata", controller.GetallCustomerdata)

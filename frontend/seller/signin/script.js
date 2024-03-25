@@ -41,7 +41,7 @@ sellerForm.addEventListener('click', (e) => {
         const jsonString = JSON.stringify(sellerData);
         localStorage.setItem('sellerdata', `${jsonString}`);
         setTimeout(()=>{
-          window.location.href = "/seller/drashboard"
+          window.location.href = "/seller/dashboard"
         },2000)
       }
 
